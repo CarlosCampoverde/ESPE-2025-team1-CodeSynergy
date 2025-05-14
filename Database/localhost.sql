@@ -23,6 +23,7 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`);
 
 
+--
 ALTER TABLE `usuarios`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
