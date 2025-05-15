@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+
+// Verifica si el usuario ha iniciado sesión
+if (!isset($_SESSION['username'])) {
+    header('Location: ../index.php');
+    
+    exit;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,13 +42,13 @@
                        </li>
                        <br />
                        <li>
-                          <a href="dashboard.html"> <i class="fa fa-th sidebar-icon"></i>  Aplicacion</a>
+                          <a href="dashboard.php"> <i class="fa fa-th sidebar-icon"></i>  Aplicacion</a>
                        </li>
                        <li>
                            <a href="#">  <i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a>
                        </li>
                        <li>
-                           <a href="transporte.html"> <i class="fa fa-truck sidebar-icon"></i> Transporte</a>
+                           <a href="transporte.php"> <i class="fa fa-truck sidebar-icon"></i> Transporte</a>
                        </li>
                        <li>
                            <a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a>

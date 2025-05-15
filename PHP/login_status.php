@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $user['username'];
 
             // Redirige al dashboard
-            header('Location: ../HTML/dashboard.html');
+            header('Location: ../HTML/dashboard.php');
             exit;
         } else {
             // Redirigir a error.php 

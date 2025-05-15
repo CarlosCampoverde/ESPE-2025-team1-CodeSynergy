@@ -10,6 +10,6 @@
               </script>";
     }   
     
-    header('Location: ../index.php'); // Redirige al inicio
+    //header('Location: ../index.php'); // Redirige al inicio
     exit;
 ?>
