@@ -12,7 +12,8 @@ class Connection {
             return new PDO($dsn, $this->username, $this->password);
         } catch (\Throwable $th) {
             // Captura cualquier error y muestra
-            echo "Error en la conexión: " . $th->getMessage();
+            $error_message = "Error en la conexión: " . $th->getMessage();
+            header("Location: error.php?error_message=" . urlencode($error_message));
             exit;
         }
     }

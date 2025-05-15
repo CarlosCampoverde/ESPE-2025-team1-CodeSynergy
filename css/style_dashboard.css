@@ -38,6 +38,16 @@ display: block;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
+.sidebar-wrapper {
+    background-image: url("https://raw.githubusercontent.com/Ahmed-Massoud/Login-and-sign-up-form/main/background.svg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.hr {
+    border: 1px solid rgba(255, 255, 255, 0.474);
+}
 
 .wrapper.toggled .sidebar-wrapper {
     width: 250px;
