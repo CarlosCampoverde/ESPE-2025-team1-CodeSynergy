@@ -110,14 +110,14 @@ if (!isset($_SESSION['username'])) {
                 <table border="0" class="table cust-table"> 
                     <thead>
                         <tr style="width:80px;">
-                            <th style="width:70px;">#</th> 
-                            <th style="width:120px;" class="text-center"><i class="fa fa-gear"></i></th>  
-                            <th style="width:200px;">Tipo de vehículo</th>  
-                            <th style="width:150px;">Placa</th> 
+                            <th style="width:20px;">#</th> 
+                            <th style="width:100px;">Tipo de vehículo</th>  
+                            <th style="width:100px;">Placa</th> 
                             <th style="width:100px;">Estado</th> 
                             <th style="width:120px;">Capacidad</th>     
-                            <th style="width:150px;">Asignado para</th> 
-                            <th style="width:120px;">Color</th> 
+                            <th style="width:180px;">Asignado para</th> 
+                            <th style="width:100px;">Color</th> 
+                            <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
                         </tr>
                     </thead>
                     <tbody id="tablaVehiculosBody">

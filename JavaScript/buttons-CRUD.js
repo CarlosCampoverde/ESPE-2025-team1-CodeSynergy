@@ -19,6 +19,12 @@ function cargarVehiculos() {
         const fila = `
           <tr>
             <th scope="row">${vehiculo.id}</th>
+            <td>${vehiculo.tipo_vehiculo || ''}</td>
+            <td>${vehiculo.placa || ''}</td>
+            <td>${vehiculo.estado || ''}</td>
+            <td>${vehiculo.capacidad || ''}</td>
+            <td>${vehiculo.uso_asignado || ''}</td>
+            <td>${vehiculo.color || ''}</td>
             <td class="text-center">
               <button class="btn btn-outline-danger del-icon" data-id="${vehiculo.id}">
                 <span class="fa fa-trash-o"></span>
@@ -27,12 +33,6 @@ function cargarVehiculos() {
                 <span class="fa fa-pencil"></span>
               </button>
             </td>
-            <td>${vehiculo.tipo_vehiculo || ''}</td>
-            <td>${vehiculo.placa || ''}</td>
-            <td>${vehiculo.estado || ''}</td>
-            <td>${vehiculo.capacidad || ''}</td>
-            <td>${vehiculo.uso_asignado || ''}</td>
-            <td>${vehiculo.color || ''}</td>
           </tr>
         `;
         tbody.innerHTML += fila;
