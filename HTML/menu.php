@@ -109,10 +109,11 @@ if (!isset($_SESSION['username'])) {
                                     <table border="0" class="table cust-table"> 
                                         <thead>
                                             <tr style="width:80px;">
-                                                <th style="width:20px;">#</th> 
-                                                <th style="width:100px;">Nombre del menu</th>  
-                                                <th style="width:100px;">Descripcion</th> 
-                                                <th style="width:100px;">Precio por persona</th> 
+                                                <th style="width:80px;">Id</th> 
+                                                <th style="width:250px;">Nombre del menu</th>  
+                                                <th style="width:400px;">Descripcion</th> 
+                                                <th style="width:200px;">Precio por persona</th> 
+                                                <th class="text-center" style="width:200px;">Tipo</th> 
                                                 <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
                                             </tr>
                                         </thead>
@@ -146,6 +147,13 @@ if (!isset($_SESSION['username'])) {
                             <textarea  name="description" class="form-control mb-2" placeholder="Descripcion" id="description_new" required></textarea>
                             <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_new" required>
                             
+                            <!-- selector-->
+                            <label for="type_edit">Tipo:</label>
+                            <select name="type" class="form-control mb-2" id="type_edit" required>
+                                <option value="predefined">Predefinido</option>
+                                <option value="customizable">Personalizable</option>
+                            </select>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Guardar">
@@ -156,7 +164,7 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
 
-                <!-- Modal Editar -->
+        <!-- Modal Editar -->
         <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -172,6 +180,13 @@ if (!isset($_SESSION['username'])) {
                             <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_edit" required>                             
                             <textarea name="description" class="form-control mb-2" placeholder="Descripcion" id="description_edit" required></textarea>
                             <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_edit" required>                             
+                            <!-- selector xd-->
+                            <label for="type_edit">Tipo:</label>
+                            <select name="type" class="form-control mb-2" id="type_edit" required>
+                                <option value="predefined">Predefinido</option>
+                                <option value="customizable">Personalizable</option>
+                            </select>
+                           
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Actualizar">

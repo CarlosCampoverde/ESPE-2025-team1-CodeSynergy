@@ -13,12 +13,13 @@ console.log("ingresa hasta carga menu");
       // crea la tabla y sube los datos
       data.forEach((menus) => {
         const fila = `
-          <tr>
-            <th scope="row">${menus.id}</th>
-            <td>${menus.name || ''}</td>
-            <td>${menus.description || ''}</td>
-            <td>${menus.price_per_person || ''}</td>
-            <td class="text-center">
+           <tr>
+            <th scope="row" style="width:83px;">${menus.id}</th> 
+            <td style="width:265px;">${menus.name || ''}</td>
+            <td style="width:400px;">${menus.description || ''}</td>
+            <td class="text-center" style="width:200px;">${menus.price_per_person || ''}</td> 
+            <td class="text-center" style="width:200px;">${menus.type || ''}</td>
+            <td class="text-center" style="width:120px;">
               <button class="btn btn-outline-danger del-icon" data-id="${menus.id}">
                 <span class="fa fa-trash-o"></span>
               </button>
@@ -32,7 +33,7 @@ console.log("ingresa hasta carga menu");
       });
     })
     .catch(error => {
-      console.error('Error al cargar los vehículos:', error);
+      console.error('Error al cargar los menus:', error);
     });
 }
 
@@ -45,11 +46,15 @@ tbody.addEventListener('click', function (e) {
     const name = fila.children[1].textContent;
     const description = fila.children[2].textContent;
     const price_per_person = fila.children[3].textContent;
+    const type = fila.children[4].textContent.toLowerCase();
 
     document.getElementById('id_menu_edit').value = id_menu; 
     document.getElementById('name_edit').value = name;
     document.getElementById('description_edit').value = description;
     document.getElementById('price_per_person_edit').value = price_per_person;
+
+    const typeSelect = document.getElementById('type_edit');
+    typeSelect.value = (type === 'predefined') ? 'predefined' : 'customizable';
 
     const modal = new bootstrap.Modal(document.getElementById('editarModal'));
     modal.show();
