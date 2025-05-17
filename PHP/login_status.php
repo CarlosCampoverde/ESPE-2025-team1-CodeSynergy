@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $connection = new Connection();
         $pdo = $connection->connect();
 
-        $sql = "SELECT * FROM usuarios WHERE username = :username";
+        $sql = "SELECT * FROM users WHERE username = :username";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
