@@ -16,15 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $connection = new Connection();
         $pdo = $connection->connect();
 
-        $sql = "INSERT INTO users (username, password, email,role)
-                VALUES (:username, :password, :email,'client')";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':username' => $username,
-            ':password' => $password,
-            ':email'    => $email
-        ]);
         //comprobar que el username o el correo no existan
         $sql = "SELECT * FROM users WHERE username = :username OR email = :email";  
         $stmt = $pdo->prepare($sql);
@@ -41,6 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </script>";
             exit;
         }
+
+        $sql = "INSERT INTO users (username, password, email,role)
+                VALUES (:username, :password, :email,'client')";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':username' => $username,
+            ':password' => $password,
+            ':email'    => $email
+        ]);
+        
 
         echo "<script>
             alert('Usuario registrado correctamente.');
