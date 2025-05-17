@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 17-05-2025 a las 20:24:33
+-- Tiempo de generación: 17-05-2025 a las 20:40:16
 -- Versión del servidor: 8.0.17
 -- Versión de PHP: 7.3.10
 
@@ -123,16 +123,42 @@ CREATE TABLE `menus` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
-  `price_per_person` decimal(10,2) NOT NULL
+  `price_per_person` decimal(10,2) NOT NULL,
+  `type` enum('predefined','customizable') DEFAULT 'predefined'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `menus`
 --
 
-INSERT INTO `menus` (`id`, `name`, `description`, `price_per_person`) VALUES
-(1, 'Buffet Estándar', 'Incluye platos principales, guarniciones y bebidas.', '10.50'),
-(2, 'Buffet Premium', 'Incluye opciones gourmet y postres.', '18.00');
+INSERT INTO `menus` (`id`, `name`, `description`, `price_per_person`, `type`) VALUES
+(1, 'Buffet Estándar', 'Incluye platos principales, guarniciones y bebidas.', '10.50', 'predefined'),
+(2, 'Buffet Premium', 'Incluye opciones gourmet y postres.', '18.00', 'predefined');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `menu_categories`
+--
+
+CREATE TABLE `menu_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `menu_items`
+--
+
+CREATE TABLE `menu_items` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `description` text,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `category_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -328,6 +354,19 @@ ALTER TABLE `menus`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `menu_categories`
+--
+ALTER TABLE `menu_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `menu_items`
+--
+ALTER TABLE `menu_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `category_id` (`category_id`);
+
+--
 -- Indices de la tabla `pdf_files`
 --
 ALTER TABLE `pdf_files`
@@ -412,6 +451,18 @@ ALTER TABLE `menus`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `menu_categories`
+--
+ALTER TABLE `menu_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `menu_items`
+--
+ALTER TABLE `menu_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `pdf_files`
 --
 ALTER TABLE `pdf_files`
@@ -475,6 +526,12 @@ ALTER TABLE `comments`
 --
 ALTER TABLE `events`
   ADD CONSTRAINT `events_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`);
+
+--
+-- Filtros para la tabla `menu_items`
+--
+ALTER TABLE `menu_items`
+  ADD CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `menu_categories` (`id`);
 
 --
 -- Filtros para la tabla `pdf_files`
