@@ -53,7 +53,7 @@ if (!isset($_SESSION['username'])) {
                         <button type="button" class="btn hamburger-btn" id="menu-toggle">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <span class="page-title"><i class="fa fa-truck sidebar-icon"></i> Transporte</span>
+                        <span class="page-title"><i class="fa fa-file sidebar-icon"></i> Menu</span>
                         <div class="profile-pic"></div>
                     </div>
                 </div>
@@ -110,16 +110,14 @@ if (!isset($_SESSION['username'])) {
                                         <thead>
                                             <tr style="width:80px;">
                                                 <th style="width:20px;">#</th> 
-                                                <th style="width:100px;">Tipo de vehículo</th>  
-                                                <th style="width:100px;">Placa</th> 
-                                                <th style="width:100px;">Estado</th> 
-                                                <th style="width:120px;">Capacidad</th>     
-                                                <th style="width:180px;">Asignado para</th> 
-                                                <th style="width:100px;">Color</th> 
+                                                <th style="width:100px;">Nombre del menu</th>  
+                                                <th style="width:100px;">Descripcion</th> 
+                                                <th style="width:100px;">Precio por persona</th> 
                                                 <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
                                             </tr>
                                         </thead>
-                                        <tbody id="tablaVehiculosBody">
+                                        <!--Aqui tenemos que poner a la nueva tabla  -->
+                                        <tbody id="tabla_menu">
                                             <!-- Las filas se cargaran aquí dinámicamente -->
                                         </tbody>
                                     </table>
@@ -136,19 +134,18 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Vehículo</h5>
+                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Menu</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="nuevoForm" method="post" action="../php/create_vehicle.php">
-                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoNuevo" required>                            
-                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaNuevo" required>
-                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoNuevo" required>
-                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadNuevo" required>
-                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoNuevo" required>
-                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorNuevo" required>
+                        <form id="nuevoForm" method="post" action="../php/adm_menu_create.php">
+                            
+                            <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_new" required>                            
+                            <textarea  name="description" class="form-control mb-2" placeholder="Descripcion" id="description_new" required></textarea>
+                            <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_new" required>
+                            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Guardar">
@@ -159,32 +156,27 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
 
-        <!-- Modal Editar -->
+                <!-- Modal Editar -->
         <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel">Editar Vehículo</h5>
+                        <h5 class="modal-title" id="editarModalLabel">Editar Menu</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editForm" method="post" action="../php/update_vehicle.php">
-                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoEditar" required>
-                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaEditar" required>
-                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoEditar" required>
-                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadEditar" required>
-                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoEditar" required>
-                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorEditar" required>
-                            
+                        <form id="editForm" method="post" action="../php/adm_menu_update.php">
+                            <input type="hidden" name="id_menu" id="id_menu_edit">
+                            <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_edit" required>                             
+                            <textarea name="description" class="form-control mb-2" placeholder="Descripcion" id="description_edit" required></textarea>
+                            <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_edit" required>                             
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Actualizar">
                             </div>
-
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -195,13 +187,13 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Vehículo</h5>
+                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Menu</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>¿Estás seguro de eliminar el vehículo con placa <span id="placaEliminar"></span>?</p>
+                        <p>¿Estás seguro de eliminar el menú con el nombre <span id="placaEliminar"></span>?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -210,8 +202,9 @@ if (!isset($_SESSION['username'])) {
                 </div>
             </div>
         </div>
+
         
     </div>
-    <script src="../JavaScript/buttons-CRUD.js"></script> 
+    <script src="../JavaScript/menu_CRUD.js"></script> 
 </body>
 </html>

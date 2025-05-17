@@ -54,7 +54,7 @@ if (!isset($_SESSION['username'])) {
                            <a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a>
                        </li>
                        <li>
-                           <a href="#"><a href="#"><i class="fa fa-file sidebar-icon"></i> Precios</a>
+                           <a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a>
                        </li>
                        <li>
                            <a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a>

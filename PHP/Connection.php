@@ -2,7 +2,7 @@
 
 class Connection {
     private $host = 'localhost';
-    private $dbname = 'catering1';
+    private $dbname = 'catering';
     private $username = 'root';
     private $password = 'adminadmin';
 
