@@ -103,40 +103,33 @@ if (!isset($_SESSION['username'])) {
                     
                     <!-- Listing table -->
                     <!-- Listing table -->
-<div class="row">
-    <div class="col-sm-12">
-        <div class="cust-table-cont">
-            <div class="table-responsive">
-                <table border="0" class="table cust-table"> 
-                    <thead>
-                        <tr style="width:80px;">
-                            <th style="width:20px;">#</th> 
-                            <th style="width:100px;">Tipo de vehículo</th>  
-                            <th style="width:100px;">Placa</th> 
-                            <th style="width:100px;">Estado</th> 
-                            <th style="width:120px;">Capacidad</th>     
-                            <th style="width:180px;">Asignado para</th> 
-                            <th style="width:100px;">Color</th> 
-                            <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
-                        </tr>
-                    </thead>
-                    <tbody id="tablaVehiculosBody">
-                        <!-- Las filas se cargaran aquí dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="cust-table-cont">
+                                <div class="table-responsive">
+                                    <table border="0" class="table cust-table"> 
+                                        <thead>
+                                            <tr style="width:80px;">
+                                                <th style="width:20px;">#</th> 
+                                                <th style="width:100px;">Tipo de vehículo</th>  
+                                                <th style="width:100px;">Placa</th> 
+                                                <th style="width:100px;">Estado</th> 
+                                                <th style="width:120px;">Capacidad</th>     
+                                                <th style="width:180px;">Asignado para</th> 
+                                                <th style="width:100px;">Color</th> 
+                                                <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaVehiculosBody">
+                                            <!-- Las filas se cargaran aquí dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
-
-
-
         </div>
 
         <!-- Modal Nuevo -->
@@ -153,14 +146,10 @@ if (!isset($_SESSION['username'])) {
                         <form id="nuevoForm" method="post" action="../php/create_vehicle.php">
                             <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoNuevo" required>                            
                             <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaNuevo" required>
-
                             <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoNuevo" required>
-
                             <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadNuevo" required>
-
                             <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoNuevo" required>
                             <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorNuevo" required>
-
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Guardar">
@@ -182,17 +171,21 @@ if (!isset($_SESSION['username'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editarForm">
-                            <!-- Formulario de Editar Vehículo -->
-                            <input type="text" class="form-control mb-2" placeholder="Placa" id="placaEditar" readonly>
-                            <input type="text" class="form-control mb-2" placeholder="Marca" id="estadoEditar">
-                            <input type="text" class="form-control mb-2" placeholder="Modelo" id="capacidadEditar">
-                            <input type="text" class="form-control mb-2" placeholder="Año" id="asignadoEditar">
+                        <form id="editForm" method="post" action="../php/update_vehicle.php">
+                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoEditar" required>
+                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaEditar" required>
+                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoEditar" required>
+                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadEditar" required>
+                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoEditar" required>
+                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorEditar" required>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <input type="submit" class="btn btn-primary" value="Actualizar">
+                            </div>
+
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" id="guardarEditar">Guardar cambios</button>
+
                     </div>
                 </div>
             </div>
@@ -218,58 +211,8 @@ if (!isset($_SESSION['username'])) {
                 </div>
             </div>
         </div>
-
-
-        <script src="../JavaScript/buttons-CRUD.js"></script>    </div>
-
-        <script>
-document.addEventListener('DOMContentLoaded', () => {
-  function cargarVehiculos() {
-    fetch('../php/create_vehicle.php')  // Asegúrate que la ruta es correcta
-      .then(response => response.json())
-      .then(data => {
-        const tbody = document.getElementById('tablaVehiculosBody');
-        tbody.innerHTML = '';  // Limpiar tabla
-
-        if (data.error) {
-          tbody.innerHTML = `<tr><td colspan="8">Error: ${data.error}</td></tr>`;
-          return;
-        }
-
-        if (data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="8">No hay vehículos registrados.</td></tr>`;
-          return;
-        }
-
-        data.forEach((vehiculo, index) => {
-          const fila = `
-            <tr>
-              <th scope="row">${index + 1}</th>
-              <td class="text-center">
-                <button class="btn btn-outline-danger del-icon" data-id="${vehiculo.id}"><span class="fa fa-trash-o"></span></button>
-                <button class="btn btn-outline-success" data-id="${vehiculo.id}"><span class="fa fa-pencil"></span></button>
-              </td>
-              <td>${vehiculo.tipo_vehiculo || ''}</td>
-              <td>${vehiculo.placa || ''}</td>
-              <td>${vehiculo.estado || ''}</td>
-              <td>${vehiculo.capacidad || ''}</td>
-              <td>${vehiculo.uso_asignado || ''}</td>
-              <td>${vehiculo.color || ''}</td>
-            </tr>
-          `;
-          tbody.innerHTML += fila;
-        });
-      })
-      .catch(error => {
-        const tbody = document.getElementById('tablaVehiculosBody');
-        tbody.innerHTML = `<tr><td colspan="8">Error al cargar datos</td></tr>`;
-        console.error('Error al cargar vehículos:', error);
-      });
-  }
-
-  cargarVehiculos();
-});
-</script>
-
+        
+    </div>
+    <script src="../JavaScript/buttons-CRUD.js"></script> 
 </body>
 </html>
