@@ -102,71 +102,41 @@ if (!isset($_SESSION['username'])) {
                     <br /><br />
                     
                     <!-- Listing table -->
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="cust-table-cont">
-                                <div class="table-responsive">
-                                    <table border="0" class="table cust-table"> 
-                                        <thead>
-                                            <tr style="width:80px;">
-                                                <th style="width:70px;">#</th> 
-                                                <th style="width:120px;" class="text-center"><i class="fa fa-gear"></i></th>  
-                                                <th style="width:200px;">Tipo de vehículo</th>  
-                                                <th style="width:150px;">Placa</th> 
-                                                <th style="width:100px;">Estado</th> 
-                                                <th style="width:120px;">Capacidad</th>     
-                                                <th style="width:150px;">Asignado para</th> 
-                                                <th style="width:120px;">Color</th> 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th style="width:70px;">1</th>
-                                                <td style="width:120px;" class="text-center">
-                                                    <button class="btn btn-outline-danger del-icon"><span class="fa fa-trash-o"></span></button> 
-                                                    <button class="btn btn-outline-success"><span class="fa fa-pencil"></span></button>
-                                                </td>
-                                                <td style="width:200px;">Camioneta</td>
-                                                <td style="width:150px;">PBQ-5420</td>
-                                                <td style="width:100px;">ACTIVO</td>
-                                                <td style="width:120px;">5 personas</td>
-                                                <td style="width:150px;">Transporte de comida</td>
-                                                <td style="width:120px;">Azul</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td class="text-center">
-                                                    <button class="btn btn-outline-danger del-icon"><span class="fa fa-trash-o"></span></button> 
-                                                    <button class="btn btn-outline-success"><span class="fa fa-pencil"></span></button>
-                                                </td>
-                                                <td>Camion</td>
-                                                <td>ICD-2545</td>
-                                                <td>INACTIVO</td>
-                                                <td>3 personas</td>
-                                                <td>Transporte de alimentos</td>
-                                                <td>Blanco</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td class="text-center">
-                                                    <button class="btn btn-outline-danger del-icon"><span class="fa fa-trash-o"></span></button> 
-                                                    <button class="btn btn-outline-success"><span class="fa fa-pencil"></span></button>
-                                                </td>
-                                                <td>Furgoneta</td>
-                                                <td>XDA-7154</td>
-                                                <td>ACTIVO</td>
-                                                <td>15 personas</td>
-                                                <td>Transporte de personal</td>
-                                                <td>Gris</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Listing table -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="cust-table-cont">
+            <div class="table-responsive">
+                <table border="0" class="table cust-table"> 
+                    <thead>
+                        <tr style="width:80px;">
+                            <th style="width:70px;">#</th> 
+                            <th style="width:120px;" class="text-center"><i class="fa fa-gear"></i></th>  
+                            <th style="width:200px;">Tipo de vehículo</th>  
+                            <th style="width:150px;">Placa</th> 
+                            <th style="width:100px;">Estado</th> 
+                            <th style="width:120px;">Capacidad</th>     
+                            <th style="width:150px;">Asignado para</th> 
+                            <th style="width:120px;">Color</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="tablaVehiculosBody">
+                        <!-- Las filas se cargaran aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
                 </div>
             </div>
+
+
+
+
+
         </div>
 
         <!-- Modal Nuevo -->
@@ -180,18 +150,22 @@ if (!isset($_SESSION['username'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="nuevoForm">
-                            <!-- Formulario de Nuevo Vehículo -->
-                            <label for="placaNuevo">Placa</label>
-                            <input type="text" class="form-control mb-2" placeholder="Placa" id="placaNuevo">
-                            <input type="text" class="form-control mb-2" placeholder="Estado" id="estadoNuevo">
-                            <input type="text" class="form-control mb-2" placeholder="Capacidad" id="capacidadNuevo">
-                            <input type="text" class="form-control mb-2" placeholder="Asignado para" id="asignadoNuevo">
+                        <form id="nuevoForm" method="post" action="../php/create_vehicle.php">
+                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoNuevo" required>                            
+                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaNuevo" required>
+
+                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoNuevo" required>
+
+                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadNuevo" required>
+
+                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoNuevo" required>
+                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorNuevo" required>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <input type="submit" class="btn btn-primary" value="Guardar">
+                            </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" id="guardarNuevo">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -247,5 +221,55 @@ if (!isset($_SESSION['username'])) {
 
 
         <script src="../JavaScript/buttons-CRUD.js"></script>    </div>
+
+        <script>
+document.addEventListener('DOMContentLoaded', () => {
+  function cargarVehiculos() {
+    fetch('../php/create_vehicle.php')  // Asegúrate que la ruta es correcta
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.getElementById('tablaVehiculosBody');
+        tbody.innerHTML = '';  // Limpiar tabla
+
+        if (data.error) {
+          tbody.innerHTML = `<tr><td colspan="8">Error: ${data.error}</td></tr>`;
+          return;
+        }
+
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8">No hay vehículos registrados.</td></tr>`;
+          return;
+        }
+
+        data.forEach((vehiculo, index) => {
+          const fila = `
+            <tr>
+              <th scope="row">${index + 1}</th>
+              <td class="text-center">
+                <button class="btn btn-outline-danger del-icon" data-id="${vehiculo.id}"><span class="fa fa-trash-o"></span></button>
+                <button class="btn btn-outline-success" data-id="${vehiculo.id}"><span class="fa fa-pencil"></span></button>
+              </td>
+              <td>${vehiculo.tipo_vehiculo || ''}</td>
+              <td>${vehiculo.placa || ''}</td>
+              <td>${vehiculo.estado || ''}</td>
+              <td>${vehiculo.capacidad || ''}</td>
+              <td>${vehiculo.uso_asignado || ''}</td>
+              <td>${vehiculo.color || ''}</td>
+            </tr>
+          `;
+          tbody.innerHTML += fila;
+        });
+      })
+      .catch(error => {
+        const tbody = document.getElementById('tablaVehiculosBody');
+        tbody.innerHTML = `<tr><td colspan="8">Error al cargar datos</td></tr>`;
+        console.error('Error al cargar vehículos:', error);
+      });
+  }
+
+  cargarVehiculos();
+});
+</script>
+
 </body>
 </html>

@@ -1,86 +1,47 @@
-console.log("JS cargado correctamente");
+// obtener referencia al cuerpo de la tabla
+const tbody = document.getElementById('tablaVehiculosBody');
 
-// Esperamos a que el DOM esté listo
-$(document).ready(function () {
+// funcion para cargar los vehiculos
+function cargarVehiculos() {
+  fetch('../php/listar_vehiculos.php') // ruta correcta para obtener datos en JSON
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // limpiar el tbody antes de cargar nuevas filas
+      tbody.innerHTML = '';
 
-    // Funcionalidad para el botón de Editar (delegado)
-    $(document).on("click", ".btn-outline-success", function () {
-        var fila = $(this).closest("tr");
-        var placa = fila.find("td").eq(2).text(); 
-        var estado = fila.find("td").eq(3).text(); 
-        var capacidad = fila.find("td").eq(4).text(); 
-        var asignado = fila.find("td").eq(5).text();   
-
-        $("#placaEditar").val(placa);
-        $("#estadoEditar").val(estado);
-        $("#capacidadEditar").val(capacidad);
-        $("#asignadoEditar").val(asignado);
-
-        $('#editarModal').modal('show');
+      // recorrer cada vehiculo y crear su fila
+      data.forEach((vehiculo) => {
+        const fila = `
+          <tr>
+            <th scope="row">${vehiculo.id}</th>
+            <td class="text-center">
+              <button class="btn btn-outline-danger del-icon" data-id="${vehiculo.id}">
+                <span class="fa fa-trash-o"></span>
+              </button>
+              <button class="btn btn-outline-success edit-icon" data-id="${vehiculo.id}">
+                <span class="fa fa-pencil"></span>
+              </button>
+            </td>
+            <td>${vehiculo.tipo_vehiculo || ''}</td>
+            <td>${vehiculo.placa || ''}</td>
+            <td>${vehiculo.estado || ''}</td>
+            <td>${vehiculo.capacidad || ''}</td>
+            <td>${vehiculo.uso_asignado || ''}</td>
+            <td>${vehiculo.color || ''}</td>
+          </tr>
+        `;
+        tbody.innerHTML += fila;
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar los vehiculos:', error);
     });
+}
 
-    // Funcionalidad para el botón de Eliminar (delegado)
-    $(document).on("click", ".btn-outline-danger", function () {
-        console.log("JS cargado correctamente btn eliminar");
-
-        var fila = $(this).closest("tr");
-        var placa = fila.find("td").eq(2).text();
-
-        $("#placaEliminar").text(placa);
-        $('#eliminarModal').modal('show');
-
-        // Evita múltiples bindings
-        $("#confirmarEliminar").off("click").on("click", function () {
-            fila.remove();
-            $('#eliminarModal').modal('hide');
-        });
-    });
-
-    // Guardar cambios del modal de edición
-    $("#guardarEditar").click(function () {
-        var placa = $("#placaEditar").val();
-        var estado = $("#estadoEditar").val();
-        var capacidad = $("#capacidadEditar").val();
-        var asignado = $("#asignadoEditar").val();
-
-        var fila = $("tr").filter(function () {
-            return $(this).find("td").eq(2).text() === placa;
-        });
-
-        fila.find("td").eq(3).text(estado);
-        fila.find("td").eq(4).text(capacidad);
-        fila.find("td").eq(5).text(asignado);
-
-        $('#editarModal').modal('hide');
-    });
-
-    // Guardar nuevo vehículo
-    $("#guardarNuevo").click(function () {
-        console.log("JS cargado correctamente btn nuevo");
-
-        var placa = $("#placaNuevo").val();
-        var estado = $("#estadoNuevo").val();
-        var capacidad = $("#capacidadNuevo").val();
-        var asignado = $("#asignadoNuevo").val();
-
-        var nuevaFila = `
-            <tr>
-                <th scope='row'></th>
-                <td class='text-center'>
-                    <button class='btn btn-outline-danger del-icon'><span class='fa fa-trash-o'></span></button>
-                    <button class='btn btn-outline-success'><span class='fa fa-pencil'></span></button>
-                </td>
-                <td>${placa}</td>
-                <td>${estado}</td>
-                <td>${capacidad}</td>
-                <td>${asignado}</td>
-                <td>ACTIVO</td>
-                <td>5 personas</td>
-                <td>Transporte de comida</td>
-                <td>Azul</td>
-            </tr>`;
-
-        $(".cust-table tbody").append(nuevaFila);
-        $('#nuevoModal').modal('hide');
-    });
-});
+// ejecutar la funcion al cargar la pagina
+document.addEventListener('DOMContentLoaded', cargarVehiculos);

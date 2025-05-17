@@ -2,7 +2,7 @@
 
 class Connection {
     private $host = 'localhost';
-    private $dbname = 'catering';
+    private $dbname = 'catering1';
     private $username = 'root';
     private $password = 'adminadmin';
 
@@ -18,4 +18,4 @@ class Connection {
         }
     }
 }
-?>
+?>  
