@@ -1,18 +1,19 @@
-left-hamberger { margin:12px 10px;}
-.btn {  cursor:pointer; }
-.sortable { color:#428bca; cursor:pointer; } 
-.disabled-btn { opacity:0.4; }
+/* Estilos generales */
+.left-hamberger { margin:12px 10px; }
+.btn { cursor: pointer; }
+.sortable { color: #428bca; cursor: pointer; }
+.disabled-btn { opacity: 0.4; }
 
-.search-fld-cont { max-width:650px; margin:0 auto; }
-.cust-table-cont { width:100%; overflow-x:auto; } 
-.cust-table-cont .table-responsive { width:1190px;  }
-.cust-table { table-layout:fixed;  } 
-.cust-table thead, .cust-table tbody { 
-display: block;
+.search-fld-cont { max-width: 650px; margin: 0 auto; }
+.cust-table-cont { width: 100%; overflow-x: auto; }
+.cust-table-cont .table-responsive { width: 1190px; }
+.cust-table { table-layout: fixed; }
+.cust-table thead, .cust-table tbody {
+    display: block;
 }
-.cust-table tbody { max-height:620px; overflow-y:auto; } 
+.cust-table tbody { max-height: 620px; overflow-y: auto; }
 
-
+/* Estilos para la barra lateral */
 .wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
@@ -24,7 +25,8 @@ display: block;
 .wrapper.toggled {
     padding-left: 250px;
 }
-		.sidebar-wrapper {
+
+.sidebar-wrapper {
     z-index: 1000;
     position: fixed;
     left: 250px;
@@ -37,8 +39,6 @@ display: block;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-}
-.sidebar-wrapper {
     background-image: url("https://raw.githubusercontent.com/Ahmed-Massoud/Login-and-sign-up-form/main/background.svg");
     background-size: cover;
     background-position: center center;
@@ -64,8 +64,7 @@ display: block;
     margin-right: -250px;
 }
 
-/* Sidebar Styles */
-
+/* Estilos para la navegación de la barra lateral */
 .sidebar-nav {
     position: absolute;
     top: 0;
@@ -74,7 +73,9 @@ display: block;
     padding: 0;
     list-style: none;
 }
-.sidebar-icon { display:inline; margin-right:10px; }
+
+.sidebar-icon { display: inline; margin-right: 10px; }
+
 .sidebar-nav li {
     text-indent: 20px;
     line-height: 40px;
@@ -86,10 +87,10 @@ display: block;
     color: #999999;
 }
 
-.sidebar-nav li a:hover, .sidebar-nav li .active  {  
+.sidebar-nav li a:hover, .sidebar-nav li .active {
     text-decoration: none;
     color: #fff;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-nav li a:active,
@@ -112,7 +113,8 @@ display: block;
     background: none;
 }
 
-@media(min-width:768px) {
+/* Media Queries */
+@media(min-width: 768px) {
     .wrapper {
         padding-left: 250px;
     }
@@ -138,17 +140,17 @@ display: block;
         position: relative;
         margin-right: 0;
     }
-	
 }
 
-.hamburger-btn { position:absolute; margin:15px 0; left:15px; cursor:pointer; width:58px; height:43px; }
-.profile-pic { position:absolute; margin:15px 0; right:15px; cursor:pointer; }
-.content {margin-bottom:25px; padding:0 16px;}
-.page-title { font-size:18px; margin:0 auto; margin-top:20px; margin-bottom:25px; text-align:center; }
+.hamburger-btn { position: absolute; margin: 15px 0; left: 15px; cursor: pointer; width: 58px; height: 43px; }
+.profile-pic { position: absolute; margin: 15px 0; right: 15px; cursor: pointer; }
+.content { margin-bottom: 25px; padding: 0 16px; }
+.page-title { font-size: 18px; margin: 0 auto; margin-top: 20px; margin-bottom: 25px; text-align: center; }
 
-@media(max-width:360px) {
-	 .wrapper.toggled .profile-pic  { display:none; }
-	 .wrapper.toggled .page-title { visibility:hidden; }
-	.header { height:72px; }
+@media(max-width: 360px) {
+    .wrapper.toggled .profile-pic { display: none; }
+    .wrapper.toggled .page-title { visibility: hidden; }
+    .header { height: 72px; }
 }
-.del-icon { margin-right:10px; }
+
+.del-icon { margin-right: 10px; }
