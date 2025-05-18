@@ -141,8 +141,18 @@ if (!isset($_SESSION['username'])) {
                             <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del ítem" id="name_new" required>
                             <textarea name="description" class="form-control mb-2" placeholder="Descripción" id="description_new" required></textarea>
                             <input type="number" step="0.01" name="price" class="form-control mb-2" placeholder="Precio" id="price_new" required>
-                            
-
+                            <label for="category_id_new">Categoría:</label>
+                            <select name="category_id" class="form-control mb-2" id="category_id_new" required>
+                                <?php
+                                require_once '../php/Connection.php';
+                                $conexion = new Connection();
+                                $pdo = $conexion->connect();
+                                $stmt = $pdo->query("SELECT id, name FROM menu_categories ORDER BY name");
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<option value='{$row['id']}'>{$row['name']}</option>";
+                                }
+                                ?>
+                            </select>
                             <label for="is_active_new">Activo:</label>
                             <select name="is_active" class="form-control mb-2" id="is_active_new" required>
                                 <option value="1">Sí</option>
