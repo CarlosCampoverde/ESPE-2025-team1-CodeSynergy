@@ -60,7 +60,7 @@ if (!isset($_SESSION['username'])) {
                            <a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a>
                        </li>
                        <li>
-                           <a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a>
+                           <a href="menu-selection.php"><i class="fa fa-user sidebar-icon"></i> Menu prueba</a>
                        </li>                       
                        <li>
                            <a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a>
