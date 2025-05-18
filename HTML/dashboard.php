@@ -56,6 +56,8 @@ if (!isset($_SESSION['username'])) {
                        <li>
                            <a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a>
                        </li>
+                       <li><a href="menu_items.php"><i class="fa fa-utensils sidebar-icon"></i> Ítems del Menú</a></li>
+
                        <li>
                            <a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a>
                        </li>

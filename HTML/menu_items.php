@@ -13,18 +13,15 @@ if (!isset($_SESSION['username'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style_dashboard.css">
-    <title>QuickQuote Catering</title>
+    <title>QuickQuote Catering - Menu Items</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<!-- Font Awesome (para íconos) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome (para íconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="wrapper">
@@ -129,29 +126,68 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
 
-        <!-- Modal Editar -->
-        <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+        <!-- Modal Nuevo -->
+        <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel">Editar Menu</h5>
+                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Ítem de Menú</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editForm" method="post" action="../php/adm_menu_update.php">
-                            <input type="hidden" name="id_menu" id="id_menu_edit">
-                            <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_edit" required>                             
-                            <textarea name="description" class="form-control mb-2" placeholder="Descripcion" id="description_edit" required></textarea>
-                            <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_edit" required>                             
-                            <!-- selector xd-->
-                            <label for="type_edit">Tipo:</label>
-                            <select name="type" class="form-control mb-2" id="type_edit" required>
-                                <option value="predefined">Predefinido</option>
-                                <option value="customizable">Personalizable</option>
+                        <form id="nuevoForm" method="post" action="../php/adm_menu_item_create.php">
+                            <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del ítem" id="name_new" required>
+                            <textarea name="description" class="form-control mb-2" placeholder="Descripción" id="description_new" required></textarea>
+                            <input type="number" step="0.01" name="price" class="form-control mb-2" placeholder="Precio" id="price_new" required>
+                            
+
+                            <label for="is_active_new">Activo:</label>
+                            <select name="is_active" class="form-control mb-2" id="is_active_new" required>
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
                             </select>
-                           
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <input type="submit" class="btn btn-primary" value="Guardar">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Editar -->
+        <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarModalLabel">Editar Ítem de Menú</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm" method="post" action="../php/adm_menu_item_update.php">
+                            <input type="hidden" name="id" id="id_edit">
+                            <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del ítem" id="name_edit" required>
+                            <textarea name="description" class="form-control mb-2" placeholder="Descripción" id="description_edit" required></textarea>
+                            <input type="number" step="0.01" name="price" class="form-control mb-2" placeholder="Precio" id="price_edit" required>
+                            <label for="category_id_edit">Categoría:</label>
+                            <select name="category_id" class="form-control mb-2" id="category_id_edit" required>
+                                <?php
+                                $stmt = $pdo->query("SELECT id, name FROM menu_categories ORDER BY name");
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<option value='{$row['id']}'>{$row['name']}</option>";
+                                }
+                                ?>
+                            </select>
+                            <label for="is_active_edit">Activo:</label>
+                            <select name="is_active" class="form-control mb-2" id="is_active_edit" required>
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Actualizar">
@@ -167,13 +203,13 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Menu</h5>
+                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Ítem de Menú</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>¿Estás seguro de eliminar el menú con el nombre <span id="placaEliminar"></span>?</p>
+                        <p>¿Estás seguro de eliminar el ítem con el nombre <span id="nombreEliminar"></span>?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -182,9 +218,7 @@ if (!isset($_SESSION['username'])) {
                 </div>
             </div>
         </div>
-
-        
     </div>
-    <script src="../JavaScript/menu_CRUD.js"></script> 
+    <script src="../JavaScript/menu_items_CRUD.js"></script>
 </body>
 </html>
