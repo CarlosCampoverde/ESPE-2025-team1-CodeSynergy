@@ -19,7 +19,7 @@ console.log("ingresa hasta carga menu");
             <td style="width:400px;">${menus.description || ''}</td>
             <td class="text-center" style="width:200px;">${menus.price_per_person || ''}</td> 
             <td class="text-center" style="width:200px;">${menus.type || ''}</td>
-            <td class="text-center" style="width:120px;">
+            <td class="text-center" style="width:200px;">
               <button class="btn btn-outline-danger del-icon" data-id="${menus.id}">
                 <span class="fa fa-trash-o"></span>
               </button>
