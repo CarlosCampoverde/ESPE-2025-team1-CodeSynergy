@@ -33,43 +33,24 @@ if (!isset($_SESSION['username'])) {
 <body>
     <div class="wrapper">
         <div class="sidebar-wrapper">
-                   <ul class="sidebar-nav" >
-                       <li class="sidebar-brand">
-                           <a href="#">
-                               Bienvenido Administrador
-                           </a>
-                           <hr class="hr">
-                       </li>
-                       <br />
-                       <li>
-                          <a href="#"> <i class="fa fa-th sidebar-icon"></i>  Aplicacion</a>
-                       </li>
-                       <li>
-                           <a href="#">  <i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a>
-                       </li>
-                       <li>
-                           <a href="transporte.php"> <i class="fa fa-truck sidebar-icon"></i> Transporte</a>
-                       </li>
-                       <li>
-                           <a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a>
-                       </li>
-                       <li>
-                           <a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a>
-                       </li>
-                       <li><a href="menu_items.php"><i class="fa fa-utensils sidebar-icon"></i> Ítems del Menú</a></li>
-
-                       <li>
-                           <a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a>
-                       </li>
-                       <li>
-                           <a href="menu-selection.php"><i class="fa fa-user sidebar-icon"></i> Menu prueba</a>
-                       </li>                       
-                       <li>
-                           <a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a>
-                       </li>
-                   </ul>
-               </div>
-       <div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">Bienvenido Administrador</a>
+                    <hr class="hr">
+                </li>
+                <br />
+                <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
+                <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
+                <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
+                <li><a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
+                <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
+                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
+                <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
+                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>
+                <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
+            </ul>
+        </div>
+    <div>
        
         <header class="header navbar-light bg-faded">
            <div class="container-fluid">

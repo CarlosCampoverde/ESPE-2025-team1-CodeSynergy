@@ -39,10 +39,10 @@ if (!isset($_SESSION['username'])) {
                 <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
                 <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
                 <li><a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
-                <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menús</a></li>
-                <li><a href="menu_items.php"><i class="fa fa-utensils sidebar-icon"></i> Ítems del Menú</a></li>
+                <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
+                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
                 <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
-                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>
+                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>                       
                 <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
             </ul>
         </div>
@@ -54,38 +54,39 @@ if (!isset($_SESSION['username'])) {
                         <button type="button" class="btn hamburger-btn" id="menu-toggle">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <span class="page-title"><i class="fa fa-utensils sidebar-icon"></i> Ítems del Menú</span>
+                        <span class="page-title"><i class="fa fa-file sidebar-icon"></i> Menu</span>
                         <div class="profile-pic"></div>
                     </div>
                 </div>
             </header>
-
+            
             <div class="page-content-wrapper">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button class="btn btn-success" data-toggle="modal" data-target="#nuevoModal" style="float:right;">+ Nuevo</button>
+                            <!-- Botón Nuevo -->
+                            <button class="btn btn-success" data-toggle="modal" data-target="#nuevoModal" style="float:right;">+ Nuevo</button>                          
                         </div>
                     </div>
 
-                    <!-- Filtros -->
+                    <!-- Start of filter block -->
                     <div class="row filter-block">
                         <div class="col-6 col-md-3">
                             <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" class="form-control" name="name" id="name" placeholder="">
+                                <label for="priority">Prioridad</label>
+                                <input type="text" class="form-control" name="priority" id="priority" placeholder="">
+                            </div> 
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-group">
+                                <label for="type">Tipo</label>
+                                <input type="text" class="form-control" name="type" id="type" placeholder="">
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="form-group">
-                                <label for="category">Categoría</label>
-                                <input type="text" class="form-control" name="category" id="category" placeholder="">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label for="price">Precio</label>
-                                <input type="text" class="form-control" name="price" id="price" placeholder="">
+                                <label for="assigned">Asignado para</label>
+                                <input type="text" class="form-control" name="assigned" id="assigned" placeholder="">
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
@@ -95,35 +96,70 @@ if (!isset($_SESSION['username'])) {
                             </div>
                         </div>
                     </div>
+                    <!-- End of filter block -->
 
                     <button class="btn btn-secondary tab-nav-btn disabled-btn" type="button" disabled><i class="fa fa-chevron-left"></i></button>
                     <button class="btn btn-secondary tab-nav-btn" type="button"><i class="fa fa-chevron-right"></i></button>
                     <br /><br />
-
-                    <!-- Tabla -->
+                    
+                    <!-- Listing table -->
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="cust-table-cont">
                                 <div class="table-responsive">
-                                    <table border="0" class="table cust-table">
+                                    <table border="0" class="table cust-table"> 
                                         <thead>
-                                            <tr>
-                                                <th style="width:80px;">Id</th>
-                                                <th style="width:250px;">Nombre</th>
-                                                <th style="width:400px;">Descripción</th>
-                                                <th style="width:150px;">Precio</th>
-                                                <th style="width:150px;">Categoría</th>
-                                                <th style="width:100px;" class="text-center">Activo</th>
-                                                <th style="width:150px;" class="text-center"><i class="fa fa-gear"></i></th>
+                                            <tr style="width:80px;">
+                                                <th style="width:80px;">Id</th> 
+                                                <th style="width:250px;">Nombre del menu</th>  
+                                                <th style="width:400px;">Descripcion</th> 
+                                                <th style="width:200px;">Precio por persona</th> 
+                                                <th class="text-center" style="width:200px;">Tipo</th> 
+                                                <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
                                             </tr>
                                         </thead>
-                                        <tbody id="tabla_menu_items">
-                                            <!-- Las filas se cargarán dinámicamente -->
+                                        <!--Aqui tenemos que poner a la nueva tabla  -->
+                                        <tbody id="tabla_menu">
+                                            <!-- Las filas se cargaran aquí dinámicamente -->
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nuevo -->
+        <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Menu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="nuevoForm" method="post" action="../php/adm_menu_create.php">
+                            
+                            <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_new" required>                            
+                            <textarea  name="description" class="form-control mb-2" placeholder="Descripcion" id="description_new" required></textarea>
+                            <input type="text" name="price_per_person" class="form-control mb-2" placeholder="Precio por persona" id="price_per_person_new" required>
+                            
+                            <!-- selector-->
+                            <label for="type_edit">Tipo:</label>
+                            <select name="type" class="form-control mb-2" id="type_edit" required>
+                                <option value="predefined">Predefinido</option>
+                                <option value="customizable">Personalizable</option>
+                            </select>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <input type="submit" class="btn btn-primary" value="Guardar">
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
