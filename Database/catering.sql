@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 17-05-2025 a las 20:40:16
+-- Tiempo de generación: 18-05-2025 a las 02:34:23
 -- Versión del servidor: 8.0.17
 -- Versión de PHP: 7.3.10
 
@@ -88,7 +88,24 @@ CREATE TABLE `comments` (
 
 INSERT INTO `comments` (`id`, `client_id`, `quote_id`, `message`, `created_at`) VALUES
 (1, 1, 1, 'Por favor, actualicen las opciones de postre.', '2025-05-17 20:19:57'),
-(2, 2, 2, '¡Todo está perfecto, gracias!', '2025-05-17 20:19:57');
+(2, 2, 2, '¡Todo está perfecto, gracias!', '2025-05-17 20:19:57'),
+(3, 1, 1, '{\"descuento\": \"10% por más de 100 personas\"}', '2025-05-17 21:35:23');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `custom_menu_selections`
+--
+
+CREATE TABLE `custom_menu_selections` (
+  `id` int(11) NOT NULL,
+  `quote_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '1',
+  `unit_price` decimal(10,2) NOT NULL COMMENT 'Precio en el momento de la selección',
+  `special_notes` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -124,16 +141,22 @@ CREATE TABLE `menus` (
   `name` varchar(100) NOT NULL,
   `description` text,
   `price_per_person` decimal(10,2) NOT NULL,
-  `type` enum('predefined','customizable') DEFAULT 'predefined'
+  `type` enum('predetermined','customizable','hybrid') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'predetermined',
+  `is_active` tinyint(1) DEFAULT '1',
+  `min_guests` int(11) DEFAULT '1',
+  `max_guests` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `menus`
 --
 
-INSERT INTO `menus` (`id`, `name`, `description`, `price_per_person`, `type`) VALUES
-(1, 'Buffet Estándar', 'Incluye platos principales, guarniciones y bebidas.', '10.50', 'predefined'),
-(2, 'Buffet Premium', 'Incluye opciones gourmet y postres.', '18.00', 'predefined');
+INSERT INTO `menus` (`id`, `name`, `description`, `price_per_person`, `type`, `is_active`, `min_guests`, `max_guests`, `created_at`) VALUES
+(1, 'Buffet Estándar', 'Incluye platos principales, guarniciones y bebidas. carne con papas ', '10.50', 'predetermined', 1, 1, NULL, '2025-05-17 21:26:14'),
+(2, 'Buffet Premium', 'Incluye opciones gourmet y postres.', '18.00', 'predetermined', 1, 1, NULL, '2025-05-17 21:26:14'),
+(3, 'Menú Personalizado', 'Elija sus componentes favoritos', '10.00', '', 1, 1, NULL, '2025-05-17 21:35:06');
 
 -- --------------------------------------------------------
 
@@ -143,8 +166,21 @@ INSERT INTO `menus` (`id`, `name`, `description`, `price_per_person`, `type`) VA
 
 CREATE TABLE `menu_categories` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL,
+  `display_order` int(11) NOT NULL DEFAULT '0',
+  `min_selections` int(11) NOT NULL DEFAULT '1' COMMENT 'Mínimo a seleccionar',
+  `max_selections` int(11) DEFAULT NULL COMMENT 'Máximo a seleccionar (NULL para ilimitado)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `menu_categories`
+--
+
+INSERT INTO `menu_categories` (`id`, `name`, `display_order`, `min_selections`, `max_selections`) VALUES
+(1, 'Entradas', 1, 1, 3),
+(2, 'Platos Principales', 2, 1, NULL),
+(3, 'Postres', 3, 0, 2),
+(4, 'Bebidas', 4, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -156,9 +192,31 @@ CREATE TABLE `menu_items` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
-  `price` decimal(10,2) DEFAULT '0.00',
-  `category_id` int(11) DEFAULT NULL
+  `image_url` varchar(255) DEFAULT NULL,
+  `allergens` varchar(255) DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL COMMENT 'Precio base del item',
+  `category_id` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL COMMENT 'ID del admin que creó el item',
+  `is_active` tinyint(1) DEFAULT '1',
+  `allow_quantity` tinyint(1) DEFAULT '0',
+  `max_quantity` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `menu_items`
+--
+
+INSERT INTO `menu_items` (`id`, `name`, `description`, `image_url`, `allergens`, `price`, `category_id`, `created_by`, `is_active`, `allow_quantity`, `max_quantity`, `created_at`) VALUES
+(1, 'Ensalada César', 'Ensalada fresca con aderezo césar', NULL, NULL, '3.50', 1, NULL, 1, 0, NULL, '2025-05-17 21:32:03'),
+(2, 'Bruschettas', 'Pan tostado con tomate y albahaca', NULL, NULL, '4.00', 1, NULL, 1, 0, NULL, '2025-05-17 21:32:03'),
+(3, 'Filete Mignon', 'Corte premium con salsa de hongos', NULL, NULL, '12.00', 2, NULL, 1, 0, NULL, '2025-05-17 21:32:03'),
+(4, 'Tiramisú', 'Postre italiano clásico', NULL, NULL, '5.00', 3, NULL, 1, 0, NULL, '2025-05-17 21:32:03'),
+(5, 'Carpaccio de Res', 'Finas láminas de res con rúcula y parmesano', NULL, NULL, '8.50', 1, NULL, 1, 0, NULL, '2025-05-17 21:56:25'),
+(6, 'Risotto de Mariscos', 'Arroz cremoso con mezcla de mariscos', NULL, NULL, '14.00', 2, NULL, 1, 0, NULL, '2025-05-17 21:56:25'),
+(7, 'Cheesecake de Frutos Rojos', 'Tarta de queso con coulis de frutos rojos', NULL, NULL, '6.50', 3, NULL, 1, 0, NULL, '2025-05-17 21:56:25'),
+(8, 'Jugo Natural', 'Jugo fresco de frutas de temporada', NULL, NULL, '3.00', 4, NULL, 1, 0, NULL, '2025-05-17 21:56:25');
 
 -- --------------------------------------------------------
 
@@ -213,7 +271,7 @@ INSERT INTO `quotes` (`id`, `event_id`, `total`, `quote_date`, `status`) VALUES
 CREATE TABLE `quote_menus` (
   `id` int(11) NOT NULL,
   `quote_id` int(11) NOT NULL,
-  `menu_id` int(11) NOT NULL,
+  `menu_id` int(11) DEFAULT NULL COMMENT 'NULL para menús personalizados',
   `people_count` int(11) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -269,7 +327,8 @@ CREATE TABLE `reports` (
 
 INSERT INTO `reports` (`id`, `admin_id`, `report_type`, `description`, `generated_at`) VALUES
 (1, 1, 'quotes', 'Resumen mensual de cotizaciones', '2025-05-17 20:19:57'),
-(2, 1, 'users', 'Nuevos usuarios registrados', '2025-05-17 20:19:57');
+(2, 1, 'users', 'Nuevos usuarios registrados', '2025-05-17 20:19:57'),
+(3, 1, 'menus', 'Precio escalonado: 0-50: $10, 51-100: $9, 101+: $8', '2025-05-17 21:35:35');
 
 -- --------------------------------------------------------
 
@@ -281,16 +340,22 @@ CREATE TABLE `services` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
-  `unit_price` decimal(10,2) NOT NULL
+  `unit_price` decimal(10,2) NOT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
+  `has_duration` tinyint(1) DEFAULT '0',
+  `has_quantity` tinyint(1) DEFAULT '1',
+  `price_type` enum('fixed','per_hour','per_person') NOT NULL DEFAULT 'fixed',
+  `min_guests` int(11) DEFAULT NULL,
+  `max_guests` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `services`
 --
 
-INSERT INTO `services` (`id`, `name`, `description`, `unit_price`) VALUES
-(1, 'Servicio de meseros', 'Meseros para atención durante el evento.', '50.00'),
-(2, 'Decoración', 'Servicio de decoración del espacio del evento.', '120.00');
+INSERT INTO `services` (`id`, `name`, `description`, `unit_price`, `is_active`, `has_duration`, `has_quantity`, `price_type`, `min_guests`, `max_guests`) VALUES
+(1, 'Servicio de meseros', 'Meseros para atención durante el evento.', '50.00', 1, 0, 1, 'fixed', NULL, NULL),
+(2, 'Decoración', 'Servicio de decoración del espacio del evento.', '120.00', 1, 0, 1, 'fixed', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -313,7 +378,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `created_at`) VALUES
 (1, 'admin1', 'contrasena123hash', 'admin1@ejemplo.com', 'admin', '2025-05-17 20:19:56'),
-(2, 'usuario_cliente', 'contrasena456hash', 'cliente1@ejemplo.com', 'client', '2025-05-17 20:19:56');
+(2, 'usuario_cliente', 'contrasena456hash', 'cliente1@ejemplo.com', 'client', '2025-05-17 20:19:56'),
+(3, 'carlos', '$2y$10$Z9cFG8lZZcWqnXTZGtoZO.CXD4XUzkDcvZOY.bN5CabK80BobTBae', 'carlos80237@gmail.com', 'client', '2025-05-17 23:35:40');
 
 --
 -- Índices para tablas volcadas
@@ -341,6 +407,14 @@ ALTER TABLE `comments`
   ADD KEY `quote_id` (`quote_id`);
 
 --
+-- Indices de la tabla `custom_menu_selections`
+--
+ALTER TABLE `custom_menu_selections`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `quote_id` (`quote_id`),
+  ADD KEY `item_id` (`item_id`);
+
+--
 -- Indices de la tabla `events`
 --
 ALTER TABLE `events`
@@ -364,7 +438,8 @@ ALTER TABLE `menu_categories`
 --
 ALTER TABLE `menu_items`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `idx_menu_items_active` (`is_active`,`category_id`);
 
 --
 -- Indices de la tabla `pdf_files`
@@ -436,7 +511,13 @@ ALTER TABLE `clients`
 -- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `custom_menu_selections`
+--
+ALTER TABLE `custom_menu_selections`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `events`
@@ -448,19 +529,19 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT de la tabla `menus`
 --
 ALTER TABLE `menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `menu_categories`
 --
 ALTER TABLE `menu_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pdf_files`
@@ -478,7 +559,7 @@ ALTER TABLE `quotes`
 -- AUTO_INCREMENT de la tabla `quote_menus`
 --
 ALTER TABLE `quote_menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `quote_services`
@@ -490,7 +571,7 @@ ALTER TABLE `quote_services`
 -- AUTO_INCREMENT de la tabla `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `services`
@@ -502,7 +583,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
@@ -520,6 +601,13 @@ ALTER TABLE `access_logs`
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`id`);
+
+--
+-- Filtros para la tabla `custom_menu_selections`
+--
+ALTER TABLE `custom_menu_selections`
+  ADD CONSTRAINT `custom_menu_selections_ibfk_1` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `custom_menu_selections_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `menu_items` (`id`);
 
 --
 -- Filtros para la tabla `events`
