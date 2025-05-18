@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Menú</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="menu_selection_container">
+        <h1>Configure su Menú</h1>
+        
+        <div class="menu_type_tabs">
+            <button type="button" class="menu_type_tab active" data-target="predefined_menu">Menús Predeterminados</button>
+            <button type="button" class="menu_type_tab" data-target="custom_menu">Personalizar Menú</button>
+        </div>
+        
+        <form id="menu_selection_form">
+            <input type="hidden" id="menu_type" name="menu_type" value="predefined">
+            
+            <!-- Sección Menús Predeterminados -->
+            <div id="predefined_menu" class="menu_section">
+                <h2>Nuestros Menús</h2>
+                
+                <div class="menu_options">
+                    <div class="menu_option">
+                        <input type="radio" id="menu_1" name="predefined_menu" value="1" checked>
+                        <label for="menu_1">
+                            <h3>Buffet Estándar</h3>
+                            <p>Incluye platos principales, guarniciones y bebidas</p>
+                            <div class="price">$10.50 por persona</div>
+                        </label>
+                    </div>
+                    
+                    <div class="menu_option">
+                        <input type="radio" id="menu_2" name="predefined_menu" value="2">
+                        <label for="menu_2">
+                            <h3>Buffet Premium</h3>
+                            <p>Opciones gourmet y postres seleccionados</p>
+                            <div class="price">$18.00 por persona</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección Menú Personalizado -->
+            <div id="custom_menu" class="menu_section" style="display:none;">
+                <h2>Personalice su Menú</h2>
+                <p>Seleccione los items que desea incluir en su menú</p>
+                
+                <div id="custom_menu_items">
+                    <!-- Aquí se cargarán dinámicamente las opciones -->
+                    <p>Cargando opciones del menú...</p>
+                </div>
+            </div>
+            
+            <!-- Cantidad de Personas -->
+            <div class="people_count_section">
+                <label for="people_count">Número de Personas:</label>
+                <input type="number" id="people_count" name="people_count" min="1" value="1" required>
+            </div>
+            
+            <button type="submit" class="btn_next">Continuar con Servicios</button>
+        </form>
+    </div>
+    <div id="error-container" class="error-container"></div>
+
+    <script src="../JavaScript/menu_selection.js"></script>
+</body>
+</html>
