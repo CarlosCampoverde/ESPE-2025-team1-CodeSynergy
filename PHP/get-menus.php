@@ -9,23 +9,33 @@ session_start();
 header('Content-Type: application/json');
 
 try {
-    // Crear instancia de Connection y obtener PDO
+    // Crear conexión
     $connection = new Connection();
     $pdo = $connection->connect();
 
+    // Consulta: obtener menús que sean 'predetermined' y estén activos
     $stmt = $pdo->query("
-        SELECT mi.id, mi.name, mi.description, mi.price, 
-               mc.id as category_id, mc.name as category_name 
-        FROM menu_items mi
-        JOIN menu_categories mc ON mi.category_id = mc.id
-        ORDER BY mc.id, mi.name
+        SELECT 
+            id, 
+            name, 
+            description, 
+            price_per_person, 
+            type, 
+            is_active, 
+            min_guests, 
+            max_guests, 
+            created_at, 
+            updated_at
+        FROM menus
+        WHERE type = 'predetermined' AND is_active = 1
+        ORDER BY name
     ");
 
-    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $menus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
         'success' => true,
-        'data' => $items
+        'data' => $menus
     ]);
 
 } catch (PDOException $e) {
@@ -35,3 +45,4 @@ try {
     ]);
 }
 ?>
+
