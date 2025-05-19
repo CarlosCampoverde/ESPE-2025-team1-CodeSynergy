@@ -8,7 +8,7 @@ if (!isset($_SESSION['username'])) {
     
     exit;
 }
-
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -55,4 +55,3 @@ if (!isset($_SESSION['username'])) {
 </body>
 </html>
 
-?>
