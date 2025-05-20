@@ -27,7 +27,7 @@ function cargar_menus() {
         status: statusFilter
     });
 
-    fetch(`../php/adm_menu_read.php?${queryParams}`)
+    fetch(`../php/adm_menu_p_read.php?${queryParams}`)
         .then(response => {
             if (!response.ok) throw new Error('Error en la respuesta del servidor');
             return response.json();
@@ -42,7 +42,7 @@ function cargar_menus() {
                         <td style="width:300px;">${menu.description || ''}</td>
                         <td class="text-center" style="width:200px;">${menu.price_per_person || ''}</td> 
                         <td class="text-center" style="width:200px;">${menu.type || ''}</td>
-                        <td class="text-center" style="width:200px;">${menu.is_active || ''}</td>
+                        <td class="text-center" style="width:200px;">${menu.is_active == 1 ? 'Activo' : 'Inactivo'}</td>
                         <td class="text-center" style="width:200px;">
                             <button class="btn btn-outline-danger del-icon" data-id="${menu.id}">
                                 <span class="fa fa-trash-o"></span>
@@ -104,7 +104,7 @@ tbody.addEventListener('click', function (e) {
 
         // Confirmar eliminación (esto debe implementarse completamente)
         document.getElementById('confirmarEliminar').addEventListener('click', function() {
-            fetch(`../php/adm_menu_delete.php`, {
+            fetch(`../php/adm_menu_p_delete.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

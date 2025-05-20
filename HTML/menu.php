@@ -41,7 +41,7 @@ if (!isset($_SESSION['current_event_id'])) {
                 <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
                 <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
                 <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
-                <li><a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
+                <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
                 <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
                 <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
                 <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
@@ -155,7 +155,7 @@ if (!isset($_SESSION['current_event_id'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="nuevoForm" method="post" action="../php/adm_menu_create.php">
+                        <form id="nuevoForm" method="post" action="../php/adm_menu_p_create.php">
                             
                             <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_new" required>                            
                             <textarea  name="description" class="form-control mb-2" placeholder="Descripcion" id="description_new" required></textarea>
@@ -189,7 +189,7 @@ if (!isset($_SESSION['current_event_id'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editForm" method="post" action="../php/adm_menu_update.php">
+                        <form id="editForm" method="post" action="../php/adm_menu_p_update.php">
                             <input type="hidden" name="id_menu" id="id_menu_edit">
                             <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_edit" required>                             
                             <textarea name="description" class="form-control mb-2" placeholder="Descripcion" id="description_edit" required></textarea>
@@ -234,6 +234,6 @@ if (!isset($_SESSION['current_event_id'])) {
 
         
     </div>
-    <script src="../JavaScript/menu_CRUD.js"></script> 
+    <script src="../JavaScript/menu_p_crud.js"></script> 
 </body>
 </html>

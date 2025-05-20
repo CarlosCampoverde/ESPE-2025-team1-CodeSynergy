@@ -13,18 +13,15 @@ if (!isset($_SESSION['username'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style_dashboard.css">
-    <title>QuickQuote Catering</title>
+    <title>QuickQuote Catering - Clientes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<!-- Font Awesome (para íconos) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="wrapper">
@@ -38,8 +35,9 @@ if (!isset($_SESSION['username'])) {
                 <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
                 <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
                 <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
-                <li><a href="#"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
+                <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
                 <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
+                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i> Items del Menu</a></li>
                 <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
                 <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>                       
                 <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
@@ -53,7 +51,7 @@ if (!isset($_SESSION['username'])) {
                         <button type="button" class="btn hamburger-btn" id="menu-toggle">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <span class="page-title"><i class="fa fa-truck sidebar-icon"></i> Transporte</span>
+                        <span class="page-title"><i class="fa fa-users sidebar-icon"></i> Clientes</span>
                         <div class="profile-pic"></div>
                     </div>
                 </div>
@@ -63,35 +61,28 @@ if (!isset($_SESSION['username'])) {
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-12">
-                            <!-- Botón Nuevo -->
                             <button class="btn btn-success" data-toggle="modal" data-target="#nuevoModal" style="float:right;">+ Nuevo</button>                          
                         </div>
                     </div>
 
                     <!-- Start of filter block -->
                     <div class="row filter-block">
-                        <div class="col-6 col-md-3">
+                        <div class="col-6 col-md-4">
                             <div class="form-group">
-                                <label for="priority">Prioridad</label>
-                                <input type="text" class="form-control" name="priority" id="priority" placeholder="">
-                            </div> 
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label for="type">Tipo</label>
-                                <input type="text" class="form-control" name="type" id="type" placeholder="">
+                                <label for="name_filter">Nombre</label>
+                                <input type="text" class="form-control" name="name_filter" id="name_filter" placeholder="Buscar por nombre o apellido">
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
+                        <div class="col-6 col-md-4">
                             <div class="form-group">
-                                <label for="assigned">Asignado para</label>
-                                <input type="text" class="form-control" name="assigned" id="assigned" placeholder="">
+                                <label for="email_filter">Email</label>
+                                <input type="text" class="form-control" name="email_filter" id="email_filter" placeholder="Buscar por email">
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
+                        <div class="col-6 col-md-4">
                             <div class="form-group">
-                                <label for="status">Estado</label>
-                                <input type="text" class="form-control" name="status" id="status" placeholder="">
+                                <label for="phone_filter">Teléfono</label>
+                                <input type="text" class="form-control" name="phone_filter" id="phone_filter" placeholder="Buscar por teléfono">
                             </div>
                         </div>
                     </div>
@@ -108,19 +99,18 @@ if (!isset($_SESSION['username'])) {
                                 <div class="table-responsive">
                                     <table border="0" class="table cust-table"> 
                                         <thead>
-                                            <tr style="width:80px;">
-                                                <th style="width:20px;">#</th> 
-                                                <th style="width:100px;">Tipo de vehículo</th>  
-                                                <th style="width:100px;">Placa</th> 
-                                                <th style="width:100px;">Estado</th> 
-                                                <th style="width:120px;">Capacidad</th>     
-                                                <th style="width:180px;">Asignado para</th> 
-                                                <th style="width:100px;">Color</th> 
-                                                <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
+                                            <tr>
+                                                <th style="width:75px;">Id</th> 
+                                                <th style="width:200px;">Nombre</th>  
+                                                <th style="width:200px;">Apellido</th> 
+                                                <th style="width:250px;">Email</th> 
+                                                <th style="width:150px;">Teléfono</th>
+                                                <th style="width:250px;">Dirección</th>
+                                                <th style="width:200px;" class="text-center"><i class="fa fa-gear"></i></th>  
                                             </tr>
                                         </thead>
-                                        <tbody id="tablaVehiculosBody">
-                                            <!-- Las filas se cargaran aquí dinámicamente -->
+                                        <tbody id="tabla_clientes">
+                                            <!-- Las filas se cargarán aquí dinámicamente -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -136,19 +126,18 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Vehículo</h5>
+                        <h5 class="modal-title" id="nuevoModalLabel">Nuevo Cliente</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="nuevoForm" method="post" action="../php/create_vehicle.php">
-                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoNuevo" required>                            
-                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaNuevo" required>
-                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoNuevo" required>
-                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadNuevo" required>
-                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoNuevo" required>
-                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorNuevo" required>
+                        <form id="nuevoForm" method="post" action="../php/adm_clients_create.php">
+                            <input type="text" name="first_name" class="form-control mb-2" placeholder="Nombre" id="first_name_new" required>
+                            <input type="text" name="last_name" class="form-control mb-2" placeholder="Apellido" id="last_name_new" required>
+                            <input type="email" name="email" class="form-control mb-2" placeholder="Email" id="email_new">
+                            <input type="text" name="phone" class="form-control mb-2" placeholder="Teléfono" id="phone_new">
+                            <input type="text" name="address" class="form-control mb-2" placeholder="Dirección" id="address_new">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Guardar">
@@ -164,27 +153,24 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel">Editar Vehículo</h5>
+                        <h5 class="modal-title" id="editarModalLabel">Editar Cliente</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editForm" method="post" action="../php/update_vehicle.php">
-                            <input type="text" name="tipo_vehiculo" class="form-control mb-2" placeholder="Tipo de vehiculo" id="tipoEditar" required>
-                            <input type="text" name="placa" class="form-control mb-2" placeholder="Placa" id="placaEditar" required>
-                            <input type="text" name="estado" class="form-control mb-2" placeholder="Estado" id="estadoEditar" required>
-                            <input type="text" name="capacidad" class="form-control mb-2" placeholder="Capacidad" id="capacidadEditar" required>
-                            <input type="text" name="asignado" class="form-control mb-2" placeholder="Asignado para" id="asignadoEditar" required>
-                            <input type="text" name="color" class="form-control mb-2" placeholder="Color" id="colorEditar" required>
-                            
+                        <form id="editForm" method="post" action="../php/adm_clients_update.php">
+                            <input type="hidden" name="id_client" id="id_client_edit">
+                            <input type="text" name="first_name" class="form-control mb-2" placeholder="Nombre" id="first_name_edit" required>
+                            <input type="text" name="last_name" class="form-control mb-2" placeholder="Apellido" id="last_name_edit" required>
+                            <input type="email" name="email" class="form-control mb-2" placeholder="Email" id="email_edit">
+                            <input type="text" name="phone" class="form-control mb-2" placeholder="Teléfono" id="phone_edit">
+                            <input type="text" name="address" class="form-control mb-2" placeholder="Dirección" id="address_edit">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <input type="submit" class="btn btn-primary" value="Actualizar">
                             </div>
-
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -195,13 +181,13 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Vehículo</h5>
+                        <h5 class="modal-title" id="eliminarModalLabel">Eliminar Cliente</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>¿Estás seguro de eliminar el vehículo con placa <span id="placaEliminar"></span>?</p>
+                        <p>¿Estás seguro de eliminar al cliente <span id="nombre_eliminar"></span>? Esta acción no se puede deshacer.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -210,8 +196,7 @@ if (!isset($_SESSION['username'])) {
                 </div>
             </div>
         </div>
-        
     </div>
-    <script src="../JavaScript/buttons-CRUD.js"></script> 
+    <script src="../JavaScript/clients_CRUD.js"></script> 
 </body>
 </html>
