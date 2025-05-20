@@ -213,6 +213,9 @@ $(document).ready(function () {
         }
 
         $('#btn-continue').prop('disabled', true).text('Procesando...');
+        console.log("Datos enviados:", JSON.stringify({
+    selection: currentSelection
+}));
 
         $.ajax({
             url: '../php/save-selection.php',

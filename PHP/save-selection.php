@@ -5,7 +5,7 @@ session_start();
 header('Content-Type: application/json');
 
 try {
-    // Verificar sesión
+    // 1. Verificar sesión
     if (!isset($_SESSION['user_id'])) {
         throw new Exception('Usuario no autenticado');
     }
@@ -13,7 +13,7 @@ try {
     $connection = new Connection();
     $pdo = $connection->connect();
 
-    // Obtener datos JSON
+    // 2. Obtener datos JSON
     $input = json_decode(file_get_contents('php://input'), true);
     if (!$input || !isset($input['selection'])) {
         throw new Exception('Datos de selección no proporcionados');
@@ -24,68 +24,66 @@ try {
         throw new Exception('Formato de selección inválido');
     }
 
-    // Iniciar transacción
+    // 3. Obtener o crear evento automáticamente
+    if (!isset($_SESSION['current_event_id'])) {
+        $stmt = $pdo->prepare("
+            INSERT INTO events (client_id, event_type, event_date, guests)
+            VALUES (
+                (SELECT id FROM clients WHERE user_id = ?),
+                'Evento rápido',
+                NOW(),
+                1
+            )
+        ");
+        $stmt->execute([$_SESSION['user_id']]);
+        $_SESSION['current_event_id'] = $pdo->lastInsertId();
+    }
+    $eventId = $_SESSION['current_event_id'];
+
+    // 4. Iniciar transacción
     $pdo->beginTransaction();
 
-    // 1. Crear la cotización
+    // 5. Calcular total
+    $total = ($selection['type'] === 'custom')
+        ? array_reduce($selection['customItems'], function($carry, $item) { return $carry + ($item['price'] * $item['quantity']); }, 0)
+        : $selection['peopleCount'] * obtenerPrecioMenu($pdo, $selection['menuId']);
+
+    // 6. Guardar en quotes
     $stmt = $pdo->prepare("
         INSERT INTO quotes (event_id, total, status)
-        VALUES (:event_id, :total, 'pending')
+        VALUES (?, ?, 'pending')
     ");
-    
-    // Necesitarías obtener el event_id del usuario actual
-    $eventId = obtenerEventoUsuarioActual($pdo, $_SESSION['user_id']);
-    
-    $total = calcularTotal($selection);
-    
-    $stmt->execute([
-        ':event_id' => $eventId,
-        ':total' => $total
-    ]);
-    
+    $stmt->execute([$eventId, $total]);
     $quoteId = $pdo->lastInsertId();
 
-    // 2. Guardar menú personalizado
-    if ($selection['type'] === 'custom' && !empty($selection['customItems'])) {
+    // 7. Guardar en quote_menus
+    $stmt = $pdo->prepare("
+        INSERT INTO quote_menus (quote_id, menu_id, people_count, subtotal)
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $quoteId,
+        $selection['type'] === 'predetermined' ? $selection['menuId'] : NULL,
+        $selection['peopleCount'],
+        $total
+    ]);
+
+    // 8. Si es personalizado, guardar items
+    if ($selection['type'] === 'custom') {
         foreach ($selection['customItems'] as $item) {
             $stmt = $pdo->prepare("
-                INSERT INTO custom_menu_selections 
-                (quote_id, item_id, quantity, unit_price)
-                VALUES (:quote_id, :item_id, :quantity, :unit_price)
+                INSERT INTO custom_menu_selections (quote_id, item_id, quantity, unit_price)
+                VALUES (?, ?, ?, ?)
             ");
-            
-            $stmt->execute([
-                ':quote_id' => $quoteId,
-                ':item_id' => $item['id'],
-                ':quantity' => $item['quantity'],
-                ':unit_price' => $item['price']
-            ]);
+            $stmt->execute([$quoteId, $item['id'], $item['quantity'], $item['price']]);
         }
-        
-        // Registrar también en quote_menus como menú personalizado
-        $stmt = $pdo->prepare("
-            INSERT INTO quote_menus 
-            (quote_id, menu_id, people_count, subtotal)
-            VALUES (:quote_id, NULL, :people_count, :subtotal)
-        ");
-        
-        $subtotal = array_reduce($selection['customItems'], function($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
-        }, 0);
-        
-        $stmt->execute([
-            ':quote_id' => $quoteId,
-            ':people_count' => $selection['peopleCount'],
-            ':subtotal' => $subtotal
-        ]);
     }
 
     $pdo->commit();
 
     echo json_encode([
         'success' => true,
-        'selectionId' => $quoteId,
-        'message' => 'Menú personalizado guardado correctamente'
+        'selectionId' => $quoteId
     ]);
 
 } catch (Exception $e) {
@@ -96,30 +94,10 @@ try {
     ]);
 }
 
-// Funciones auxiliares
-function obtenerEventoUsuarioActual($pdo, $userId) {
-    $stmt = $pdo->prepare("
-        SELECT id FROM events 
-        WHERE client_id = (SELECT id FROM clients WHERE user_id = :user_id)
-        ORDER BY event_date DESC LIMIT 1
-    ");
-    $stmt->execute([':user_id' => $userId]);
-    $event = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$event) {
-        throw new Exception('No se encontró evento para el usuario');
-    }
-    
-    return $event['id'];
-}
-
-function calcularTotal($selection) {
-    if ($selection['type'] === 'custom') {
-        return array_reduce($selection['customItems'], function($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
-        }, 0);
-    }
-    // Lógica para menús predeterminados si es necesario
-    return 0;
+// Función auxiliar para menús predeterminados
+function obtenerPrecioMenu($pdo, $menuId) {
+    $stmt = $pdo->prepare("SELECT price_per_person FROM menus WHERE id = ?");
+    $stmt->execute([$menuId]);
+    return $stmt->fetchColumn() ?? 0;
 }
 ?>

@@ -2,9 +2,12 @@
 session_start();
 
 // Verifica si el usuario ha iniciado sesión
-if (!isset($_SESSION['username'])) {
-    header('Location: ../index.php');
-    exit;
+if (!isset($_SESSION['current_event_id'])) {
+    require_once '../php/Connection.php';
+    $pdo = (new Connection())->connect();
+    $stmt = $pdo->prepare("INSERT INTO events (client_id, event_type) VALUES (?, 'Evento Rápido')");
+    $stmt->execute([$_SESSION['user_id']]);
+    $_SESSION['current_event_id'] = $pdo->lastInsertId();
 }
 ?>
 <!DOCTYPE html>

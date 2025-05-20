@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cotización - Catering</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Cotización</h1>
+        
+        <form id="quoteForm" action="../PHP/process_quote.php" method="post">
+            <!-- Paso 1: Información del Cliente -->
+            <div class="form-step active" id="step1">
+                <h2>Información del Cliente</h2>
+                <div class="form-group">
+                    <label for="first_name">Nombres:</label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Apellidos:</label>
+                    <input type="text" id="last_name" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Teléfono:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Dirección:</label>
+                    <input type="text" id="address" name="address">
+                </div>
+                <button type="button" class="next-btn" data-current="1" data-next="2">Siguiente</button>
+            </div>
+            
+            <!-- Paso 2: Información del Evento -->
+            <div class="form-step" id="step2">
+                <h2>Información del Evento</h2>
+                <div class="form-group">
+                    <label for="event_type">Tipo de Evento:</label>
+                    <input type="text" id="event_type" name="event_type" required>
+                </div>
+                <div class="form-group">
+                    <label for="event_date">Fecha del Evento:</label>
+                    <input type="date" id="event_date" name="event_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">Ubicación:</label>
+                    <input type="text" id="location" name="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="guests">Número de Invitados:</label>
+                    <input type="number" id="guests" name="guests" min="1" required>
+                </div>
+                <button type="button" class="prev-btn" data-current="2" data-prev="1">Anterior</button>
+                <button type="button" class="next-btn" data-current="2" data-next="3">Siguiente</button>
+            </div>
+            
+            <!-- Paso 3: Selección de Menú -->
+            <div class="form-step" id="step3">
+                <h2>Selección de Menú</h2>
+                <div class="form-group">
+                    <label for="menu_type">Tipo de Menú:</label>
+                    <select id="menu_type" name="menu_type" required>
+                        <option value="">Seleccione un tipo</option>
+                        <option value="predetermined">Menú Predeterminado</option>
+                        <option value="customizable">Menú Personalizado</option>
+                    </select>
+                </div>
+                
+                <div id="predetermined_menus" class="menu-section">
+                    <h3>Menús Disponibles</h3>
+                    <div id="menu_list"></div>
+                </div>
+                
+                <div id="custom_menu" class="menu-section" style="display:none;">
+                    <h3>Personaliza tu Menú</h3>
+                    <div id="custom_menu_categories"></div>
+                </div>
+                
+                <button type="button" class="prev-btn" data-current="3" data-prev="2">Anterior</button>
+                <button type="button" class="next-btn" data-current="3" data-next="4">Siguiente</button>
+            </div>
+            
+            <!-- Paso 4: Servicios Adicionales -->
+            <div class="form-step" id="step4">
+                <h2>Servicios Adicionales</h2>
+                <div id="services_list"></div>
+                
+                <div class="form-group">
+                    <label for="comments">Comentarios o Requerimientos Especiales:</label>
+                    <textarea id="comments" name="comments" rows="4"></textarea>
+                </div>
+                
+                <button type="button" class="prev-btn" data-current="4" data-prev="3">Anterior</button>
+                <button type="submit" class="submit-btn">Generar Cotización</button>
+            </div>
+        </form>
+    </div>
+    
+    <script src="../JavaScript/quote_form.js"></script>
+</body>
+</html>

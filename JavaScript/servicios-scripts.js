@@ -101,8 +101,10 @@ function updateServicesSummary() {
 
 function saveQuote() {
     const services = [];
+    const menus = [];
     let isValid = true;
 
+    // 1. Recoger servicios seleccionados (ya lo tienes)
     $('.service-card').each(function() {
         const quantity = parseInt($(this).find('.service-quantity').val()) || 0;
         if (quantity > 0) {
@@ -113,36 +115,50 @@ function saveQuote() {
         }
     });
 
-    // Validación adicional
-    if (services.length === 0) {
-        if (!confirm("¿Deseas continuar sin servicios adicionales?")) {
-            isValid = false;
+    // 2. Recoger menús seleccionados (¡NUEVO!)
+    $('.menu-card').each(function() {
+        const peopleCount = parseInt($(this).find('.people-count').val()) || 0;
+        if (peopleCount > 0) {
+            menus.push({
+                id: $(this).data('id'),
+                people: peopleCount
+            });
         }
+    });
+
+    // 3. Validación (opcional)
+    if (menus.length === 0 && services.length === 0) {
+        alert("Selecciona al menos un menú o servicio");
+        return;
     }
 
-    if (isValid) {
-        $('#btn-continue').prop('disabled', true).text('Guardando...');
-        
-        $.ajax({
-            url: baseUrl + '/save-quote.php',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                selectionId: new URLSearchParams(window.location.search).get('selection'),
-                services: services
-            }),
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = `confirmacion.html?quoteId=${response.quoteId}`;
-                } else {
-                    showError(response.error || 'Error al guardar');
-                }
-            },
-            complete: function() {
-                $('#btn-continue').prop('disabled', false).text('Continuar');
+    // 4. Enviar datos al servidor
+    $('#btn-continue').prop('disabled', true).text('Guardando...');
+    
+    $.ajax({
+        url: baseUrl + '/save-quote.php',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            selectionId: new URLSearchParams(window.location.search).get('selection'),
+            eventId: 1, // Reemplaza con el ID real del evento (puedes obtenerlo de un campo oculto o de la URL)
+            menus: menus,
+            services: services
+        }),
+        success: function(response) {
+            if (response.success) {
+                window.location.href = `confirmacion.html?quoteId=${response.quoteId}`;
+            } else {
+                alert(response.error || 'Error al guardar');
             }
-        });
-    }
+        },
+        error: function() {
+            alert('Error de conexión');
+        },
+        complete: function() {
+            $('#btn-continue').prop('disabled', false).text('Continuar');
+        }
+    });
 }
 
 function showError(message) {
