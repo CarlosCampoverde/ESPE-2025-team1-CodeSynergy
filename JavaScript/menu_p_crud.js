@@ -42,7 +42,7 @@ function cargar_menus() {
                         <td style="width:300px;">${menu.description || ''}</td>
                         <td class="text-center" style="width:200px;">${menu.price_per_person || ''}</td> 
                         <td class="text-center" style="width:200px;">${menu.type || ''}</td>
-                        <td class="text-center" style="width:200px;">${menu.is_active || ''}</td>
+                        <td class="text-center" style="width:200px;">${menu.is_active == 1 ? 'Activo' : 'Inactivo'}</td>
                         <td class="text-center" style="width:200px;">
                             <button class="btn btn-outline-danger del-icon" data-id="${menu.id}">
                                 <span class="fa fa-trash-o"></span>
