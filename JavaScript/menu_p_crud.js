@@ -27,7 +27,7 @@ function cargar_menus() {
         status: statusFilter
     });
 
-    fetch(`../php/adm_menu_read.php?${queryParams}`)
+    fetch(`../php/adm_menu_p_read.php?${queryParams}`)
         .then(response => {
             if (!response.ok) throw new Error('Error en la respuesta del servidor');
             return response.json();
@@ -104,7 +104,7 @@ tbody.addEventListener('click', function (e) {
 
         // Confirmar eliminación (esto debe implementarse completamente)
         document.getElementById('confirmarEliminar').addEventListener('click', function() {
-            fetch(`../php/adm_menu_delete.php`, {
+            fetch(`../php/adm_menu_p_delete.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

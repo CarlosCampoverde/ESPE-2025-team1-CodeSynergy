@@ -152,7 +152,7 @@ if (!isset($_SESSION['username'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="nuevoForm" method="post" action="../php/adm_menu_create.php">
+                        <form id="nuevoForm" method="post" action="../php/adm_menu_p_create.php">
                             
                             <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_new" required>                            
                             <textarea  name="description" class="form-control mb-2" placeholder="Descripcion" id="description_new" required></textarea>
@@ -186,7 +186,7 @@ if (!isset($_SESSION['username'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="editForm" method="post" action="../php/adm_menu_update.php">
+                        <form id="editForm" method="post" action="../php/adm_menu_p_update.php">
                             <input type="hidden" name="id_menu" id="id_menu_edit">
                             <input type="text" name="name_menu" class="form-control mb-2" placeholder="Nombre del menu" id="name_edit" required>                             
                             <textarea name="description" class="form-control mb-2" placeholder="Descripcion" id="description_edit" required></textarea>
@@ -231,6 +231,6 @@ if (!isset($_SESSION['username'])) {
 
         
     </div>
-    <script src="../JavaScript/menu_CRUD.js"></script> 
+    <script src="../JavaScript/menu_p_crud.js"></script> 
 </body>
 </html>
