@@ -98,11 +98,13 @@ function updateServicesSummary() {
     $('#total-summary').html(`<strong>Total estimado: $${totalServices.toFixed(2)}</strong>`);
 }
 
+
 function saveQuote() {
     const services = [];
-    
+    let isValid = true;
+
     $('.service-card').each(function() {
-        const quantity = parseInt($(this).find('.service-quantity').val());
+        const quantity = parseInt($(this).find('.service-quantity').val()) || 0;
         if (quantity > 0) {
             services.push({
                 id: $(this).data('id'),
@@ -111,20 +113,36 @@ function saveQuote() {
         }
     });
 
-    // Guardar en la base de datos
-    $.ajax({
-        url: '../php/save-quote.php',
-        type: 'POST',
-        data: {
-            selectionId: new URLSearchParams(window.location.search).get('selection'),
-            services: JSON.stringify(services)
-        },
-        success: function(response) {
-            if (response.success) {
-                window.location.href = `confirmacion.html?quoteId=${response.quoteId}`;
-            }
+    // Validación adicional
+    if (services.length === 0) {
+        if (!confirm("¿Deseas continuar sin servicios adicionales?")) {
+            isValid = false;
         }
-    });
+    }
+
+    if (isValid) {
+        $('#btn-continue').prop('disabled', true).text('Guardando...');
+        
+        $.ajax({
+            url: baseUrl + '/save-quote.php',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                selectionId: new URLSearchParams(window.location.search).get('selection'),
+                services: services
+            }),
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = `confirmacion.html?quoteId=${response.quoteId}`;
+                } else {
+                    showError(response.error || 'Error al guardar');
+                }
+            },
+            complete: function() {
+                $('#btn-continue').prop('disabled', false).text('Continuar');
+            }
+        });
+    }
 }
 
 function showError(message) {

@@ -1,6 +1,7 @@
 <?php
 require_once 'Connection.php';
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *"); // Importante para evitar CORS
 
 try {
     $connection = new Connection();
@@ -15,15 +16,20 @@ try {
 
     $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Verifica si hay datos
+    if (empty($services)) {
+        throw new Exception('No hay servicios activos disponibles');
+    }
+
     echo json_encode([
         'success' => true,
         'data' => $services
     ]);
 
-} catch (PDOException $e) {
+} catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Error al cargar servicios: ' . $e->getMessage()
+        'error' => $e->getMessage()
     ]);
 }
 ?>
