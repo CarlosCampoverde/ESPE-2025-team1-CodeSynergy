@@ -119,12 +119,13 @@ if (!isset($_SESSION['username'])) {
                                     <table border="0" class="table cust-table"> 
                                         <thead>
                                             <tr style="width:80px;">
-                                                <th style="width:80px;">Id</th> 
+                                                <th style="width:75px;">Id</th> 
                                                 <th style="width:250px;">Nombre del menu</th>  
-                                                <th style="width:400px;">Descripcion</th> 
+                                                <th style="width:300px;">Descripcion</th> 
                                                 <th style="width:200px;">Precio por persona</th> 
                                                 <th class="text-center" style="width:200px;">Tipo</th> 
-                                                <th style="width:80px;" class="text-center"><i class="fa fa-gear"></i></th>  
+                                                <th class="text-center" style="width:200px;">Estado</th> 
+                                                <th style="width:200px;" class="text-center"><i class="fa fa-gear"></i></th>  
                                             </tr>
                                         </thead>
                                         <!--Aqui tenemos que poner a la nueva tabla  -->
@@ -218,7 +219,7 @@ if (!isset($_SESSION['username'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>¿Estás seguro de eliminar el menú con el nombre <span id="placaEliminar"></span>?</p>
+                        <p>¿Estás seguro de desactivar el menú con el nombre <span id="nombre_eliminar"></span>?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

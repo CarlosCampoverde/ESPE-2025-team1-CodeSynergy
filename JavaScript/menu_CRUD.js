@@ -37,11 +37,12 @@ function cargar_menus() {
             data.forEach((menu) => {
                 const fila = `
                     <tr>
-                        <th scope="row" style="width:83px;">${menu.id}</th> 
-                        <td style="width:265px;">${menu.name || ''}</td>
-                        <td style="width:400px;">${menu.description || ''}</td>
+                        <th scope="row" style="width:80px;">${menu.id}</th> 
+                        <td style="width:250px;">${menu.name || ''}</td>
+                        <td style="width:300px;">${menu.description || ''}</td>
                         <td class="text-center" style="width:200px;">${menu.price_per_person || ''}</td> 
                         <td class="text-center" style="width:200px;">${menu.type || ''}</td>
+                        <td class="text-center" style="width:200px;">${menu.is_active || ''}</td>
                         <td class="text-center" style="width:200px;">
                             <button class="btn btn-outline-danger del-icon" data-id="${menu.id}">
                                 <span class="fa fa-trash-o"></span>
@@ -92,8 +93,11 @@ tbody.addEventListener('click', function (e) {
     if (e.target.closest('.del-icon')) {
         const fila = e.target.closest('tr');
         const id_menu = fila.children[0].textContent;
+        const name_menu = fila.children[1].textContent;
+        const status_menu = fila.children[5].textContent;
 
-        document.getElementById('placaEliminar').textContent = id_menu;
+
+        document.getElementById('nombre_eliminar').textContent = name_menu;
 
         const modal = new bootstrap.Modal(document.getElementById('eliminarModal'));
         modal.show();
@@ -110,7 +114,12 @@ tbody.addEventListener('click', function (e) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Menú eliminado correctamente.');
+                    if(status_menu==1){
+                       alert('Menú desactivado correctamente.');
+                    }else{
+                      alert('Menú activado correctamente.');
+                    }
+                    
                     cargar_menus();
                 } else {
                     alert('Error al eliminar el menú: ' + data.error);
