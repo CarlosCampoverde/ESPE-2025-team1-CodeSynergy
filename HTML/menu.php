@@ -73,26 +73,35 @@ if (!isset($_SESSION['username'])) {
                     <div class="row filter-block">
                         <div class="col-6 col-md-3">
                             <div class="form-group">
-                                <label for="priority">Prioridad</label>
-                                <input type="text" class="form-control" name="priority" id="priority" placeholder="">
-                            </div> 
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label for="type">Tipo</label>
-                                <input type="text" class="form-control" name="type" id="type" placeholder="">
+                                <label for="name_filter">Nombre</label>
+                                <input type="text" class="form-control" name="name_filter" id="name_filter" placeholder="Buscar por nombre">
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="form-group">
-                                <label for="assigned">Asignado para</label>
-                                <input type="text" class="form-control" name="assigned" id="assigned" placeholder="">
+                                <label for="type_filter">Tipo</label>
+                                <select class="form-control" name="type_filter" id="type_filter">
+                                    <option value="">Todos</option>
+                                    <option value="predetermined">Predeterminado</option>
+                                    <option value="customizable">Personalizable</option>
+                                    <option value="hybrid">Híbrido</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="form-group">
-                                <label for="status">Estado</label>
-                                <input type="text" class="form-control" name="status" id="status" placeholder="">
+                                <label for="price_filter">Precio por persona (máximo)</label>
+                                <input type="number" step="0.01" class="form-control" name="price_filter" id="price_filter" placeholder="Máximo precio">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-group">
+                                <label for="status_filter">Estado</label>
+                                <select class="form-control" name="status_filter" id="status_filter">
+                                    <option value="">Todos</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -151,7 +160,7 @@ if (!isset($_SESSION['username'])) {
                             <!-- selector-->
                             <label for="type_edit">Tipo:</label>
                             <select name="type" class="form-control mb-2" id="type_edit" required>
-                                <option value="predefined">Predefinido</option>
+                                <option value="predetermined">Predefinido</option>
                                 <option value="customizable">Personalizable</option>
                             </select>
 
@@ -184,7 +193,7 @@ if (!isset($_SESSION['username'])) {
                             <!-- selector xd-->
                             <label for="type_edit">Tipo:</label>
                             <select name="type" class="form-control mb-2" id="type_edit" required>
-                                <option value="predefined">Predefinido</option>
+                                <option value="predetermined">Predefinido</option>
                                 <option value="customizable">Personalizable</option>
                             </select>
                            

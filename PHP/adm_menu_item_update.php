@@ -3,51 +3,56 @@ require_once 'Connection.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validar datos enviados
-    if (!isset($_POST['id'], $_POST['name'], $_POST['description'], $_POST['price'], $_POST['category_id'], $_POST['is_active'])) {
+    // Validar que todos los datos hayan sido enviados
+    if (!isset($_POST['name_menu'], $_POST['description'], $_POST['price_per_person'], $_POST['type'], $_POST['id_menu'])) {
         die("Faltan datos del formulario.");
     }
 
-    // Obtener datos
-    $id = $_POST['id'];
-    $name = $_POST['name'];
+    // Obtener los datos
+    $id_menu = $_POST['id_menu'];
+    $name_menu = $_POST['name_menu'];
     $description = $_POST['description'];
-    $price = $_POST['price'];
-    $category_id = $_POST['category_id'];
-    $is_active = $_POST['is_active'];
+    $price_per_person = $_POST['price_per_person'];
+    $type = $_POST['type'];
+
+    // Validar el tipo
+    $valid_types = ['predetermined', 'customizable', 'hybrid'];
+    if (!in_array($type, $valid_types)) {
+        die("Tipo de menú inválido.");
+    }
 
     try {
+        // Conectar con la base de datos
         $conexion = new Connection();
         $pdo = $conexion->connect();
 
-        $sql = "UPDATE menu_items
-                SET name = :name,
+        // SQL para actualizar
+        $sql = "UPDATE menus
+                SET name = :name_menu,
                     description = :description,
-                    price = :price,
-                    category_id = :category_id,
-                    is_active = :is_active
-                WHERE id = :id";
+                    price_per_person = :price_per_person,
+                    type = :type
+                WHERE id = :id_menu";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            ':name' => $name,
+            ':name_menu' => $name_menu,
             ':description' => $description,
-            ':price' => $price,
-            ':category_id' => $category_id,
-            ':is_active' => $is_active,
-            ':id' => $id
+            ':price_per_person' => $price_per_person,
+            ':type' => $type,
+            ':id_menu' => $id_menu
         ]);
 
         echo "<script>
-            alert('Ítem de menú actualizado correctamente.');
-            window.location.href = '../html/menu_items.php';
+            alert('Menú actualizado correctamente.');
+            window.location.href = '../html/menu.php';
         </script>";
 
     } catch (\Throwable $th) {
         $msg = json_encode("Error al actualizar: " . $th->getMessage());
         echo "<script>
             alert($msg);
-            window.location.href = '../html/menu_items.php';
+            window.location.href = '../html/menu.php';
         </script>";
     }
 }
