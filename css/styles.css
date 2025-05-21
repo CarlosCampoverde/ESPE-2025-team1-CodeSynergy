@@ -195,3 +195,136 @@ button:disabled {
         margin-bottom: 10px;
     }
 }
+
+/* Añadir al final del archivo CSS */
+
+.success-message {
+    background-color: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+
+.success-message p {
+    margin-bottom: 10px;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2e7d32;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #1b5e20;
+}
+
+.loader {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* Estilos existentes... */
+
+/* Añadir estos nuevos estilos al final */
+.quote-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.quote-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #2e7d32;
+}
+
+.quote-section {
+    margin-bottom: 25px;
+}
+
+.quote-title {
+    color: #2e7d32;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+th {
+    background-color: #2e7d32;
+    color: white;
+    text-align: left;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.total-row {
+    font-weight: bold;
+    background-color: #f5f5f5;
+}
+
+.back-btn {
+    display: block;
+    width: 200px;
+    margin: 30px auto 0;
+    padding: 10px;
+    background-color: #2e7d32;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #1b5e20;
+}
+
+@media (max-width: 768px) {
+    .quote-container {
+        padding: 15px;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px 5px;
+    }
+}

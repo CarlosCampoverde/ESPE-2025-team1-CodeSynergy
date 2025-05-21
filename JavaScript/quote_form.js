@@ -24,6 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Añadir al final del event listener del formulario
+document.getElementById('quoteForm').addEventListener('submit', function(e) {
+    // [Validaciones anteriores...]
+    
+    // Mostrar loader mientras se procesa
+    const submitBtn = this.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Generando PDF... <span class="loader"></span>';
+});
+
     function changeStep(hide, show) {
         document.getElementById(`step${hide}`).classList.remove('active');
         document.getElementById(`step${show}`).classList.add('active');
