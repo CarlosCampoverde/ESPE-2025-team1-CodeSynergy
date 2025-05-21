@@ -40,8 +40,7 @@ if (!isset($_SESSION['username'])) {
                 </li>
                 <br />
                 <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
-                <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
-                <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
+                <li><a href="quote-form.php"><i class="fa fa-calendar-check-o sidebar-icon"></i> Cotizacion</a></li>
                 <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
                 <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
                 <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
