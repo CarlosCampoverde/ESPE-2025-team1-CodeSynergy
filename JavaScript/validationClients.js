@@ -1,54 +1,71 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('nuevoForm');
+    // Función para validar un formulario dado sus campos por IDs
+    function validarFormulario(form, ids) {
+        const firstName = document.getElementById(ids.first_name).value.trim();
+        const lastName = document.getElementById(ids.last_name).value.trim();
+        const email = document.getElementById(ids.email).value.trim();
+        const phone = document.getElementById(ids.phone).value.trim();
+        const address = document.getElementById(ids.address).value.trim();
 
-    form.addEventListener('submit', function (e) {
-        // Obtener valores
-        const firstName = document.getElementById('first_name_new').value.trim();
-        const lastName = document.getElementById('last_name_new').value.trim();
-        const email = document.getElementById('email_new').value.trim();
-        const phone = document.getElementById('phone_new').value.trim();
-        const address = document.getElementById('address_new').value.trim();
-
-        // Validar nombre y apellido: solo letras y al menos 2 caracteres
         const nameRegex = /^[a-zA-ZÀ-ÿ\s]{2,}$/;
 
         if (!nameRegex.test(firstName)) {
             alert('Por favor, ingresa un nombre válido (solo letras, mínimo 2 caracteres).');
-            e.preventDefault();
-            return;
+            return false;
         }
 
         if (!nameRegex.test(lastName)) {
             alert('Por favor, ingresa un apellido válido (solo letras, mínimo 2 caracteres).');
-            e.preventDefault();
-            return;
+            return false;
         }
-        
-        // Validar email si no está vacío
+
         if (email.length > 0) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert('Por favor, ingresa un email válido.');
-                e.preventDefault();
-                return;
+                return false;
             }
         }
 
-        // Validar teléfono si no está vacío
         if (phone.length > 0) {
-            const phoneRegex = /^\d{10}$/;
+            const phoneRegex = /^[0-9\s\-\(\)]{7,15}$/;
             if (!phoneRegex.test(phone)) {
-                alert('Por favor, ingresa un teléfono valido. (10 digitos)');
-                e.preventDefault();
-                return;
+                alert('Por favor, ingresa un teléfono válido (7 a 15 dígitos, puede incluir espacios, guiones o paréntesis).');
+                return false;
             }
         }
-        
-        // Validar dirección si no está vacía (mínimo 5 caracteres)
+
         if (address.length > 0 && address.length < 5) {
             alert('La dirección debe tener al menos 5 caracteres si se ingresa.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Validar formulario Nuevo Cliente
+    document.getElementById('nuevoForm').addEventListener('submit', function (e) {
+        if (!validarFormulario(this, {
+            first_name: 'first_name_new',
+            last_name: 'last_name_new',
+            email: 'email_new',
+            phone: 'phone_new',
+            address: 'address_new'
+        })) {
             e.preventDefault();
-            return;
+        }
+    });
+
+    // Validar formulario Editar Cliente
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+        if (!validarFormulario(this, {
+            first_name: 'first_name_edit',
+            last_name: 'last_name_edit',
+            email: 'email_edit',
+            phone: 'phone_edit',
+            address: 'address_edit'
+        })) {
+            e.preventDefault();
         }
     });
 });
