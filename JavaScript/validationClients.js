@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             return;
         }
-
+        
         // Validar email si no está vacío
         if (email.length > 0) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,21 +34,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Validar teléfono si no está vacío (números, espacios, paréntesis, guiones)
-        if (phone.length > 0) {
-            const phoneRegex = /^[0-9\s\-\(\)]{10}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('Por favor, ingresa un teléfono válido (10 dígitos, puede incluir espacios, guiones o paréntesis).');
-                e.preventDefault();
-                return;
-            }
-        }
-
-        // Validar dirección si no está vacía (mínimo 5 caracteres)
-        if (address.length > 0 && address.length < 5) {
-            alert('La dirección debe tener al menos 5 caracteres si se ingresa.');
-            e.preventDefault();
-            return;
-        }
     });
 });
