@@ -44,5 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         
+        // Validar dirección si no está vacía (mínimo 5 caracteres)
+        if (address.length > 0 && address.length < 5) {
+            alert('La dirección debe tener al menos 5 caracteres si se ingresa.');
+            e.preventDefault();
+            return;
+        }
     });
 });
