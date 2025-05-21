@@ -1,19 +1,79 @@
+<?php
+session_start();
+
+
+// Verifica si el usuario ha iniciado sesión
+if (!isset($_SESSION['username'])) {
+    header('Location: ../index.php');
+    
+    exit;
+}
+
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Cotización - Catering</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/style_dashboard.css">
+       <link rel="stylesheet" href="../css/styles.css">
+
+    <title>QuickQuote Catering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Font Awesome (para íconos) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </head>
 <body>
+    <div class="wrapper">
+        <div class="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">Bienvenido Administrador</a>
+                    <hr class="hr">
+                </li>
+                <br />
+                <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
+                <li><a href="quote-form.php"><i class="fa fa-calendar-check-o sidebar-icon"></i> Cotizacion</a></li>
+                <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
+                <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
+                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
+                <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
+                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>
+                <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
+            </ul>
+        </div>
+    <div>
+       
+        <header class="header navbar-light bg-faded">
+           <div class="container-fluid">
+               <div class="row text-center">
+                     <button type="button" class="btn hamburger-btn" id="menu-toggle">
+                       <span class="navbar-toggler-icon"></span>
+                     </button>
+                     <span class="page-title">Sistema de Cotización</span>
+                     <div class="profile-pic">
+                      
+                     </div>
+               </div> <!-- ENd of row -->
+           </div> <!-- End of container fluid -->
+       </header>
+
     <div class="container">
-        <h1>Sistema de Cotización</h1>
+        <h3>Sistema de Cotización</h3>
         
         <form id="quoteForm" action="../PHP/process_quote.php" method="post">
             <!-- Paso 1: Información del Cliente -->
             <div class="form-step active" id="step1">
-                <h2>Información del Cliente</h2>
+                <h4>Información del Cliente</h4>
                 <div class="form-group">
                     <label for="first_name">Nombres:</label>
                     <input type="text" id="first_name" name="first_name" required>

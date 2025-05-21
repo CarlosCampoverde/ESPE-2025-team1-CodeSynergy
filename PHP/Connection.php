@@ -2,9 +2,11 @@
 
 class Connection {
     private $host = 'localhost';
-    private $dbname = 'catering';
-    private $username = 'root';
-    private $password = 'adminadmin';
+    private $dbname = 'CATERING';
+    //private $username = 'david';
+    //private $password = 'admin';
+     private $username = 'root';
+     private $password = 'adminadmin';
 
     public function connect() {
         try {

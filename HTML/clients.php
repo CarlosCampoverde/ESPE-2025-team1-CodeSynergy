@@ -32,14 +32,13 @@ if (!isset($_SESSION['username'])) {
                     <hr class="hr">
                 </li>
                 <br />
-                <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
-                <li><a href="#"><i class="fa fa-calendar-check-o sidebar-icon"></i> Reservas</a></li>
-                <li><a href="transporte.php"><i class="fa fa-truck sidebar-icon"></i> Transporte</a></li>
+<li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
+                <li><a href="quote-form.php"><i class="fa fa-calendar-check-o sidebar-icon"></i> Cotizacion</a></li>
                 <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
                 <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
-                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i> Items del Menu</a></li>
+                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
                 <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
-                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>                       
+                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>
                 <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
             </ul>
         </div>
@@ -197,6 +196,8 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
-    <script src="../JavaScript/clients_CRUD.js"></script> 
+    <script src="../JavaScript/clients_CRUD.js"></script>        
+    <script src="../JavaScript/validationClients.js"></script> 
+
 </body>
 </html>

@@ -347,7 +347,7 @@ function showQuoteHtml($quote_id, $form_data, $total, $menu_details, $services_d
     }
     
     $html .= '
-            <a href="../html/quote-form.html" class="back-btn">Volver al Formulario</a>
+            <a href="../html/quote-form.php" class="back-btn">Volver al Formulario</a>
         </div>
     </body>
     </html>';
