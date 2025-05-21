@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (phone.length > 0) {
-            const phoneRegex = /^[0-9\s\-\(\)]{7,15}$/;
+            const phoneRegex = /^[0-9\s]{10}$/;
             if (!phoneRegex.test(phone)) {
                 alert('Por favor, ingresa un teléfono válido (7 a 15 dígitos, puede incluir espacios, guiones o paréntesis).');
                 return false;

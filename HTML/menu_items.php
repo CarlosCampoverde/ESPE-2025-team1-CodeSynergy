@@ -229,6 +229,8 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
-    <script src="../JavaScript/menu_items_crud.js"></script>
+    <script src="../JavaScript/menu_items_crud.js"></script>        
+    <script src="../JavaScript/validationMenuItems.js"></script>
+
 </body>
 </html>
