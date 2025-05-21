@@ -234,6 +234,7 @@ if (!isset($_SESSION['current_event_id'])) {
 
         
     </div>
-    <script src="../JavaScript/menu_p_crud.js"></script> 
+    <script src="../JavaScript/menu_p_crud.js"></script>
+    <script src="../JavaScript/validationMenu.js"></script>  
 </body>
 </html>
