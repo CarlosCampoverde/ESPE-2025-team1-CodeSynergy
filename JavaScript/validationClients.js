@@ -34,5 +34,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        // Validar teléfono si no está vacío
+        if (phone.length > 0) {
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Por favor, ingresa un teléfono valido. (10 digitos)');
+                e.preventDefault();
+                return;
+            }
+        }
+        
     });
 });
