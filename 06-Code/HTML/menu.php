@@ -9,6 +9,12 @@ if (!isset($_SESSION['current_event_id'])) {
     $stmt->execute([$_SESSION['user_id']]);
     $_SESSION['current_event_id'] = $pdo->lastInsertId();
 }
+
+if ($_SESSION['role'] !== admin ) {
+    echo "Acceso denegado. Solo los administradores pueden acceder a esta página.";
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
