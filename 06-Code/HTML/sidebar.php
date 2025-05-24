@@ -14,7 +14,7 @@ $currentPage = isset($currentPage) ? $currentPage : '';
             </a>
         </li>
         <li>
-            <a href="quote-form.php" class="<?php echo $currentPage === 'quote-form' ? 'active' : ''; ?>">
+            <a href="quote_form.php" class="<?php echo $currentPage === 'quote_form' ? 'active' : ''; ?>">
                 <i class="fa fa-calendar-check-o sidebar-icon"></i> Cotización
             </a>
         </li>

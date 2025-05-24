@@ -53,7 +53,7 @@ if (!isset($_SESSION['username'])) {
         </div>
     </div>
 
-    <script src="../JavaScript/menu-scripts.js"></script>
+    <script src="../javascript/menu_scripts.js"></script>
 </body>
 </html>
 

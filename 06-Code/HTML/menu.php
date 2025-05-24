@@ -226,8 +226,8 @@ if ($_SESSION['role'] !== admin ) {
 
         
     </div>
-    <script src="../JavaScript/menu_p_crud.js"></script>
-    <script src="../JavaScript/validationMenu.js"></script>
-    <script src="../JavaScript/common.js"></script>  
+    <script src="../javascript/menu_p_crud.js"></script>
+    <script src="../javascript/validation_menu.js"></script>
+    <script src="../javascript/common.js"></script>  
 </body>
 </html>

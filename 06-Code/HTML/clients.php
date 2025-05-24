@@ -180,9 +180,9 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
-    <script src="../JavaScript/clients_CRUD.js"></script>        
-    <script src="../JavaScript/validationClients.js"></script>
-    <script src="../JavaScript/common.js"></script> 
+    <script src="../javascript/clients_CRUD.js"></script>        
+    <script src="../javascript/validation_clients.js"></script>
+    <script src="../javascript/common.js"></script> 
 
 </body>
 </html>

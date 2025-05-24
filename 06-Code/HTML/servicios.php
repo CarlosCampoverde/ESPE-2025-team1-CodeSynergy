@@ -50,6 +50,6 @@ if (!isset($_SESSION['username'])) {
         </div>
     </div>
 
-    <script src="../JavaScript/servicios-scripts.js"></script>
+    <script src="../javascript/servicios_scripts.js"></script>
 </body>
 </html>

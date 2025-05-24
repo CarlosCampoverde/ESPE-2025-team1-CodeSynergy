@@ -18,14 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_start();
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-<<<<<<< HEAD:PHP/login_status.php
-
-            // Redirige al dashboard
-            header('Location: ../html/dashboard.php');
-=======
             $_SESSION['role'] = $user['role']; // Asignar el rol
-            header('Location: ../HTML/dashboard.php');
->>>>>>> 9cbbd33896a942857ca223e9af406ffe68329a04:06-Code/PHP/login_status.php
+            header('Location: ../html/dashboard.php');
             exit;
         } else {
             $error_message = "Credenciales incorrectas. Intenta nuevamente.";

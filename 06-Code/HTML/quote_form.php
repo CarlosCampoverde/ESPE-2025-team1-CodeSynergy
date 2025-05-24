@@ -146,7 +146,7 @@ if (!isset($_SESSION['username'])) {
         </form>
     </div>
     
-    <script src="../JavaScript/quote_form.js"></script>
-    <script src="../JavaScript/common.js"></script>
+    <script src="../javascript/quote_form.js"></script>
+    <script src="../javascript/common.js"></script>
 </body>
 </html>

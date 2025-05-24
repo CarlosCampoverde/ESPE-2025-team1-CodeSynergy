@@ -212,9 +212,9 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
-    <script src="../JavaScript/menu_items_crud.js"></script>        
-    <script src="../JavaScript/validationMenuItems.js"></script>
-    <script src="../JavaScript/common.js"></script>
+    <script src="../javascript/menu_items_crud.js"></script>        
+    <script src="../javascript/validation_menu_items.js"></script>
+    <script src="../javascript/common.js"></script>
 
 </body>
 </html>

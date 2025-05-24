@@ -152,7 +152,7 @@ $currentPage = 'dashboard';
             </div>
         </div>
     </div>
-    <script src="../JavaScript/dashboard.js"></script>
-    <script src="../JavaScript/common.js"></script>
+    <script src="../javascript/dashboard.js"></script>
+    <script src="../javascript/common.js"></script>
 </body>
 </html>
