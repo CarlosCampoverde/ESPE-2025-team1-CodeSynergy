@@ -11,7 +11,10 @@ if (!isset($_SESSION['current_event_id'])) {
 }
 
 if ($_SESSION['role'] !== admin ) {
-    echo "Acceso denegado. Solo los administradores pueden acceder a esta página.";
+    echo "<script>
+        alert('Acceso denegado. Solo los administradores pueden acceder a esta página.');
+        window.location.href = 'dashboard.php';
+        </script>";
     exit;
 }
 
