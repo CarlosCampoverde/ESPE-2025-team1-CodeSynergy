@@ -31,23 +31,7 @@ if (!isset($_SESSION['current_event_id'])) {
 </head>
 <body>
     <div class="wrapper">
-        <div class="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="#">Bienvenido Administrador</a>
-                    <hr class="hr">
-                </li>
-                <br />
-                <li><a href="dashboard.php"><i class="fa fa-th sidebar-icon"></i> Aplicación</a></li>
-                <li><a href="quote-form.php"><i class="fa fa-calendar-check-o sidebar-icon"></i> Cotizacion</a></li>
-                <li><a href="clients.php"><i class="fa fa-users sidebar-icon"></i> Clientes</a></li>
-                <li><a href="menu.php"><i class="fa fa-file sidebar-icon"></i> Menu</a></li>
-                <li><a href="menu_items.php"><i class="fa fa-file sidebar-icon"></i>Items del Menu</a></li>
-                <li><a href="#"><i class="fa fa-bell sidebar-icon"></i> Notificaciones</a></li>
-                <li><a href="#"><i class="fa fa-user sidebar-icon"></i> Empleados</a></li>
-                <li><a href="../PHP/log_out.php"><i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión</a></li>
-            </ul>
-        </div>
+        <?php include 'sidebar.php'; ?>
 
         <div>
             <header class="header navbar-light bg-faded">
@@ -234,6 +218,7 @@ if (!isset($_SESSION['current_event_id'])) {
         
     </div>
     <script src="../JavaScript/menu_p_crud.js"></script>
-    <script src="../JavaScript/validationMenu.js"></script>  
+    <script src="../JavaScript/validationMenu.js"></script>
+    <script src="../JavaScript/common.js"></script>  
 </body>
 </html>

@@ -153,12 +153,6 @@ $currentPage = 'dashboard';
         </div>
     </div>
     <script src="../JavaScript/dashboard.js"></script>
-    <script>
-        // Toggle sidebar
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $(".wrapper").toggleClass("toggled");
-        });
-    </script>
+    <script src="../JavaScript/common.js"></script>
 </body>
 </html>

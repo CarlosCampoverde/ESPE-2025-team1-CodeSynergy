@@ -197,7 +197,8 @@ if (!isset($_SESSION['username'])) {
         </div>
     </div>
     <script src="../JavaScript/clients_CRUD.js"></script>        
-    <script src="../JavaScript/validationClients.js"></script> 
+    <script src="../JavaScript/validationClients.js"></script>
+    <script src="../JavaScript/common.js"></script> 
 
 </body>
 </html>
