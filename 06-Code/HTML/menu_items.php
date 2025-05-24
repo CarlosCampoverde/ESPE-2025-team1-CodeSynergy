@@ -2,10 +2,22 @@
 session_start();
 
 // Verifica si el usuario ha iniciado sesión
-if (!isset($_SESSION['username'])) {
-    header('Location: ../index.php');
+if (!isset($_SESSION['current_event_id'])) {
+    require_once '../php/Connection.php';
+    $pdo = (new Connection())->connect();
+    $stmt = $pdo->prepare("INSERT INTO events (client_id, event_type) VALUES (?, 'Evento Rápido')");
+    $stmt->execute([$_SESSION['user_id']]);
+    $_SESSION['current_event_id'] = $pdo->lastInsertId();
+}
+
+if ($_SESSION['role'] !== 'admin' ) {
+    echo "<script>
+        alert('Acceso denegado. Solo los administradores pueden acceder a esta página.');
+        window.location.href = 'dashboard.php';
+        </script>";
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,9 +27,7 @@ if (!isset($_SESSION['username'])) {
     <link rel="stylesheet" href="../css/style_dashboard.css">
     <title>QuickQuote Catering - Menu Items</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome (para íconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
