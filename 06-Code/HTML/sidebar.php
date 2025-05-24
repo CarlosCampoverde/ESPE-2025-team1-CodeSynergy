@@ -34,16 +34,7 @@ $currentPage = isset($currentPage) ? $currentPage : '';
                 <i class="fa fa-file sidebar-icon"></i> Items del Menú
             </a>
         </li>
-        <li>
-            <a href="notifications.php" class="<?php echo $currentPage === 'notifications' ? 'active' : ''; ?>">
-                <i class="fa fa-bell sidebar-icon"></i> Notificaciones
-            </a>
-        </li>
-        <li>
-            <a href="employees.php" class="<?php echo $currentPage === 'employees' ? 'active' : ''; ?>">
-                <i class="fa fa-user sidebar-icon"></i> Empleados
-            </a>
-        </li>
+
         <li>
             <a href="../php/log_out.php" class="<?php echo $currentPage === 'log_out' ? 'active' : ''; ?>">
                 <i class="fa fa-sign-out-alt sidebar-icon"></i> Cerrar sesión
