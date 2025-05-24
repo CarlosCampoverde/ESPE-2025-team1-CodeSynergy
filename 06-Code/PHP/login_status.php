@@ -18,21 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_start();
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-
-            // Redirige al dashboard
+            $_SESSION['role'] = $user['role']; // Asignar el rol
             header('Location: ../HTML/dashboard.php');
             exit;
         } else {
-            // Redirigir a error.php 
             $error_message = "Credenciales incorrectas. Intenta nuevamente.";
-            // envia mensaje mediante el url
             header("Location: error.php?error_message=" . urlencode($error_message));
             exit;
         }
-
     } catch (\Throwable $th) {
         $error_message = "Error en la conexión: " . $th->getMessage();
         header("Location: error.php?error_message=" . urlencode($error_message));
         exit;
     }
 }
+?>
