@@ -1,11 +1,10 @@
 <?php
-// Determinar la página actual (pasa este valor desde la página que incluye sidebar.php)
 $currentPage = isset($currentPage) ? $currentPage : '';
 ?>
 <div class="sidebar-wrapper">
     <ul class="sidebar-nav">
         <li class="sidebar-brand">
-            <a href="#">Bienvenido Administrador</a>
+            <a href="#">Bienvenido <?php echo htmlspecialchars($_SESSION['username']); ?></a>
             <hr class="hr">
         </li>
         <br />
