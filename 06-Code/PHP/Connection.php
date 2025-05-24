@@ -3,10 +3,10 @@
 class Connection {
     private $host = 'localhost';
     private $dbname = 'CATERING';
-    //private $username = 'david';
-    //private $password = 'admin';
-     private $username = 'root';
-     private $password = 'adminadmin';
+    private $username = 'david';
+    private $password = 'admin';
+     //private $username = 'root';
+     //private $password = 'adminadmin';
 
     public function connect() {
         try {
