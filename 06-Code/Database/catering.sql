@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 18-05-2025 a las 02:34:23
+-- Tiempo de generación: 23-05-2025 a las 20:03:35
 -- Versión del servidor: 8.0.17
 -- Versión de PHP: 7.3.10
 
@@ -66,7 +66,13 @@ CREATE TABLE `clients` (
 
 INSERT INTO `clients` (`id`, `first_name`, `last_name`, `email`, `phone`, `address`, `created_at`) VALUES
 (1, 'Carlos', 'Campoverde', 'carlos@ejemplo.com', '0987654321', 'Quito, Ecuador', '2025-05-17 20:19:57'),
-(2, 'María', 'López', 'maria@ejemplo.com', '0911223344', 'Guayaquil, Ecuador', '2025-05-17 20:19:57');
+(2, 'María', 'López', 'maria@ejemplo.com', '0911223344', 'Guayaquil, Ecuador', '2025-05-17 20:19:57'),
+(3, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-20 23:25:31'),
+(4, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-20 23:35:57'),
+(5, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-21 00:13:36'),
+(6, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-21 00:16:15'),
+(7, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-21 00:24:34'),
+(8, 'Carlos', 'Campoverde', 'carlos80237@gmail.com', '0958789219', 'Chillogallo', '2025-05-21 03:49:18');
 
 -- --------------------------------------------------------
 
@@ -89,7 +95,8 @@ CREATE TABLE `comments` (
 INSERT INTO `comments` (`id`, `client_id`, `quote_id`, `message`, `created_at`) VALUES
 (1, 1, 1, 'Por favor, actualicen las opciones de postre.', '2025-05-17 20:19:57'),
 (2, 2, 2, '¡Todo está perfecto, gracias!', '2025-05-17 20:19:57'),
-(3, 1, 1, '{\"descuento\": \"10% por más de 100 personas\"}', '2025-05-17 21:35:23');
+(3, 1, 1, '{\"descuento\": \"10% por más de 100 personas\"}', '2025-05-17 21:35:23'),
+(4, 3, 3, 'eed', '2025-05-20 23:25:31');
 
 -- --------------------------------------------------------
 
@@ -106,6 +113,18 @@ CREATE TABLE `custom_menu_selections` (
   `special_notes` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `custom_menu_selections`
+--
+
+INSERT INTO `custom_menu_selections` (`id`, `quote_id`, `item_id`, `quantity`, `unit_price`, `special_notes`, `created_at`) VALUES
+(1, 6, 5, 1, '8.50', NULL, '2025-05-21 00:16:15'),
+(2, 7, 2, 1, '4.00', NULL, '2025-05-21 00:24:34'),
+(3, 7, 3, 1, '12.00', NULL, '2025-05-21 00:24:34'),
+(4, 7, 4, 1, '5.00', NULL, '2025-05-21 00:24:34'),
+(5, 7, 7, 1, '6.50', NULL, '2025-05-21 00:24:34'),
+(6, 7, 8, 1, '3.00', NULL, '2025-05-21 00:24:34');
 
 -- --------------------------------------------------------
 
@@ -128,7 +147,13 @@ CREATE TABLE `events` (
 
 INSERT INTO `events` (`id`, `client_id`, `event_type`, `event_date`, `location`, `guests`) VALUES
 (1, 1, 'Boda', '2025-07-12', 'Salón de Eventos Quito', 100),
-(2, 2, 'Cumpleaños', '2025-08-20', 'Parque Samanes', 50);
+(2, 2, 'Cumpleaños', '2025-08-20', 'Parque Samanes', 50),
+(4, 3, 'boda', '2025-05-06', 'ddf', 100),
+(5, 4, 'boda', '2025-05-22', 'chillogallo', 100),
+(6, 5, 'boda', '2025-05-23', 'chillogallo', 100),
+(7, 6, 'boda', '2025-05-29', 'chillogallo', 12),
+(8, 7, 'boda', '2025-05-22', 'chillogallo', 34),
+(9, 8, 'boda', '2025-05-29', 'chillogallo', 56);
 
 -- --------------------------------------------------------
 
@@ -260,7 +285,13 @@ CREATE TABLE `quotes` (
 
 INSERT INTO `quotes` (`id`, `event_id`, `total`, `quote_date`, `status`) VALUES
 (1, 1, '1500.00', '2025-05-17 20:19:57', 'pending'),
-(2, 2, '650.00', '2025-05-17 20:19:57', 'sent');
+(2, 2, '650.00', '2025-05-17 20:19:57', 'sent'),
+(3, 4, '0.00', '2025-05-20 23:25:31', 'pending'),
+(4, 5, '1100.00', '2025-05-20 23:35:57', 'pending'),
+(5, 6, '1170.00', '2025-05-21 00:13:36', 'pending'),
+(6, 7, '58.50', '2025-05-21 00:16:15', 'pending'),
+(7, 8, '30.50', '2025-05-21 00:24:34', 'pending'),
+(8, 9, '708.00', '2025-05-21 03:49:18', 'pending');
 
 -- --------------------------------------------------------
 
@@ -282,7 +313,10 @@ CREATE TABLE `quote_menus` (
 
 INSERT INTO `quote_menus` (`id`, `quote_id`, `menu_id`, `people_count`, `subtotal`) VALUES
 (1, 1, 1, 100, '1050.00'),
-(2, 2, 2, 50, '900.00');
+(2, 2, 2, 50, '900.00'),
+(5, 4, 1, 100, '1050.00'),
+(6, 5, 1, 100, '1050.00'),
+(7, 8, 1, 56, '588.00');
 
 -- --------------------------------------------------------
 
@@ -305,7 +339,11 @@ CREATE TABLE `quote_services` (
 INSERT INTO `quote_services` (`id`, `quote_id`, `service_id`, `quantity`, `subtotal`) VALUES
 (1, 1, 1, 3, '150.00'),
 (2, 1, 2, 1, '120.00'),
-(3, 2, 1, 1, '50.00');
+(3, 2, 1, 1, '50.00'),
+(4, 4, 1, 1, '50.00'),
+(5, 5, 2, 1, '120.00'),
+(6, 6, 1, 1, '50.00'),
+(7, 8, 2, 1, '120.00');
 
 -- --------------------------------------------------------
 
@@ -505,25 +543,25 @@ ALTER TABLE `access_logs`
 -- AUTO_INCREMENT de la tabla `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `custom_menu_selections`
 --
 ALTER TABLE `custom_menu_selections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `menus`
@@ -553,19 +591,19 @@ ALTER TABLE `pdf_files`
 -- AUTO_INCREMENT de la tabla `quotes`
 --
 ALTER TABLE `quotes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `quote_menus`
 --
 ALTER TABLE `quote_menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `quote_services`
 --
 ALTER TABLE `quote_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `reports`
