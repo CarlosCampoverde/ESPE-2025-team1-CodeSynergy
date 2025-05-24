@@ -315,6 +315,16 @@ td {
     background-color: #1b5e20;
 }
 
+input.invalid, select.invalid, textarea.invalid {
+    border: 2px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
 @media (max-width: 768px) {
     .quote-container {
         padding: 15px;

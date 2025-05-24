@@ -32,6 +32,7 @@ if (!isset($_SESSION['username'])) {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </head>
+
 <body>
     <div class="wrapper">
         <?php include 'sidebar.php'; ?>
@@ -76,7 +77,7 @@ if (!isset($_SESSION['username'])) {
                 </div>
                 <div class="form-group">
                     <label for="address">Dirección:</label>
-                    <input type="text" id="address" name="address">
+                    <input type="text" id="address" name="address" required>
                 </div>
                 <button type="button" class="next-btn" data-current="1" data-next="2">Siguiente</button>
             </div>
@@ -148,5 +149,6 @@ if (!isset($_SESSION['username'])) {
     
     <script src="../javascript/quote_form.js"></script>
     <script src="../javascript/common.js"></script>
+    <script src="../javascript/validation_quote_form.js"></script>
 </body>
 </html>

@@ -3,16 +3,46 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupFormSteps() {
         // Botones Siguiente
         document.querySelectorAll('.next-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const current = this.getAttribute('data-current');
-                const next = this.getAttribute('data-next');
-                changeStep(current, next);
-                
-                // Cargar datos dinámicos cuando sea necesario
-                if (next === '3') loadMenuOptions();
-                if (next === '4') loadServices();
-            });
+    button.addEventListener('click', function() {
+        const current = this.getAttribute('data-current');
+        const next = this.getAttribute('data-next');
+
+        const currentStepElement = document.getElementById(`step${current}`);
+        const inputs = currentStepElement.querySelectorAll('input, select, textarea, text, tel');
+
+        let valid = true;
+        inputs.forEach(input => {
+            const errorMsg = input.parentElement.querySelector('.error-message');
+
+            if (!input.checkValidity()) {
+                input.classList.add('invalid');
+
+                if (!errorMsg) {
+                    const msg = document.createElement('div');
+                    msg.className = 'error-message';
+                    msg.textContent = input.validationMessage;
+                    input.parentElement.appendChild(msg);
+                }
+
+                valid = false;
+            } else {
+                input.classList.remove('invalid');
+                if (errorMsg) errorMsg.remove();
+            }
         });
+
+        // Si no es válido, detener el avance
+        if (!valid) {
+            return;
+        }
+
+        // Avanzar solo si pasa validación
+        changeStep(current, next);
+
+        if (next === '3') loadMenuOptions();
+        if (next === '4') loadServices();
+    });
+});
 
         // Botones Anterior
         document.querySelectorAll('.prev-btn').forEach(button => {

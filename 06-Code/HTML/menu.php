@@ -10,7 +10,7 @@ if (!isset($_SESSION['current_event_id'])) {
     $_SESSION['current_event_id'] = $pdo->lastInsertId();
 }
 
-if ($_SESSION['role'] !== admin ) {
+if ($_SESSION['role'] !== 'admin' ) {
     echo "<script>
         alert('Acceso denegado. Solo los administradores pueden acceder a esta página.');
         window.location.href = 'dashboard.php';
