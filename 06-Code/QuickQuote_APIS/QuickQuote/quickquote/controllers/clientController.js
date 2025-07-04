@@ -32,6 +32,21 @@ exports.getClient = async (req, res) => {
   }
 };
 
+// Obtener todos los clientes
+exports.getAllClients = async (req, res) => {
+  try {
+    const clients = await Client.find();  // Obtener todos los clientes
+
+    if (clients.length === 0) {
+      return res.status(404).json({ message: "No hay clientes registrados" });
+    }
+
+    res.status(200).json(clients);  // Retornar los clientes encontrados
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los clientes", error: error.message });
+  }
+};
+
 // Actualizar los detalles de un cliente
 exports.updateClient = async (req, res) => {
   const { id_client, first_name, last_name, email, phone, address } = req.body;

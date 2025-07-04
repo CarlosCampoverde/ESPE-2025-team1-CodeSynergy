@@ -1,5 +1,3 @@
-// venueController.js
-
 const Venue = require('../models/venue');
 
 // Crear un nuevo lugar
@@ -29,6 +27,21 @@ exports.getVenue = async (req, res) => {
     res.status(200).json(venue);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el lugar", error: error.message });
+  }
+};
+
+// Obtener todos los lugares
+exports.getAllVenues = async (req, res) => {
+  try {
+    const venues = await Venue.find();  // Obtener todos los lugares
+
+    if (venues.length === 0) {
+      return res.status(404).json({ message: "No hay lugares registrados" });
+    }
+
+    res.status(200).json(venues);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los lugares", error: error.message });
   }
 };
 

@@ -1,5 +1,3 @@
-// paymentController.js
-
 const Payment = require('../models/payment');
 
 // Crear un nuevo pago
@@ -29,6 +27,21 @@ exports.getPayment = async (req, res) => {
     res.status(200).json(payment);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el pago", error: error.message });
+  }
+};
+
+// Obtener todos los pagos
+exports.getAllPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find();  // Obtener todos los pagos
+
+    if (payments.length === 0) {
+      return res.status(404).json({ message: "No hay pagos registrados" });
+    }
+
+    res.status(200).json(payments);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los pagos", error: error.message });
   }
 };
 

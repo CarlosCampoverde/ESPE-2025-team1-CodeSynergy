@@ -8,6 +8,9 @@ router.post("/createClient", clientController.createClient);
 // Obtener un cliente por ID
 router.get("/:id_client", clientController.getClient);
 
+// Obtener todos los clientes (getAll)
+router.get("/", clientController.getAllClients);
+
 // Actualizar un cliente
 router.put("/updateClient", clientController.updateClient);
 

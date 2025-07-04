@@ -8,6 +8,9 @@ router.post("/createVenue", venueController.createVenue);
 // Obtener un lugar por ID
 router.get("/:id", venueController.getVenue);
 
+// Obtener todos los lugares (getAll)
+router.get("/", venueController.getAllVenues);
+
 //actualizar un lugar
 router.put("/updateVenue", venueController.updateVenue);
 

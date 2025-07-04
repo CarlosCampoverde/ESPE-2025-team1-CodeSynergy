@@ -8,6 +8,9 @@ router.post("/createMenu", menuController.createMenu);
 // Obtener un menú por ID
 router.get("/:id", menuController.getMenu);
 
+// Obtener todos los menús (getAll)
+router.get("/", menuController.getAllMenus);
+
 // Actualizar un menú
 router.put("/updateMenu", menuController.updateMenu);
 

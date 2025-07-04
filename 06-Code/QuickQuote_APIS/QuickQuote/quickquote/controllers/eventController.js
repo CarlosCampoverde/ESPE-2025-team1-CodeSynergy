@@ -1,5 +1,3 @@
-// eventController.js
-
 const Event = require('../models/event');
 
 // Crear un nuevo evento
@@ -30,6 +28,21 @@ exports.getEvent = async (req, res) => {
     res.status(200).json(event);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el Evento", error: error.message });
+  }
+};
+
+// Obtener todos los eventos
+exports.getAllEvents = async (req, res) => {
+  try {
+    const events = await Event.find();  // Obtener todos los eventos
+
+    if (events.length === 0) {
+      return res.status(404).json({ message: "No hay eventos registrados" });
+    }
+
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los eventos", error: error.message });
   }
 };
 

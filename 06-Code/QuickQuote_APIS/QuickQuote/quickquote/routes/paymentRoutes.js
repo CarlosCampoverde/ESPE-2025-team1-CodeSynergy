@@ -8,6 +8,9 @@ router.post("/createPayment", paymentController.createPayment);
 // Obtener un pago por ID
 router.get("/:id", paymentController.getPayment);
 
+// Obtener todos los pagos (getAll)
+router.get("/", paymentController.getAllPayments);
+
 // Actualizar un pago
 router.put("/updatePayment", paymentController.updatePayment);
 

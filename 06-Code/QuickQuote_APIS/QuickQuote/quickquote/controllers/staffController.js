@@ -1,5 +1,3 @@
-// staffController.js
-
 const Staff = require('../models/staff');
 
 // Crear un nuevo personal
@@ -12,6 +10,21 @@ exports.createStaff = async (req, res) => {
     res.status(201).json(newStaff);  // Personal creado exitosamente
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el personal', error: error.message });
+  }
+};
+
+// Obtener todos los personal
+exports.getAllStaff = async (req, res) => {
+  try {
+    const staff = await Staff.find();  // Obtener todos los personal
+
+    if (staff.length === 0) {
+      return res.status(404).json({ message: "No hay personal registrado" });
+    }
+
+    res.status(200).json(staff);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener el personal", error: error.message });
   }
 };
 

@@ -8,6 +8,9 @@ router.post("/createEvent", eventController.createEvent);
 // Obtener un evento por ID
 router.get("/:id", eventController.getEvent);
 
+// Obtener todos los eventos (getAll)
+router.get("/", eventController.getAllEvents);
+
 // Actualizar un evento
 router.put("/updateEvent", eventController.updateEvent);
 

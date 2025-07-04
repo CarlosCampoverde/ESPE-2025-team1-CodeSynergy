@@ -8,6 +8,9 @@ router.post("/createStaff", staffController.createStaff);
 // Obtener un personal por ID
 router.get("/:id", staffController.getStaff);
 
+// Obtener todos los personal (getAll)
+router.get("/", staffController.getAllStaff);
+
 // Actualizar un personal
 router.put("/updateStaff", staffController.updateStaff);
 

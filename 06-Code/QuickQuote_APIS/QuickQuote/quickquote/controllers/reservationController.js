@@ -1,5 +1,3 @@
-// reservationController.js
-
 const Reservation = require('../models/reservation');
 
 // Crear una nueva reserva
@@ -29,6 +27,21 @@ exports.getReservation = async (req, res) => {
     res.status(200).json(reservation);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener la reserva", error: error.message });
+  }
+};
+
+// Obtener todas las reservas
+exports.getAllReservations = async (req, res) => {
+  try {
+    const reservations = await Reservation.find();  // Obtener todas las reservas
+
+    if (reservations.length === 0) {
+      return res.status(404).json({ message: "No hay reservas registradas" });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las reservas", error: error.message });
   }
 };
 

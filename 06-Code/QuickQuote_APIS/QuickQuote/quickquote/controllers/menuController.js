@@ -1,5 +1,3 @@
-// menuController.js
-
 const Menu = require('../models/menu');
 
 // Crear un nuevo menú
@@ -33,6 +31,20 @@ exports.getMenu = async (req, res) => {
   }
 };
 
+// Obtener todos los menús
+exports.getAllMenus = async (req, res) => {
+  try {
+    const menus = await Menu.find();  // Obtener todos los menús
+
+    if (menus.length === 0) {
+      return res.status(404).json({ message: "No hay menús registrados" });
+    }
+
+    res.status(200).json(menus);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los menús", error: error.message });
+  }
+};
 // Actualizar los detalles de un menú
 exports.updateMenu = async (req, res) => {
   const { id, menu_name, menu_description, menu_price } = req.body;
