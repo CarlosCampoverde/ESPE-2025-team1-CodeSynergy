@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema(
   {
-    id: { type: Number},
+    id: { type: Number, unique: true }, // Añadido unique: true para garantizar IDs únicos
     event_name: { type: String },
     event_date: { type: Date },
     event_location: { type: String },

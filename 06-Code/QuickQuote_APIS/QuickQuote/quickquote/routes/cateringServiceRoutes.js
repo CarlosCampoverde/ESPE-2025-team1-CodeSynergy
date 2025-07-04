@@ -1,11 +1,12 @@
-// cateringServiceRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const cateringServiceController = require('../controllers/cateringServiceController');
 
 // Obtener todos los servicios de catering
 router.get("/", cateringServiceController.getAllCateringServices);
+
+// Obtener todos los servicios de catering públicos
+router.get("/public", cateringServiceController.getPublicCateringServices);
 
 // Obtener un servicio de catering por ID
 router.get("/:id", cateringServiceController.getCateringService);

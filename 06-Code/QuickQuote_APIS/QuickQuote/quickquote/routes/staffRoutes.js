@@ -2,17 +2,23 @@ const express = require("express");
 const router = express.Router();
 const staffController = require("../controllers/staffController");
 
-// Crear un nuevo personal
-router.post("/createStaff", staffController.createStaff);
+// Obtener todos los personal (getAll)
+router.get("/", staffController.getAllStaff);
+
+// Obtener todos los administradores
+router.get("/admins", staffController.getAdminStaff);
 
 // Obtener un personal por ID
 router.get("/:id", staffController.getStaff);
 
-// Obtener todos los personal (getAll)
-router.get("/", staffController.getAllStaff);
+// Crear un nuevo personal
+router.post("/createStaff", staffController.createStaff);
 
 // Actualizar un personal
 router.put("/updateStaff", staffController.updateStaff);
+
+// Asignar o actualizar el rol de un miembro del staff
+router.patch("/assign-role/:id", staffController.assignStaffRole);
 
 // Eliminar un personal
 router.delete("/deleteStaff/:id", staffController.deleteStaff);

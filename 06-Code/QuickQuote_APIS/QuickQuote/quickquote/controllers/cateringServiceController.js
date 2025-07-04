@@ -4,13 +4,13 @@ const mongoose = require("mongoose");
 // Obtener todos los servicios de catering
 exports.getAllCateringServices = async (req, res) => {
   try {
-    const cateringServices = await CateringService.find();  // Obtener todos los servicios
+    const cateringServices = await CateringService.find();
 
     if (cateringServices.length === 0) {
       return res.status(404).json({ message: "No hay servicios de catering registrados" });
     }
 
-    res.status(200).json(cateringServices);  // Retornar los servicios encontrados
+    res.status(200).json(cateringServices);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los servicios de catering", error: error.message });
   }
@@ -18,29 +18,47 @@ exports.getAllCateringServices = async (req, res) => {
 
 // Obtener un servicio de catering por ID
 exports.getCateringService = async (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id); // Convertir a número para consistencia
 
   try {
-    const cateringService = await CateringService.findOne({ id: id });
+    const cateringService = await CateringService.findOne({ id });
 
     if (!cateringService) {
       return res.status(404).json({ message: "Servicio de catering no encontrado" });
     }
 
-    res.status(200).json(cateringService);  // Retornar el servicio de catering encontrado
+    res.status(200).json(cateringService);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el servicio de catering", error: error.message });
   }
 };
 
+// Obtener todos los servicios de catering públicos
+exports.getPublicCateringServices = async (req, res) => {
+  try {
+    const publicServices = await CateringService.find(
+      { $or: [{ is_public: true }, { is_public: { $exists: false } }] },
+      'service_name service_description service_price'
+    );
+
+    if (publicServices.length === 0) {
+      return res.status(404).json({ message: "No hay servicios de catering públicos disponibles" });
+    }
+
+    res.status(200).json(publicServices);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los servicios de catering públicos", error: error.message });
+  }
+};
+
 // Crear un nuevo servicio de catering
 exports.createCateringService = async (req, res) => {
-  const { id, service_name, service_description, service_price } = req.body;
+  const { id, service_name, service_description, service_price, is_public } = req.body;
 
   try {
-    const newService = new CateringService({ id, service_name, service_description, service_price });
+    const newService = new CateringService({ id, service_name, service_description, service_price, is_public });
     await newService.save();
-    res.status(201).json(newService);  // Servicio creado exitosamente
+    res.status(201).json(newService);
   } catch (error) {
     res.status(500).json({ message: "Error al crear el servicio de catering", error: error.message });
   }
@@ -48,22 +66,22 @@ exports.createCateringService = async (req, res) => {
 
 // Actualizar un servicio de catering existente
 exports.updateCateringService = async (req, res) => {
-  const { id, service_name, service_description, service_price } = req.body;
+  const { id, service_name, service_description, service_price, is_public } = req.body;
 
   try {
-    const service = await CateringService.findOne({ id: id });
+    const service = await CateringService.findOne({ id });
 
     if (!service) {
       return res.status(404).json({ message: "Servicio de catering no encontrado" });
     }
 
-    // Actualizar los campos del servicio
     service.service_name = service_name;
     service.service_description = service_description;
     service.service_price = service_price;
+    service.is_public = is_public !== undefined ? is_public : service.is_public;
 
     await service.save();
-    res.status(200).json(service);  // Servicio actualizado
+    res.status(200).json(service);
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar el servicio de catering", error: error.message });
   }
@@ -71,16 +89,16 @@ exports.updateCateringService = async (req, res) => {
 
 // Eliminar un servicio de catering
 exports.deleteCateringService = async (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id); // Convertir a número para consistencia
 
   try {
-    const service = await CateringService.findOne({ id: id });
+    const service = await CateringService.findOne({ id });
 
     if (!service) {
       return res.status(404).json({ message: "Servicio de catering no encontrado" });
     }
 
-    await CateringService.deleteOne({ id: id });
+    await CateringService.deleteOne({ id });
     res.status(200).json({ message: "Servicio de catering eliminado exitosamente" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el servicio de catering", error: error.message });

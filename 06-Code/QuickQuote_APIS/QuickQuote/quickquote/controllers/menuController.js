@@ -2,12 +2,12 @@ const Menu = require('../models/menu');
 
 // Crear un nuevo menú
 exports.createMenu = async (req, res) => {
-  const { id, menu_name, menu_description, menu_price } = req.body;
+  const { id, menu_name, menu_description, menu_price, event_type } = req.body;
 
   try {
-    const newMenu = new Menu({ id, menu_name, menu_description, menu_price });
+    const newMenu = new Menu({ id, menu_name, menu_description, menu_price, event_type });
     await newMenu.save();
-    res.status(201).json(newMenu);  // Menú creado exitosamente
+    res.status(201).json(newMenu);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el menú', error: error.message });
   }
@@ -18,23 +18,22 @@ exports.getMenu = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Buscar Menuo usando el campo id directamente
-    const menu = await Menu.findOne({ id: id });  // Cambié 'menu' a 'Menu'
+    const menu = await Menu.findOne({ id });
 
     if (!menu) {
-      return res.status(404).json({ message: "Menu no encontrado" });
+      return res.status(404).json({ message: "Menú no encontrado" });
     }
 
     res.status(200).json(menu);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener el Menuo", error: error.message });
+    res.status(500).json({ message: "Error al obtener el menú", error: error.message });
   }
 };
 
 // Obtener todos los menús
 exports.getAllMenus = async (req, res) => {
   try {
-    const menus = await Menu.find();  // Obtener todos los menús
+    const menus = await Menu.find();
 
     if (menus.length === 0) {
       return res.status(404).json({ message: "No hay menús registrados" });
@@ -45,9 +44,31 @@ exports.getAllMenus = async (req, res) => {
     res.status(500).json({ message: "Error al obtener los menús", error: error.message });
   }
 };
+
+// Obtener menús por tipo de evento
+exports.getMenusByEventType = async (req, res) => {
+  const { event_type } = req.params;
+
+  try {
+    const query = event_type === "General" 
+      ? { $or: [{ event_type }, { event_type: { $exists: false } }] }
+      : { event_type };
+    
+    const menus = await Menu.find(query, 'menu_name menu_description menu_price');
+
+    if (menus.length === 0) {
+      return res.status(404).json({ message: `No hay menús para el tipo de evento ${event_type}` });
+    }
+
+    res.status(200).json(menus);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los menús por tipo de evento", error: error.message });
+  }
+};
+
 // Actualizar los detalles de un menú
 exports.updateMenu = async (req, res) => {
-  const { id, menu_name, menu_description, menu_price } = req.body;
+  const { id, menu_name, menu_description, menu_price, event_type } = req.body;
 
   try {
     const menu = await Menu.findOne({ id });
@@ -59,9 +80,10 @@ exports.updateMenu = async (req, res) => {
     menu.menu_name = menu_name;
     menu.menu_description = menu_description;
     menu.menu_price = menu_price;
+    menu.event_type = event_type;
 
     await menu.save();
-    res.status(200).json(menu);  // Menú actualizado
+    res.status(200).json(menu);
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar el menú", error: error.message });
   }
