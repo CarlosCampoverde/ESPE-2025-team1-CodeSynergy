@@ -2,14 +2,17 @@ const express = require("express");
 const router = express.Router();
 const menuController = require("../controllers/menuController");
 
-// Crear un nuevo menú
-router.post("/createMenu", menuController.createMenu);
+// Obtener todos los menús (getAll)
+router.get("/", menuController.getAllMenus);
+
+// Obtener menús por tipo de evento
+router.get("/type/:event_type", menuController.getMenusByEventType);
 
 // Obtener un menú por ID
 router.get("/:id", menuController.getMenu);
 
-// Obtener todos los menús (getAll)
-router.get("/", menuController.getAllMenus);
+// Crear un nuevo menú
+router.post("/createMenu", menuController.createMenu);
 
 // Actualizar un menú
 router.put("/updateMenu", menuController.updateMenu);

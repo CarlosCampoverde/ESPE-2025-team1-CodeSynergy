@@ -7,7 +7,7 @@ exports.createEvent = async (req, res) => {
   try {
     const newEvent = new Event({ id, event_name, event_date, event_location, event_type });
     await newEvent.save();
-    res.status(201).json(newEvent);  // Evento creado exitosamente
+    res.status(201).json(newEvent);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el evento', error: error.message });
   }
@@ -18,8 +18,7 @@ exports.getEvent = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Buscar Evento usando el campo id directamente
-    const event = await Event.findOne({ id: id });  // Cambié 'event' a 'Event'
+    const event = await Event.findOne({ id: id });
 
     if (!event) {
       return res.status(404).json({ message: "Evento no encontrado" });
@@ -27,14 +26,14 @@ exports.getEvent = async (req, res) => {
 
     res.status(200).json(event);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener el Evento", error: error.message });
+    res.status(500).json({ message: "Error al obtener el evento", error: error.message });
   }
 };
 
 // Obtener todos los eventos
 exports.getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();  // Obtener todos los eventos
+    const events = await Event.find();
 
     if (events.length === 0) {
       return res.status(404).json({ message: "No hay eventos registrados" });
@@ -46,38 +45,51 @@ exports.getAllEvents = async (req, res) => {
   }
 };
 
+// Obtener eventos próximos
+exports.getUpcomingEvents = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const upcomingEvents = await Event.find(
+      { event_date: { $gt: currentDate } },
+      'event_name event_date event_location'
+    );
+
+    if (upcomingEvents.length === 0) {
+      return res.status(404).json({ message: "No hay eventos próximos registrados" });
+    }
+
+    res.status(200).json(upcomingEvents);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los eventos próximos", error: error.message });
+  }
+};
+
 // Actualizar los detalles de un evento
 exports.updateEvent = async (req, res) => {
   const { id, event_name, event_date, event_location, event_type } = req.body;
 
   try {
-    // Verificar que todos los campos necesarios estén presentes
     if (!id || !event_name || !event_date || !event_location || !event_type) {
       return res.status(400).json({ message: "Todos los campos son requeridos." });
     }
 
-    // Buscar el evente por id (no por _id)
     const event = await Event.findOne({ id: id });
 
     if (!event) {
       return res.status(404).json({ message: "Evento no encontrado" });
     }
 
-    // Actualizar los campos del evente
     event.event_name = event_name;
     event.event_date = event_date;
     event.event_location = event_location;
     event.event_type = event_type;
 
-    // Guardar el evente actualizado
     await event.save();
-
-    res.status(200).json(event);  // Retornar el evente actualizado
+    res.status(200).json(event);
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar el evente", error: error.message });
+    res.status(500).json({ message: "Error al actualizar el evento", error: error.message });
   }
 };
-
 
 // Eliminar un evento
 exports.deleteEvent = async (req, res) => {
