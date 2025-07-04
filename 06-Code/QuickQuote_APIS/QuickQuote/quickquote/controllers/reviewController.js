@@ -86,3 +86,20 @@ exports.deleteReview = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar la reseña", error: error.message });
   }
 };
+
+// Obtener calificaciones de un lugar
+exports.getReviewsByVenue = async (req, res) => {
+  const { venue_id } = req.params;
+
+  try {
+    const reviews = await Review.find({ id_venue: venue_id }).select('id_client review_rating review_comments');
+
+    if (reviews.length === 0) {
+      return res.status(404).json({ message: "No se encontraron reseñas para este lugar" });
+    }
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las reseñas del lugar", error: error.message });
+  }
+};

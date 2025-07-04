@@ -84,3 +84,20 @@ exports.deleteVenue = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar el lugar", error: error.message });
   }
 };
+
+// Buscar lugares por capacidad mínima
+exports.getVenuesByCapacity = async (req, res) => {
+  const { min_capacity } = req.params;
+
+  try {
+    const venues = await Venue.find({ venue_capacity: { $gte: parseInt(min_capacity) } }).select('venue_name venue_capacity venue_location');
+
+    if (venues.length === 0) {
+      return res.status(404).json({ message: "No se encontraron lugares con la capacidad mínima especificada" });
+    }
+
+    res.status(200).json(venues);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los lugares por capacidad", error: error.message });
+  }
+};

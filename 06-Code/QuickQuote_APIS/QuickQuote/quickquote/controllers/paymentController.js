@@ -1,4 +1,6 @@
 const Payment = require('../models/payment');
+const Reservation = require('../models/reservation');
+const Menu = require('../models/menu'); // Assumed Menu model
 
 // Crear un nuevo pago
 exports.createPayment = async (req, res) => {
@@ -82,5 +84,42 @@ exports.deletePayment = async (req, res) => {
     res.status(200).json({ message: "Pago eliminado exitosamente" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el pago", error: error.message });
+  }
+};
+
+// Verificar pago vs cotización
+exports.verifyPayment = async (req, res) => {
+  const { reservation_id, payment_amount } = req.body;
+
+  try {
+    // Buscar la reserva por id_reservation
+    const reservation = await Reservation.findOne({ id: reservation_id });
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+
+    // Buscar el menú asociado a la reserva
+    const menu = await Menu.findOne({ id: reservation.menu_id });
+
+    if (!menu) {
+      return res.status(404).json({ message: "Menú no encontrado" });
+    }
+
+    // Calcular el monto esperado (número de invitados * precio del menú)
+    const expected_amount = reservation.number_of_guests * menu.menu_price;
+
+    // Comparar el monto pagado con el esperado
+    const is_complete = payment_amount >= expected_amount;
+    const difference = expected_amount - payment_amount;
+
+    // Devolver la respuesta según el formato especificado
+    res.status(200).json({
+      is_complete,
+      expected_amount,
+      difference: difference > 0 ? difference : 0
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error al verificar el pago", error: error.message });
   }
 };

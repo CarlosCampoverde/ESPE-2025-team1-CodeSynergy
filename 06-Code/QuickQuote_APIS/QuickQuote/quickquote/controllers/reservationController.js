@@ -86,3 +86,28 @@ exports.deleteReservation = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar la reserva", error: error.message });
   }
 };
+
+// Obtener historial de reservas por cliente
+exports.getReservationsByClient = async (req, res) => {
+  const { client_id } = req.params;
+
+  try {
+    const reservations = await Reservation.find({ id_client: client_id }).select('id menu_id number_of_guests reservation_date');
+
+    if (reservations.length === 0) {
+      return res.status(404).json({ message: "No se encontraron reservas para este cliente" });
+    }
+
+    // Formatear la respuesta según el esquema especificado
+    const formattedReservations = reservations.map(reservation => ({
+      reservation_id: reservation.id,
+      menu_id: reservation.menu_id,
+      number_of_guests: reservation.number_of_guests,
+      reservation_date: reservation.reservation_date.toISOString().split('T')[0]
+    }));
+
+    res.status(200).json(formattedReservations);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener el historial de reservas", error: error.message });
+  }
+};

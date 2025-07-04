@@ -17,4 +17,7 @@ router.put("/updateReview", reviewController.updateReview);
 // Eliminar una reseña
 router.delete("/deleteReview/:id", reviewController.deleteReview);
 
+// Obtener calificaciones de un lugar
+router.get("/venue/:venue_id", reviewController.getReviewsByVenue);
+
 module.exports = router;
