@@ -111,3 +111,38 @@ exports.getReservationsByClient = async (req, res) => {
     res.status(500).json({ message: "Error al obtener el historial de reservas", error: error.message });
   }
 };
+
+// Obtener reservas por fecha
+exports.getReservationsByDate = async (req, res) => {
+  const { yyyy_mm_dd } = req.params; // Fecha en formato yyyy-mm-dd
+
+  try {
+    // Convertir la fecha de string a objeto Date (solo fecha, sin hora)
+    const date = new Date(yyyy_mm_dd);
+    date.setHours(0, 0, 0, 0); // Establecer inicio del día
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1); // Fin del día
+
+    // Filtrar reservas por fecha
+    const reservations = await Reservation.find({
+      reservation_date: { $gte: date, $lt: nextDay },
+    }).select('id reservation_date reservation_time number_of_guests menu_id');
+
+    if (reservations.length === 0) {
+      return res.status(404).json({ message: `No hay reservas registradas para el ${yyyy_mm_dd}` });
+    }
+
+    // Formatear la respuesta según el JSON del documento
+    const formattedReservations = reservations.map(reservation => ({
+      id: reservation.id,
+      reservation_date: reservation.reservation_date.toISOString().split('T')[0],
+      reservation_time: reservation.reservation_time,
+      number_of_guests: reservation.number_of_guests,
+      menu_id: reservation.menu_id,
+    }));
+
+    res.status(200).json(formattedReservations);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las reservas por fecha", error: error.message });
+  }
+};

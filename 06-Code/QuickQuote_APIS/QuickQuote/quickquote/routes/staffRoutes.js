@@ -23,4 +23,6 @@ router.patch("/assign-role/:id", staffController.assignStaffRole);
 // Eliminar un personal
 router.delete("/deleteStaff/:id", staffController.deleteStaff);
 
+
+
 module.exports = router;

@@ -20,4 +20,6 @@ router.delete("/deleteReview/:id", reviewController.deleteReview);
 // Obtener calificaciones de un lugar
 router.get("/venue/:venue_id", reviewController.getReviewsByVenue);
 
+router.get("/byRating/:rating", reviewController.getReviewsByRating);
+
 module.exports = router;

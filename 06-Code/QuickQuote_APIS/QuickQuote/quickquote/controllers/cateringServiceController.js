@@ -104,3 +104,42 @@ exports.deleteCateringService = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar el servicio de catering", error: error.message });
   }
 };
+
+// Generar reporte básico de servicios de catering
+exports.generateServiceReport = async (req, res) => {
+  try {
+    console.log("Iniciando consulta a CateringService...");
+
+    // Usar el modelo de Mongoose en lugar de la colección directa
+    const rawServices = await CateringService.find().lean(); // .lean() para mejorar rendimiento
+
+    // Validar y mapear los servicios
+    const services = rawServices.map(service => {
+      if (!service.id || !service.service_name || service.service_price === undefined) {
+        console.warn(`Servicio con ID ${service.id} tiene datos incompletos`);
+        return null;
+      }
+      return {
+        id: service.id,
+        service_name: service.service_name,
+        service_price: service.service_price
+      };
+    }).filter(service => service !== null); // Filtrar servicios inválidos
+
+    if (!services.length) {
+      return res.status(404).json({ message: "No se encontraron servicios de catering válidos" });
+    }
+
+    const report = {
+      total_services: services.length,
+      services: services,
+      generated_at: new Date().toISOString()
+    };
+
+    console.log("Reporte generado:", JSON.stringify(report, null, 2));
+    res.status(200).json(report);
+  } catch (error) {
+    console.error("Error en generateServiceReport:", error.message, "Stack:", error.stack);
+    res.status(500).json({ message: "Error al generar el reporte", error: error.message });
+  }
+};

@@ -20,4 +20,7 @@ router.put("/updateCateringService", cateringServiceController.updateCateringSer
 // Eliminar un servicio de catering
 router.delete("/deleteCateringService/:id", cateringServiceController.deleteCateringService);
 
+// Generar reporte básico de servicios
+router.get('/report', cateringServiceController.generateServiceReport);
+
 module.exports = router;

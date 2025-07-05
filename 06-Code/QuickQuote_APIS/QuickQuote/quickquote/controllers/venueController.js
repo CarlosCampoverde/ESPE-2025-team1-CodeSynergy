@@ -101,3 +101,26 @@ exports.getVenuesByCapacity = async (req, res) => {
     res.status(500).json({ message: "Error al obtener los lugares por capacidad", error: error.message });
   }
 };
+
+// Buscar lugares por rango de capacidad
+exports.searchVenuesByCapacity = async (req, res) => {
+  const { min, max } = req.query;
+
+  try {
+    if (!min || !max || isNaN(min) || isNaN(max) || parseInt(min) > parseInt(max)) {
+      return res.status(400).json({ message: "Parámetros min y max son requeridos y min debe ser menor o igual a max" });
+    }
+
+    const venues = await Venue.find({
+      venue_capacity: { $gte: parseInt(min), $lte: parseInt(max) },
+    }).select('id venue_name venue_capacity venue_location');
+
+    if (venues.length === 0) {
+      return res.status(404).json({ message: `No se encontraron lugares con capacidad entre ${min} y ${max}` });
+    }
+
+    res.status(200).json(venues);
+  } catch (error) {
+    res.status(500).json({ message: "Error al buscar lugares por capacidad", error: error.message });
+  }
+};

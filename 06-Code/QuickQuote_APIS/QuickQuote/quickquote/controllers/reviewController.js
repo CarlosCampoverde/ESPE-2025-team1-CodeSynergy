@@ -103,3 +103,26 @@ exports.getReviewsByVenue = async (req, res) => {
     res.status(500).json({ message: "Error al obtener las reseñas del lugar", error: error.message });
   }
 };
+
+// Obtener reseñas por calificación mínima
+exports.getReviewsByRating = async (req, res) => {
+  const { rating } = req.params;
+
+  try {
+    const minRating = parseFloat(rating);
+    if (isNaN(minRating) || minRating < 0 || minRating > 5) {
+      return res.status(400).json({ message: "La calificación debe ser un número entre 0 y 5" });
+    }
+
+    const reviews = await Review.find({ review_rating: { $gte: minRating } })
+      .select('id id_client id_venue review_rating review_comments');
+
+    if (reviews.length === 0) {
+      return res.status(404).json({ message: `No se encontraron reseñas con calificación mayor o igual a ${minRating}` });
+    }
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las reseñas por calificación", error: error.message });
+  }
+};

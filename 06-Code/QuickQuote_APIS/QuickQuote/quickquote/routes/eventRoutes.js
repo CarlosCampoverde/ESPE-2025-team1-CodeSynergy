@@ -20,4 +20,7 @@ router.put("/updateEvent", eventController.updateEvent);
 // Eliminar un evento
 router.delete("/deleteEvent/:id", eventController.deleteEvent);
 
+// Obtener eventos por cliente
+router.get("/byClient/:id_client", eventController.getEventsByClient);
+
 module.exports = router;

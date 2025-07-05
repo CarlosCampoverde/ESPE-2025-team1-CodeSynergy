@@ -35,7 +35,7 @@ app.use("/quickquote/webresources/Staff", staffRoutes);
 app.use("/quickquote/webresources/Venues", venueRoutes);
 
 // Iniciar el servidor en el puerto configurado en el archivo .env
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

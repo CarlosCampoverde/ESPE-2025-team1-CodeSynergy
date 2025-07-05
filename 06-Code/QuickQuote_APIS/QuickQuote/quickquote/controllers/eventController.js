@@ -108,3 +108,23 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar el evento", error: error.message });
   }
 };
+
+// Obtener eventos por cliente
+exports.getEventsByClient = async (req, res) => {
+  const { id_client } = req.params;
+
+  try {
+    // Suponemos que los eventos están relacionados a través de reservas
+    const events = await Event.find({
+      id: { $in: await Reservation.distinct("id", { id_client: id_client }) },
+    }).select('id event_name event_date event_location event_type');
+
+    if (events.length === 0) {
+      return res.status(404).json({ message: `No se encontraron eventos para el cliente ${id_client}` });
+    }
+
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los eventos por cliente", error: error.message });
+  }
+};
