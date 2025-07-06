@@ -1,4 +1,5 @@
 const CateringService = require('../models/cateringservice');
+const Menu = require('../models/menu');
 const mongoose = require("mongoose");
 
 // Obtener todos los servicios de catering
@@ -192,5 +193,84 @@ exports.generateCateringQuote = async (req, res) => {
     res.status(201).json(quote);
   } catch (error) {
     res.status(500).json({ message: "Error al generar la cotización", error: error.message });
+  }
+};
+
+// Generar una cotización completa con menú y servicios adicionales
+exports.generateFullCateringQuote = async (req, res) => {
+  const { menu_id, number_of_guests, service_ids, event_type } = req.body;
+
+  try {
+    // Validar campos requeridos
+    if (!menu_id || !number_of_guests) {
+      return res.status(400).json({ message: "menu_id y number_of_guests son requeridos" });
+    }
+
+    // Validar que number_of_guests sea un número positivo
+    const guests = parseInt(number_of_guests);
+    if (isNaN(guests) || guests <= 0) {
+      return res.status(400).json({ message: "number_of_guests debe ser un número positivo" });
+    }
+
+    // Buscar el menú por id
+    const menu = await Menu.findOne({ id: menu_id });
+    if (!menu) {
+      return res.status(404).json({ message: "Menú no encontrado" });
+    }
+
+    // Calcular subtotal del menú
+    const menu_subtotal = menu.menu_price * guests;
+
+    // Inicializar subtotal de servicios adicionales
+    let services_subtotal = 0;
+    let services_details = [];
+
+    // Si se proporcionan service_ids, calcular subtotal de servicios
+    if (service_ids && Array.isArray(service_ids) && service_ids.length > 0) {
+      const services = await CateringService.find({ 
+        id: { $in: service_ids },
+        $or: [{ is_public: true }, { is_public: { $exists: false } }]
+      });
+
+      if (services.length !== service_ids.length) {
+        return res.status(404).json({ message: "Uno o más servicios de catering no encontrados o no públicos" });
+      }
+
+      // Calcular subtotal y detalles de servicios
+      services_subtotal = services.reduce((total, service) => {
+        const service_total = service.service_price * guests;
+        services_details.push({
+          service_id: service.id,
+          service_name: service.service_name,
+          price_per_person: service.service_price,
+          service_total
+        });
+        return total + service_total;
+      }, 0);
+    }
+
+    // Calcular cotización total
+    const total_quote = menu_subtotal + services_subtotal;
+
+    // Generar un quote_id único (simulado)
+    const quote_id = Math.floor(Math.random() * 10000) + 1;
+
+    // Preparar la respuesta
+    const quote = {
+      quote_id,
+      menu_id,
+      menu_name: menu.menu_name,
+      menu_price_per_person: menu.menu_price,
+      number_of_guests: guests,
+      menu_subtotal,
+      services_subtotal,
+      services: services_details,
+      total_quote,
+      event_type: event_type || "General"
+    };
+
+    res.status(201).json(quote);
+  } catch (error) {
+    res.status(500).json({ message: "Error al generar la cotización completa", error: error.message });
   }
 };

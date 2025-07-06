@@ -25,4 +25,6 @@ router.get('/report', cateringServiceController.generateServiceReport);
 
 router.post("/quote", cateringServiceController.generateCateringQuote);
 
+router.post("/fullQuote", cateringServiceController.generateFullCateringQuote);
+
 module.exports = router;
