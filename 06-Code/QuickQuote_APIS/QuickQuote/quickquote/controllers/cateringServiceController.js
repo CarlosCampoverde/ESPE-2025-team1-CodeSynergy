@@ -143,3 +143,54 @@ exports.generateServiceReport = async (req, res) => {
     res.status(500).json({ message: "Error al generar el reporte", error: error.message });
   }
 };
+
+// Generar una cotización para un servicio de catering
+exports.generateCateringQuote = async (req, res) => {
+  const { service_id, number_of_guests, event_type } = req.body;
+
+  try {
+    // Validar que los campos requeridos estén presentes
+    if (!service_id || !number_of_guests) {
+      return res.status(400).json({ message: "service_id y number_of_guests son requeridos" });
+    }
+
+    // Validar que number_of_guests sea un número positivo
+    const guests = parseInt(number_of_guests);
+    if (isNaN(guests) || guests <= 0) {
+      return res.status(400).json({ message: "number_of_guests debe ser un número positivo" });
+    }
+
+    // Buscar el servicio de catering por id
+    const service = await CateringService.findOne({ id: service_id });
+
+    if (!service) {
+      return res.status(404).json({ message: "Servicio de catering no encontrado" });
+    }
+
+    // Validar que el servicio sea público si es necesario
+    if (service.is_public === false) {
+      return res.status(403).json({ message: "El servicio de catering no está disponible para cotización pública" });
+    }
+
+    // Calcular el costo total estimado
+    const estimated_total = service.service_price * guests;
+
+    // Generar un quote_id único (simulado)
+    const quote_id = Math.floor(Math.random() * 10000) + 1;
+
+    // Preparar la respuesta
+    const quote = {
+      quote_id,
+      service_id,
+      service_name: service.service_name,
+      price_per_person: service.service_price,
+      number_of_guests: guests,
+      estimated_total,
+      event_type: event_type || "General"
+    };
+
+    res.status(201).json(quote);
+  } catch (error) {
+    res.status(500).json({ message: "Error al generar la cotización", error: error.message });
+  }
+};

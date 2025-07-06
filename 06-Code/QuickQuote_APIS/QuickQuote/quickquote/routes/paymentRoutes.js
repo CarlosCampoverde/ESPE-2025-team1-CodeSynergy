@@ -20,4 +20,6 @@ router.delete("/deletePayment/:id", paymentController.deletePayment);
 // Verificar pago vs cotización
 router.post("/verify", paymentController.verifyPayment);
 
+router.get("/totalByDate/:date", paymentController.getTotalPaymentsByDate);
+
 module.exports = router;

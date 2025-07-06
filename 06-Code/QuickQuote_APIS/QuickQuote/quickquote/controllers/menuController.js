@@ -106,3 +106,35 @@ exports.deleteMenu = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar el menú", error: error.message });
   }
 };
+
+// Buscar menús por rango de precio
+exports.searchMenusByPrice = async (req, res) => {
+  const { min, max } = req.query;
+
+  try {
+    // Validar que min y max sean números válidos
+    const minPrice = parseFloat(min);
+    const maxPrice = parseFloat(max);
+
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      return res.status(400).json({ message: "Los parámetros min y max deben ser números válidos" });
+    }
+
+    if (minPrice > maxPrice) {
+      return res.status(400).json({ message: "El precio mínimo no puede ser mayor que el precio máximo" });
+    }
+
+    // Buscar menús dentro del rango de precios
+    const menus = await Menu.find({
+      menu_price: { $gte: minPrice, $lte: maxPrice }
+    }, 'menu_name menu_description menu_price event_type');
+
+    if (menus.length === 0) {
+      return res.status(404).json({ message: `No hay menús en el rango de precios de ${minPrice} a ${maxPrice}` });
+    }
+
+    res.status(200).json(menus);
+  } catch (error) {
+    res.status(500).json({ message: "Error al buscar menús por rango de precio", error: error.message });
+  }
+};

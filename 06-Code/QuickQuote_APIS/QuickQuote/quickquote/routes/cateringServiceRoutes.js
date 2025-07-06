@@ -23,4 +23,6 @@ router.delete("/deleteCateringService/:id", cateringServiceController.deleteCate
 // Generar reporte básico de servicios
 router.get('/report', cateringServiceController.generateServiceReport);
 
+router.post("/quote", cateringServiceController.generateCateringQuote);
+
 module.exports = router;

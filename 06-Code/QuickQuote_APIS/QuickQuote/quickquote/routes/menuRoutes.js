@@ -20,4 +20,6 @@ router.put("/updateMenu", menuController.updateMenu);
 // Eliminar un menú
 router.delete("/deleteMenu/:id", menuController.deleteMenu);
 
+// Nueva ruta para buscar menús por rango de precio
+router.get("/searchByPrice", menuController.searchMenusByPrice);
 module.exports = router;

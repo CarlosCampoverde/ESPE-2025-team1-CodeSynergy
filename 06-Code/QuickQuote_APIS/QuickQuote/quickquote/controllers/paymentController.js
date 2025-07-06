@@ -123,3 +123,51 @@ exports.verifyPayment = async (req, res) => {
     res.status(500).json({ message: "Error al verificar el pago", error: error.message });
   }
 };
+
+// Obtener el total pagado por fecha
+exports.getTotalPaymentsByDate = async (req, res) => {
+  const { date } = req.params;
+
+  try {
+    // Validate date format (yyyy-mm-dd)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(date)) {
+      return res.status(400).json({ message: "Formato de fecha inválido. Use yyyy-mm-dd" });
+    }
+
+    // Convert the input date to a Date object
+    const startDate = new Date(date);
+    if (isNaN(startDate)) {
+      return res.status(400).json({ message: "Fecha inválida" });
+    }
+
+    // Set the start and end of the day for the query
+    const startOfDay = new Date(startDate.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(startDate.setHours(23, 59, 59, 999));
+
+    // Aggregate payments to sum payment_amount for the specified date
+    const totalPayments = await Payment.aggregate([
+      {
+        $match: {
+          payment_date: {
+            $gte: startOfDay,
+            $lte: endOfDay
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$payment_amount" }
+        }
+      }
+    ]);
+
+    // If no payments are found, return 0 as total
+    const total = totalPayments.length > 0 ? totalPayments[0].total : 0;
+
+    res.status(200).json({ date, total });
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener el total de pagos por fecha", error: error.message });
+  }
+};
