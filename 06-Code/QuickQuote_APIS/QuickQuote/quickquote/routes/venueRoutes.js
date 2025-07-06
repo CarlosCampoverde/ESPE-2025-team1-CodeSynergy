@@ -21,6 +21,5 @@ router.delete("/deleteVenue/:id", venueController.deleteVenue);
 router.get("/by-capacity/:min_capacity", venueController.getVenuesByCapacity);
 
 // Buscar lugares por rango de capacidad
-router.get("/searchByCapacity", venueController.searchVenuesByCapacity);
-
+router.get("/searchByCapacity/:min/:max", venueController.searchVenuesByCapacity);
 module.exports = router;

@@ -104,7 +104,7 @@ exports.getVenuesByCapacity = async (req, res) => {
 
 // Buscar lugares por rango de capacidad
 exports.searchVenuesByCapacity = async (req, res) => {
-  const { min, max } = req.query;
+  const { min, max } = req.params; // Cambiar de req.query a req.params
 
   try {
     if (!min || !max || isNaN(min) || isNaN(max) || parseInt(min) > parseInt(max)) {

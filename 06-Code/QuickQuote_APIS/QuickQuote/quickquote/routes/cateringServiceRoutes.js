@@ -23,8 +23,9 @@ router.delete("/deleteCateringService/:id", cateringServiceController.deleteCate
 // Generar reporte básico de servicios
 router.get('/report', cateringServiceController.generateServiceReport);
 
-router.post("/quote", cateringServiceController.generateCateringQuote);
+router.post("/quote/", cateringServiceController.generateCateringQuote);
 
-router.post("/fullQuote", cateringServiceController.generateFullCateringQuote);
+// Ruta para generar la cotización completa con el `client_id` y `service_id`
+router.post('/fullQuote/:id', cateringServiceController.generateFullCateringQuoteWithClient);
 
 module.exports = router;
