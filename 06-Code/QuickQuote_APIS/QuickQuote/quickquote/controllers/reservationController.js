@@ -136,7 +136,7 @@ exports.getReservationsByDate = async (req, res) => {
     const formattedReservations = reservations.map(reservation => ({
       id: reservation.id,
       reservation_date: reservation.reservation_date.toISOString().split('T')[0],
-      reservation_time: reservation.reservation_time,
+      reservation_time: reservation.time,
       number_of_guests: reservation.number_of_guests,
       menu_id: reservation.menu_id,
     }));
@@ -144,5 +144,42 @@ exports.getReservationsByDate = async (req, res) => {
     res.status(200).json(formattedReservations);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener las reservas por fecha", error: error.message });
+  }
+};
+// Obtener reservas por rango de fechas
+exports.getReservationsByDateRange = async (req, res) => {
+  const { startDate, endDate } = req.params; // Fechas en formato yyyy-mm-dd
+
+  try {
+    // Convertir las fechas de string a objetos Date en UTC
+    const start = new Date(`${startDate}T00:00:00Z`);
+    const end = new Date(`${endDate}T23:59:59Z`);
+
+    // Validar que startDate sea menor o igual a endDate
+    if (start > end) {
+      return res.status(400).json({ message: "La fecha de inicio debe ser menor o igual a la fecha de fin" });
+    }
+
+    // Filtrar reservas por rango de fechas en UTC
+    const reservations = await Reservation.find({
+      reservation_date: { $gte: start, $lte: end },
+    }).select('id reservation_date reservation_time number_of_guests menu_id');
+
+    if (reservations.length === 0) {
+      return res.status(404).json({ message: `No hay reservas registradas entre ${startDate} y ${endDate}` });
+    }
+
+    // Formatear la respuesta
+    const formattedReservations = reservations.map(reservation => ({
+      id: reservation.id,
+      reservation_date: reservation.reservation_date.toISOString().split('T')[0],
+      reservation_time: reservation.reservation_time,
+      number_of_guests: reservation.number_of_guests,
+      menu_id: reservation.menu_id,
+    }));
+
+    res.status(200).json(formattedReservations);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las reservas por rango de fechas", error: error.message });
   }
 };

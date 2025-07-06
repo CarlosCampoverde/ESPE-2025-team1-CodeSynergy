@@ -23,4 +23,7 @@ router.get("/history/:client_id", reservationController.getReservationsByClient)
 // Obtener reservas por fecha
 router.get("/byDate/:yyyy_mm_dd", reservationController.getReservationsByDate);
 
+// Obtener reservas por rango de fechas
+router.get("/byDate/:startDate/:endDate", reservationController.getReservationsByDateRange);
+
 module.exports = router;
