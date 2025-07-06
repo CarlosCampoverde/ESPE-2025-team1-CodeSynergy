@@ -1,5 +1,7 @@
 const CateringService = require('../models/cateringservice');
 const Menu = require('../models/menu');
+const Client = require('../models/client'); // Agregar el modelo de Cliente
+const Quotation = require('../models/quotation'); // Agregar el modelo de Quotation
 const mongoose = require("mongoose");
 
 // Obtener todos los servicios de catering
@@ -197,6 +199,7 @@ exports.generateCateringQuote = async (req, res) => {
 };
 
 // Generar una cotización completa con menú y servicios adicionales
+// Generar una cotización completa con menú y servicios adicionales
 exports.generateFullCateringQuote = async (req, res) => {
   const { menu_id, number_of_guests, service_ids, event_type } = req.body;
 
@@ -218,7 +221,7 @@ exports.generateFullCateringQuote = async (req, res) => {
       return res.status(404).json({ message: "Menú no encontrado" });
     }
 
-    // Calcular subtotal del menú
+    // CÁLCULO 1: Subtotal del menú seleccionado = precio del menú * cantidad personas
     const menu_subtotal = menu.menu_price * guests;
 
     // Inicializar subtotal de servicios adicionales
@@ -236,32 +239,60 @@ exports.generateFullCateringQuote = async (req, res) => {
         return res.status(404).json({ message: "Uno o más servicios de catering no encontrados o no públicos" });
       }
 
-      // Calcular subtotal y detalles de servicios
+      // CÁLCULO 2: Subtotal servicios adicionales = precio unitario * cantidad
+      // Nota: Asumiendo que cada servicio se cobra una sola vez (cantidad = 1)
+      // Si necesitas especificar cantidades diferentes, deberías incluir un campo 'quantity' en el request
       services_subtotal = services.reduce((total, service) => {
-        const service_total = service.service_price * guests;
+        const service_quantity = 1; // Cantidad por defecto, puedes modificar esto
+        const service_total = service.service_price * service_quantity;
+        
         services_details.push({
           service_id: service.id,
           service_name: service.service_name,
-          price_per_person: service.service_price,
+          price_per_unit: service.service_price,
+          quantity: service_quantity,
           service_total
         });
         return total + service_total;
       }, 0);
     }
 
-    // Calcular cotización total
+    // CÁLCULO 3: Cotización total = Subtotal del menú seleccionado + Subtotal servicios adicionales
     const total_quote = menu_subtotal + services_subtotal;
 
     // Generar un quote_id único (simulado)
     const quote_id = Math.floor(Math.random() * 10000) + 1;
 
-    // Preparar la respuesta
+    // Preparar la respuesta con los cálculos explícitos
     const quote = {
       quote_id,
       menu_id,
       menu_name: menu.menu_name,
       menu_price_per_person: menu.menu_price,
       number_of_guests: guests,
+      
+      // Cálculos detallados
+      calculations: {
+        menu_subtotal: {
+          description: "Subtotal del menú seleccionado",
+          formula: "precio del menú × cantidad personas",
+          calculation: `${menu.menu_price} × ${guests}`,
+          amount: menu_subtotal
+        },
+        services_subtotal: {
+          description: "Subtotal servicios adicionales",
+          formula: "precio unitario × cantidad",
+          amount: services_subtotal
+        },
+        total_quote: {
+          description: "Cotización total",
+          formula: "Subtotal del menú + Subtotal servicios adicionales",
+          calculation: `${menu_subtotal} + ${services_subtotal}`,
+          amount: total_quote
+        }
+      },
+      
+      // Resumen
       menu_subtotal,
       services_subtotal,
       services: services_details,
@@ -272,5 +303,177 @@ exports.generateFullCateringQuote = async (req, res) => {
     res.status(201).json(quote);
   } catch (error) {
     res.status(500).json({ message: "Error al generar la cotización completa", error: error.message });
+  }
+};
+
+// NUEVA FUNCIÓN: Generar cotización completa con cliente y guardar en Quotation
+exports.generateFullCateringQuoteWithClient = async (req, res) => {
+  const { menu_id, number_of_guests, service_ids, event_type } = req.body;
+  const client_id = req.params.id; // ObjectId del cliente desde la URL
+
+  try {
+    // Validar campos requeridos
+    if (!menu_id || !number_of_guests) {
+      return res.status(400).json({ message: "menu_id y number_of_guests son requeridos" });
+    }
+
+    // Validar que el client_id sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(client_id)) {
+      return res.status(400).json({ message: "client_id debe ser un ObjectId válido" });
+    }
+
+    // Validar que number_of_guests sea un número positivo
+    const guests = parseInt(number_of_guests);
+    if (isNaN(guests) || guests <= 0) {
+      return res.status(400).json({ message: "number_of_guests debe ser un número positivo" });
+    }
+
+    // Buscar el cliente por ObjectId
+    const client = await Client.findById(client_id);
+    if (!client) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+
+    // Buscar el menú por id
+    const menu = await Menu.findOne({ id: menu_id });
+    if (!menu) {
+      return res.status(404).json({ message: "Menú no encontrado" });
+    }
+
+    // CÁLCULO 1: Subtotal del menú seleccionado = precio del menú * cantidad personas
+    const menu_subtotal = menu.menu_price * guests;
+
+    // Inicializar subtotal de servicios adicionales
+    let services_subtotal = 0;
+    let services_details = [];
+
+    // Si se proporcionan service_ids, calcular subtotal de servicios
+    if (service_ids && Array.isArray(service_ids) && service_ids.length > 0) {
+      const services = await CateringService.find({ 
+        id: { $in: service_ids },
+        $or: [{ is_public: true }, { is_public: { $exists: false } }]
+      });
+
+      if (services.length !== service_ids.length) {
+        return res.status(404).json({ message: "Uno o más servicios de catering no encontrados o no públicos" });
+      }
+
+      // CÁLCULO 2: Subtotal servicios adicionales = precio unitario * cantidad
+      services_subtotal = services.reduce((total, service) => {
+        const service_quantity = 1; // Cantidad por defecto
+        const service_total = service.service_price * service_quantity;
+        
+        services_details.push({
+          service_id: service.id,
+          service_name: service.service_name,
+          price_per_unit: service.service_price,
+          quantity: service_quantity,
+          service_total
+        });
+        return total + service_total;
+      }, 0);
+    }
+
+    // CÁLCULO 3: Cotización total = Subtotal del menú seleccionado + Subtotal servicios adicionales
+    const total_quote = menu_subtotal + services_subtotal;
+
+    // Generar un quote_id único (simulado)
+    const quote_id = Math.floor(Math.random() * 10000) + 1;
+
+    // Preparar los datos de la cotización
+    const quotationData = {
+      quote_id,
+      client_id: client._id,
+      client_info: {
+        id_client: client.id_client,
+        first_name: client.first_name,
+        last_name: client.last_name,
+        full_name: `${client.first_name || ''} ${client.last_name || ''}`.trim(),
+        email: client.email,
+        phone: client.phone,
+        address: client.address,
+      },
+      menu_id,
+      menu_name: menu.menu_name,
+      menu_price_per_person: menu.menu_price,
+      number_of_guests: guests,
+      menu_subtotal,
+      services_subtotal,
+      services: services_details,
+      total_quote,
+      event_type: event_type || "General",
+      status: "pending",
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+
+    // Guardar la cotización en la base de datos
+    const newQuotation = new Quotation(quotationData);
+    const savedQuotation = await newQuotation.save();
+
+    // Preparar la respuesta incluyendo la información del cliente y cálculos detallados
+    const response = {
+      quotation_id: savedQuotation._id,
+      quote_id,
+      client_info: {
+        client_id: client._id,
+        id_client: client.id_client,
+        first_name: client.first_name,
+        last_name: client.last_name,
+        full_name: `${client.first_name || ''} ${client.last_name || ''}`.trim(),
+        email: client.email,
+        phone: client.phone,
+        address: client.address,
+      },
+      menu_details: {
+        menu_id,
+        menu_name: menu.menu_name,
+        menu_price_per_person: menu.menu_price,
+        menu_subtotal
+      },
+      event_details: {
+        event_type: event_type || "General",
+        number_of_guests: guests
+      },
+      services_details: {
+        services_subtotal,
+        services: services_details
+      },
+      
+      // Cálculos detallados
+      calculations: {
+        menu_subtotal: {
+          description: "Subtotal del menú seleccionado",
+          formula: "precio del menú × cantidad personas",
+          calculation: `${menu.menu_price} × ${guests}`,
+          amount: menu_subtotal
+        },
+        services_subtotal: {
+          description: "Subtotal servicios adicionales",
+          formula: "precio unitario × cantidad",
+          amount: services_subtotal
+        },
+        total_quote: {
+          description: "Cotización total",
+          formula: "Subtotal del menú + Subtotal servicios adicionales",
+          calculation: `${menu_subtotal} + ${services_subtotal}`,
+          amount: total_quote
+        }
+      },
+      
+      pricing: {
+        menu_subtotal,
+        services_subtotal,
+        total_quote
+      },
+      status: "pending",
+      created_at: savedQuotation.created_at,
+      message: "Cotización generada y guardada exitosamente"
+    };
+
+    res.status(201).json(response);
+  } catch (error) {
+    console.error("Error al generar cotización con cliente:", error);
+    res.status(500).json({ message: "Error al generar la cotización completa con cliente", error: error.message });
   }
 };
