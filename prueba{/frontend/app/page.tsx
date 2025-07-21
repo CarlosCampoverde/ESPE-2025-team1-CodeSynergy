@@ -5,20 +5,24 @@ import { useState } from 'react';
 interface University {
   name: string;
   web_pages: string[];
+  state_province: string | null;
+  domains: string[];
+  country: string;
+  alpha_two_code: string;
 }
 
 export default function Home() {
-  const [country, setCountry] = useState<string>('');
+  const [country, setCountry] = useState('');
   const [universities, setUniversities] = useState<University[]>([]);
 
   const handleSearch = async () => {
     if (!country.trim()) {
-      alert("Por favor escribe un país");
+      alert("Search a country");
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/api/universidades?country=${country}`);
+      const res = await fetch(`http://universities.hipolabs.com/search?country=${encodeURIComponent(country)}`);
       const data: University[] = await res.json();
       setUniversities(data);
     } catch (error) {
@@ -28,26 +32,34 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>Buscador de Universidades por País</h1>
+    <div>
+      <h1>search universities</h1>
       <input
         type="text"
-        placeholder="Ej: Ecuador"
         value={country}
         onChange={(e) => setCountry(e.target.value)}
-        style={{ padding: '8px' }}
+        placeholder="Ej: Ecuador"
       />
-      <button onClick={handleSearch} style={{ padding: '8px', marginLeft: '8px' }}>
+      <button onClick={handleSearch}>
         Buscar
       </button>
 
-      <ul style={{ marginTop: '20px' }}>
+      <ul>
         {universities.map((uni, index) => (
-          <li key={index} style={{ marginBottom: '10px' }}>
-            <strong>{uni.name}</strong><br />
-            <a href={uni.web_pages[0]} target="_blank" rel="noopener noreferrer">
-              {uni.web_pages[0]}
-            </a>
+          <li key={index}>
+            <p><strong>Name:</strong> {uni.name}</p>
+            <p><strong>Coutry:</strong> {uni.country}</p>
+            <p><strong>Alpha two code:</strong> {uni.alpha_two_code}</p>
+            <p><strong>state-province:</strong> {uni.state_province || 'Null'}</p>
+            <p><strong>Domains:</strong> {uni.domains.join(', ')}</p>
+            <p>
+              <strong>Web:</strong>{' '}
+              {uni.web_pages.map((url, i) => (
+                <span key={i}>
+                  <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>{' '}
+                </span>
+              ))}
+            </p>
           </li>
         ))}
       </ul>
