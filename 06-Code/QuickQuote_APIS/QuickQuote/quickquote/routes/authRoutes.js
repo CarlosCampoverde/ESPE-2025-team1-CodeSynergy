@@ -1,8 +1,9 @@
-// quickquote/routes/authRoutes.js
+// 06-Code/QuickQuote_APIS/QuickQuote/quickquote/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
 // Registro
 router.post('/register', async (req, res) => {
@@ -38,6 +39,16 @@ router.post('/login', async (req, res) => {
     res.json({ token, role: user.role, username: user.username });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+// Obtener todos los usuarios (solo para pruebas, requiere admin)
+router.get('/users', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const users = await User.find({}, 'username email role createdAt');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
