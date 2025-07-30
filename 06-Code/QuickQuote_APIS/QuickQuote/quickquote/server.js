@@ -22,12 +22,6 @@ connectDB();
 
 // Middleware para manejar JSON
 app.use(express.json());
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:3000',  // Permitir solicitudes desde el frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}));
-
 
 // Usar las rutas para cada recurso
 app.use("/quickquote/webresources/CateringService", cateringServiceRoutes);
