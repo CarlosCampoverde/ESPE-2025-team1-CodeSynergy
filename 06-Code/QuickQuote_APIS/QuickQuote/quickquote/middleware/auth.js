@@ -1,4 +1,4 @@
-// quickquote/middleware/auth.js
+// 06-Code/QuickQuote_APIS/QuickQuote/quickquote/middleware/auth.js
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
