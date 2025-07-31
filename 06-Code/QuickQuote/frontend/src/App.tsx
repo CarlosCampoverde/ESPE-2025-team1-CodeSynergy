@@ -8,20 +8,20 @@ const App: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [editClient, setEditClient] = useState<any | null>(null);
 
-  useEffect(() => {
-    // Obtener todos los clientes al cargar la página
-    axios.get('http://localhost:3001/quickquote/webresources/Clients/')
-      .then((response) => {
-        setClients(response.data);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los clientes:", error);
-      });
-  }, []);
+ axios.get('https://espe-2025-team1-codesynergy.onrender.com/quickquote/webresources/Clients/', {
+  timeout: 10000 // 10 segundos de tiempo de espera
+})
+  .then((response) => {
+    setClients(response.data);
+  })
+  .catch((error) => {
+    console.error("Error al obtener los clientes:", error);
+  });
+
 
   const handleDelete = (id: string) => {
     // Eliminar cliente
-    axios.delete(`http://localhost:3001/quickquote/webresources/Clients/deleteClient/${id}`)
+    axios.delete(`https://espe-2025-team1-codesynergy.onrender.com/quickquote/webresources/Clients/deleteClient/${id}`)
       .then(() => {
         setClients(clients.filter((client) => client.id_client !== id));
       })
@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
   const handleUpdate = () => {
     // Actualizar cliente
-    axios.put('http://localhost:3001/quickquote/webresources/Clients/updateClient', editClient)
+    axios.put('https://espe-2025-team1-codesynergy.onrender.com/quickquote/webresources/Clients/updateClient', editClient)
       .then((response) => {
         const updatedClients = clients.map(client =>
           client.id_client === editClient.id_client ? response.data : client
@@ -71,9 +71,8 @@ const App: React.FC = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button onClick={handleSearch} aria-label="Buscar cliente">
-  <FaSearch />
-</button>
-
+          <FaSearch />
+        </button>
       </div>
       <div className="client-list">
         {handleSearch().map((client) => (
