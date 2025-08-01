@@ -12,7 +12,7 @@ const api = axios.create({
 
 // Clients API
 export const clientsAPI = {
-  getAll: () => api.get('/clients/'),
+  getAll: () => api.get('/Clients/'),
   getById: (id) => api.get(`/Clients/${id}`),
   create: (data) => api.post('/Clients/createClient', data),
   update: (data) => api.put('/Clients/updateClient', data),

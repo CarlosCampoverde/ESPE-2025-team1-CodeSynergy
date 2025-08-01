@@ -77,7 +77,7 @@ function App() {
             {/* Staff Routes */}
             <Route path="/staff" element={<StaffList />} />
             <Route path="/staff/new" element={<StaffForm />} />
-            <Route path="/staff/edit/:id" element={<StaffForm />} /> 
+            <Route path="/staff/edit/:id" element={<StaffForm />} />
             
             {/* Venues Routes */}
             <Route path="/venues" element={<VenueList />} />

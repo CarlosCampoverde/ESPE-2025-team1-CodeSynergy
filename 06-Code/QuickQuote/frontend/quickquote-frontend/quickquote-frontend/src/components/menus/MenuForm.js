@@ -18,6 +18,7 @@ import { menusAPI } from '../../services/api';
 
 function MenuForm() {
   const [menu, setMenu] = useState({
+    id: '',
     menu_name: '',
     menu_description: '',
     menu_price: '',
@@ -29,9 +30,44 @@ function MenuForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
+  // NUEVO: Función para obtener el próximo ID disponible
+  const fetchNextId = async () => {
+    try {
+      // Opción A: Si tu API tiene un endpoint específico para obtener el próximo ID
+      // const response = await menusAPI.getNextId();
+      // return response.data.nextId;
+      
+      // Opción B: Obtener todos los menús y calcular el próximo ID
+      const response = await menusAPI.getAll();
+      const maxId = Math.max(...response.data.map(menu => menu.id), 0);
+      return maxId + 1;
+    } catch (error) {
+      console.error('Error al obtener el próximo ID:', error);
+      // Fallback: retornar 1 si hay error
+      return 1;
+    }
+  };
+
+  // MODIFICADO: useEffect actualizado para generar ID automáticamente
   useEffect(() => {
     if (isEdit) {
       fetchMenu();
+    } else {
+      // Para nuevo menú, generar el próximo ID automáticamente
+      const generateId = async () => {
+        try {
+          setLoading(true);
+          const nextId = await fetchNextId();
+          setMenu(prev => ({ ...prev, id: nextId }));
+        } catch (error) {
+          setError('Error al generar el ID del menú');
+          console.error('Error:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      generateId();
     }
   }, [id, isEdit]);
 
@@ -95,7 +131,8 @@ function MenuForm() {
         await menusAPI.update({ ...menuData, id: parseInt(id) });
         setSuccess('Menú actualizado exitosamente');
       } else {
-        await menusAPI.create(menuData);
+        // MODIFICADO: Incluir el ID generado al crear
+        await menusAPI.create({ ...menuData, id: parseInt(menu.id) });
         setSuccess('Menú creado exitosamente');
       }
       
@@ -110,10 +147,14 @@ function MenuForm() {
     }
   };
 
-  if (loading && isEdit) {
+  // MODIFICADO: Mostrar loading también cuando se está generando el ID
+  if (loading && (isEdit || !menu.id)) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          {isEdit ? 'Cargando menú...' : 'Generando ID...'}
+        </Typography>
       </Box>
     );
   }
@@ -149,6 +190,20 @@ function MenuForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="ID"
+                  name="id"
+                  value={menu.id}
+                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  helperText={isEdit ? "ID del menú (solo lectura)" : "ID generado automáticamente"}
+                />
+              </Grid>
+              
               <Grid item xs={12}>
                 <TextField
                   fullWidth
