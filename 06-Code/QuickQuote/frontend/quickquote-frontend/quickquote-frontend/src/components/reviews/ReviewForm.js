@@ -19,6 +19,7 @@ import { reviewsAPI, clientsAPI, venuesAPI } from '../../services/api';
 
 function ReviewForm() {
   const [review, setReview] = useState({
+    id: '',
     id_client: '',
     id_venue: '',
     review_rating: 0,
@@ -33,13 +34,45 @@ function ReviewForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
+  // NUEVO: Función para obtener el próximo ID disponible
+  const fetchNextId = async () => {
+    try {
+      // Opción A: Si tu API tiene un endpoint específico para obtener el próximo ID
+      // const response = await reviewsAPI.getNextId();
+      // return response.data.nextId;
+      
+      // Opción B: Obtener todas las reseñas y calcular el próximo ID
+      const response = await reviewsAPI.getAll();
+      const maxId = Math.max(...response.data.map(review => review.id), 0);
+      return maxId + 1;
+    } catch (error) {
+      console.error('Error al obtener el próximo ID:', error);
+      // Fallback: retornar 1 si hay error
+      return 1;
+    }
+  };
+
   useEffect(() => {
     fetchInitialData();
   }, []);
 
+  // MODIFICADO: useEffect actualizado para generar ID automáticamente
   useEffect(() => {
     if (isEdit && clients.length > 0 && venues.length > 0) {
       fetchReview();
+    } else if (!isEdit && clients.length > 0 && venues.length > 0) {
+      // Para nueva reseña, generar el próximo ID automáticamente
+      const generateId = async () => {
+        try {
+          const nextId = await fetchNextId();
+          setReview(prev => ({ ...prev, id: nextId }));
+        } catch (error) {
+          setError('Error al generar el ID de la reseña');
+          console.error('Error:', error);
+        }
+      };
+      
+      generateId();
     }
   }, [id, isEdit, clients.length, venues.length]);
 
@@ -136,7 +169,8 @@ function ReviewForm() {
         await reviewsAPI.update({ ...reviewData, id: parseInt(id) });
         setSuccess('Reseña actualizada exitosamente');
       } else {
-        await reviewsAPI.create(reviewData);
+        // MODIFICADO: Incluir el ID generado al crear
+        await reviewsAPI.create({ ...reviewData, id: parseInt(review.id) });
         setSuccess('Reseña creada exitosamente');
       }
       
@@ -151,10 +185,14 @@ function ReviewForm() {
     }
   };
 
-  if (loading && (isEdit || clients.length === 0 || venues.length === 0)) {
+  // MODIFICADO: Mostrar loading también cuando se está generando el ID
+  if (loading && (isEdit || clients.length === 0 || venues.length === 0 || (!isEdit && !review.id))) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          {isEdit ? 'Cargando reseña...' : 'Generando ID...'}
+        </Typography>
       </Box>
     );
   }
@@ -190,7 +228,21 @@ function ReviewForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="ID"
+                  name="id"
+                  value={review.id}
+                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  helperText={isEdit ? "ID de la reseña (solo lectura)" : "ID generado automáticamente"}
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
                   select
@@ -210,7 +262,7 @@ function ReviewForm() {
                 </TextField>
               </Grid>
               
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
                   select

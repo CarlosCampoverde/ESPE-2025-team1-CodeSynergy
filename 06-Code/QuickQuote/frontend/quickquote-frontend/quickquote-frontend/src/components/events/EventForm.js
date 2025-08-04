@@ -17,6 +17,7 @@ import { eventsAPI } from '../../services/api';
 
 function EventForm() {
   const [event, setEvent] = useState({
+    id: '',
     event_name: '',
     event_date: '',
     event_location: '',
@@ -29,9 +30,41 @@ function EventForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
+  // NUEVO: Función para obtener el próximo ID disponible
+  const fetchNextId = async () => {
+    try {
+      const response = await eventsAPI.getAll();
+      const ids = response.data.map(event => parseInt(event.id, 10));
+      const maxId = Math.max(...ids, 0);
+      return maxId + 1;  // Genera el próximo ID
+    } catch (error) {
+      console.error('Error al obtener el próximo ID:', error);
+      return 1; // Fallback a ID 1 si ocurre un error
+    }
+  };
+
+  // MODIFICADO: useEffect actualizado para generar ID automáticamente
   useEffect(() => {
+    const generateId = async () => {
+      try {
+        setLoading(true);
+        const nextId = await fetchNextId(); // Obtener el siguiente ID
+        setEvent(prev => ({
+          ...prev,
+          id: nextId, // Asignar el próximo ID generado
+        }));
+      } catch (error) {
+        setError('Error al generar el ID del evento');
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isEdit) {
-      fetchEvent();
+      fetchEvent(); // Si es edición, obtener los datos del evento
+    } else {
+      generateId(); // Si es nuevo evento, generar ID automáticamente
     }
   }, [id, isEdit]);
 
@@ -40,7 +73,6 @@ function EventForm() {
       setLoading(true);
       const response = await eventsAPI.getById(id);
       const eventData = response.data;
-      // Formatear la fecha para el input date
       if (eventData.event_date) {
         eventData.event_date = new Date(eventData.event_date).toISOString().split('T')[0];
       }
@@ -108,14 +140,14 @@ function EventForm() {
       // Formatear la fecha para envío
       const eventData = {
         ...event,
-        event_date: new Date(event.event_date).toISOString()
+        event_date: new Date(event.event_date).toISOString(),
       };
       
       if (isEdit) {
         await eventsAPI.update({ ...eventData, id: parseInt(id) });
         setSuccess('Evento actualizado exitosamente');
       } else {
-        await eventsAPI.create(eventData);
+        await eventsAPI.create({ ...eventData, id: parseInt(event.id) });
         setSuccess('Evento creado exitosamente');
       }
       
@@ -130,13 +162,20 @@ function EventForm() {
     }
   };
 
-  if (loading && isEdit) {
+  // MODIFICADO: Mostrar loading también cuando se está generando el ID
+  if (loading && (isEdit || !event.id)) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          {isEdit ? 'Cargando evento...' : 'Generando ID...'}
+        </Typography>
       </Box>
     );
   }
+
+  // Asegurarse de que el valor de ID no sea NaN
+  const safeEventId = isNaN(event.id) ? '' : event.id;
 
   return (
     <Box>
@@ -169,7 +208,21 @@ function EventForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="ID"
+                  name="id"
+                  value={safeEventId} // Usar la variable segura
+                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  helperText={isEdit ? "ID del evento (solo lectura)" : "ID generado automáticamente"}
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={8}>
                 <TextField
                   fullWidth
                   label="Nombre del Evento"
@@ -200,18 +253,6 @@ function EventForm() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Ubicación"
-                  name="event_location"
-                  value={event.event_location}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                />
-              </Grid>
-              
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
                   label="Tipo de Evento"
                   name="event_type"
                   value={event.event_type}
@@ -219,6 +260,18 @@ function EventForm() {
                   required
                   disabled={loading}
                   placeholder="Ej: Boda, Cumpleaños, Corporativo..."
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Ubicación"
+                  name="event_location"
+                  value={event.event_location}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
                 />
               </Grid>
               

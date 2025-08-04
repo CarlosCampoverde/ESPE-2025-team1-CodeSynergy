@@ -17,6 +17,7 @@ import { venuesAPI } from '../../services/api';
 
 function VenueForm() {
   const [venue, setVenue] = useState({
+    id: '',
     venue_name: '',
     venue_location: '',
     venue_capacity: '',
@@ -28,9 +29,44 @@ function VenueForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
+  // NUEVO: Función para obtener el próximo ID disponible
+  const fetchNextId = async () => {
+    try {
+      // Opción A: Si tu API tiene un endpoint específico para obtener el próximo ID
+      // const response = await venuesAPI.getNextId();
+      // return response.data.nextId;
+      
+      // Opción B: Obtener todos los lugares y calcular el próximo ID
+      const response = await venuesAPI.getAll();
+      const maxId = Math.max(...response.data.map(venue => venue.id), 0);
+      return maxId + 1;
+    } catch (error) {
+      console.error('Error al obtener el próximo ID:', error);
+      // Fallback: retornar 1 si hay error
+      return 1;
+    }
+  };
+
+  // MODIFICADO: useEffect actualizado para generar ID automáticamente
   useEffect(() => {
     if (isEdit) {
       fetchVenue();
+    } else {
+      // Para nuevo lugar, generar el próximo ID automáticamente
+      const generateId = async () => {
+        try {
+          setLoading(true);
+          const nextId = await fetchNextId();
+          setVenue(prev => ({ ...prev, id: nextId }));
+        } catch (error) {
+          setError('Error al generar el ID del lugar');
+          console.error('Error:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      generateId();
     }
   }, [id, isEdit]);
 
@@ -100,7 +136,8 @@ function VenueForm() {
         await venuesAPI.update({ ...venueData, id: parseInt(id) });
         setSuccess('Lugar actualizado exitosamente');
       } else {
-        await venuesAPI.create(venueData);
+        // MODIFICADO: Incluir el ID generado al crear
+        await venuesAPI.create({ ...venueData, id: parseInt(venue.id) });
         setSuccess('Lugar creado exitosamente');
       }
       
@@ -115,10 +152,14 @@ function VenueForm() {
     }
   };
 
-  if (loading && isEdit) {
+  // MODIFICADO: Mostrar loading también cuando se está generando el ID
+  if (loading && (isEdit || !venue.id)) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          {isEdit ? 'Cargando lugar...' : 'Generando ID...'}
+        </Typography>
       </Box>
     );
   }
@@ -154,7 +195,21 @@ function VenueForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="ID"
+                  name="id"
+                  value={venue.id}
+                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  helperText={isEdit ? "ID del lugar (solo lectura)" : "ID generado automáticamente"}
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={8}>
                 <TextField
                   fullWidth
                   label="Nombre del Lugar"
