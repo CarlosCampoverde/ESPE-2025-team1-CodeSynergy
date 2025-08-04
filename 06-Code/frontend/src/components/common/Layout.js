@@ -26,6 +26,7 @@ import {
   Group,
   LocationOn,
   RateReview,
+  LogoutOutlined,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +44,7 @@ const menuItems = [
   { text: 'Personal', icon: <Group />, path: '/staff' },
   { text: 'Venues', icon: <LocationOn />, path: '/venues' },
   { text: 'Reseñas', icon: <RateReview />, path: '/reviews' },
-  { text: 'Cerrar sesión', icon: <MenuIcon />, logout: true },
+  { text: 'Cerrar sesión', icon: <LogoutOutlined />, logout: true },
 ];
 
 function Layout({ children }) {
@@ -76,8 +77,11 @@ function Layout({ children }) {
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             {item.logout ? (
-              <ListItemButton onClick={handleLogout}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemButton
+                onClick={handleLogout}
+                sx={{ color: '#fff', bgcolor: '#e57373', '&:hover': { bgcolor: '#ef9a9a' } }}
+              >
+                <ListItemIcon sx={{ color: '#fff' }}>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItemButton>
             ) : (
