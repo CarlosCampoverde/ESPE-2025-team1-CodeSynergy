@@ -24,3 +24,4 @@ router.put("/updateClient", clientController.updateClient);
 router.delete("/deleteClient/:id_client", clientController.deleteClient);
 
 module.exports = router;
+

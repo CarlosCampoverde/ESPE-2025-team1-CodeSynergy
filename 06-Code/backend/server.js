@@ -1,5 +1,7 @@
 // quickquote/server.js
 require('dotenv').config();
+const { swaggerUi, swaggerSpec } = require('./swagger');
+const swaggerAuth = require('./middleware/authSwagger');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -47,6 +49,12 @@ app.use('/quickquote/webresources/Payments', authMiddleware, paymentRoutes);
 // Rutas solo para administradores
 app.use('/quickquote/webresources/Staff', authMiddleware, adminMiddleware, staffRoutes);
 app.use('/quickquote/webresources/CateringService', authMiddleware, adminMiddleware, cateringServiceRoutes);
+
+
+// Middleware de autenticación para Swagger
+app.use('/api-docs', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3001;
