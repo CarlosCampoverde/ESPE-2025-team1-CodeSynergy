@@ -5,23 +5,23 @@ const clientController = require("../controllers/clientController");
 /**
  * @swagger
  * tags:
- *   name: Clientes
- *   description: Operaciones relacionadas con clientes
+ *   name: Clients
+ *   description: Operations related to clients
  */
 
 /**
  * @swagger
  * /quickquote/webresources/Clients:
  *   get:
- *     summary: Obtener todos los clientes
- *     tags: [Clientes]
+ *     summary: Get all clients
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de clientes obtenida exitosamente
+ *         description: List of clients retrieved successfully
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.get("/", clientController.getAllClients);
 
@@ -29,12 +29,12 @@ router.get("/", clientController.getAllClients);
  * @swagger
  * /quickquote/webresources/Clients/custom-quote:
  *   post:
- *     summary: Personalizar una cotización
- *     tags: [Clientes]
+ *     summary: Customize a quotation
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Datos para personalizar la cotización
+ *       description: Data to customize the quotation
  *       required: true
  *       content:
  *         application/json:
@@ -46,17 +46,17 @@ router.get("/", clientController.getAllClients);
  *                 example: "12345"
  *               product:
  *                 type: string
- *                 example: "Producto X"
+ *                 example: "Product X"
  *               quantity:
  *                 type: integer
  *                 example: 10
  *     responses:
  *       200:
- *         description: Cotización personalizada creada correctamente
+ *         description: Customized quotation created successfully
  *       400:
- *         description: Error en los datos enviados
+ *         description: Invalid data sent
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.post("/custom-quote", clientController.customQuote);
 
@@ -64,12 +64,12 @@ router.post("/custom-quote", clientController.customQuote);
  * @swagger
  * /quickquote/webresources/Clients/send-quote:
  *   post:
- *     summary: Enviar o descargar una cotización
- *     tags: [Clientes]
+ *     summary: Send or download a quotation
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Datos para enviar o descargar la cotización
+ *       description: Data to send or download the quotation
  *       required: true
  *       content:
  *         application/json:
@@ -81,14 +81,14 @@ router.post("/custom-quote", clientController.customQuote);
  *                 example: "quote123"
  *               email:
  *                 type: string
- *                 example: "cliente@example.com"
+ *                 example: "client@example.com"
  *     responses:
  *       200:
- *         description: Cotización enviada o descargada correctamente
+ *         description: Quotation sent or downloaded successfully
  *       400:
- *         description: Error en los datos enviados
+ *         description: Invalid data sent
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.post("/send-quote", clientController.sendQuote);
 
@@ -96,8 +96,8 @@ router.post("/send-quote", clientController.sendQuote);
  * @swagger
  * /quickquote/webresources/Clients/{id_client}:
  *   get:
- *     summary: Obtener un cliente por ID
- *     tags: [Clientes]
+ *     summary: Get a client by ID
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -106,14 +106,14 @@ router.post("/send-quote", clientController.sendQuote);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del cliente a obtener
+ *         description: Client ID to retrieve
  *     responses:
  *       200:
- *         description: Cliente obtenido correctamente
+ *         description: Client retrieved successfully
  *       404:
- *         description: Cliente no encontrado
+ *         description: Client not found
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.get("/:id_client", clientController.getClient);
 
@@ -121,12 +121,12 @@ router.get("/:id_client", clientController.getClient);
  * @swagger
  * /quickquote/webresources/Clients/createClient:
  *   post:
- *     summary: Crear un nuevo cliente
- *     tags: [Clientes]
+ *     summary: Create a new client
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Datos del cliente a crear
+ *       description: Data for the new client
  *       required: true
  *       content:
  *         application/json:
@@ -135,20 +135,20 @@ router.get("/:id_client", clientController.getClient);
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Juan Pérez"
+ *                 example: "John Doe"
  *               email:
  *                 type: string
- *                 example: "juan@example.com"
+ *                 example: "john@example.com"
  *               phone:
  *                 type: string
  *                 example: "123456789"
  *     responses:
  *       201:
- *         description: Cliente creado exitosamente
+ *         description: Client created successfully
  *       400:
- *         description: Error en los datos enviados
+ *         description: Invalid data sent
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.post("/createClient", clientController.createClient);
 
@@ -156,12 +156,12 @@ router.post("/createClient", clientController.createClient);
  * @swagger
  * /quickquote/webresources/Clients/updateClient:
  *   put:
- *     summary: Actualizar un cliente existente
- *     tags: [Clientes]
+ *     summary: Update an existing client
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Datos del cliente a actualizar
+ *       description: Data to update the client
  *       required: true
  *       content:
  *         application/json:
@@ -173,20 +173,20 @@ router.post("/createClient", clientController.createClient);
  *                 example: "abc123"
  *               name:
  *                 type: string
- *                 example: "Juan Pérez Actualizado"
+ *                 example: "John Doe Updated"
  *               email:
  *                 type: string
- *                 example: "juan.actualizado@example.com"
+ *                 example: "john.updated@example.com"
  *               phone:
  *                 type: string
  *                 example: "987654321"
  *     responses:
  *       200:
- *         description: Cliente actualizado correctamente
+ *         description: Client updated successfully
  *       400:
- *         description: Error en los datos enviados
+ *         description: Invalid data sent
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.put("/updateClient", clientController.updateClient);
 
@@ -194,8 +194,8 @@ router.put("/updateClient", clientController.updateClient);
  * @swagger
  * /quickquote/webresources/Clients/deleteClient/{id_client}:
  *   delete:
- *     summary: Eliminar un cliente por ID
- *     tags: [Clientes]
+ *     summary: Delete a client by ID
+ *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -204,14 +204,14 @@ router.put("/updateClient", clientController.updateClient);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del cliente a eliminar
+ *         description: Client ID to delete
  *     responses:
  *       200:
- *         description: Cliente eliminado correctamente
+ *         description: Client deleted successfully
  *       404:
- *         description: Cliente no encontrado
+ *         description: Client not found
  *       401:
- *         description: No autorizado
+ *         description: Unauthorized
  */
 router.delete("/deleteClient/:id_client", clientController.deleteClient);
 
