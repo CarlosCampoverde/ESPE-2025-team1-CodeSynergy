@@ -34,8 +34,8 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
   const user = req.user;
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
   // Redirigir al frontend con el token como query param
-  const redirectUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-  res.redirect(`${redirectUrl}/?token=${token}`);
+  // Redirigir siempre a la URL de producción
+  res.redirect(`https://espe-2025-team1-codesynergy-2.onrender.com/?token=${token}`);
 });
 
 module.exports = router;
