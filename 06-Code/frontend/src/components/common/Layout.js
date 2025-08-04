@@ -31,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
+
 const menuItems = [
   { text: 'Dashboard', icon: <Dashboard />, path: '/' },
   { text: 'Clientes', icon: <People />, path: '/clients' },
@@ -42,6 +43,7 @@ const menuItems = [
   { text: 'Personal', icon: <Group />, path: '/staff' },
   { text: 'Venues', icon: <LocationOn />, path: '/venues' },
   { text: 'Reseñas', icon: <RateReview />, path: '/reviews' },
+  { text: 'Cerrar sesión', icon: <MenuIcon />, logout: true },
 ];
 
 function Layout({ children }) {
@@ -57,6 +59,12 @@ function Layout({ children }) {
     setMobileOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/auth');
+    setMobileOpen(false);
+  };
+
   const drawer = (
     <div>
       <Toolbar>
@@ -67,12 +75,17 @@ function Layout({ children }) {
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => handleNavigation(item.path)}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
+            {item.logout ? (
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            ) : (
+              <ListItemButton onClick={() => handleNavigation(item.path)}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            )}
           </ListItem>
         ))}
       </List>
