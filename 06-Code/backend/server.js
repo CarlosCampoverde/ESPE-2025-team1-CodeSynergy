@@ -40,6 +40,8 @@ app.use('/quickquote/webresources/CateringService/public', cateringServiceRoutes
 app.use('/quickquote/webresources/Events', eventRoutes);
 app.use('/quickquote/webresources/Venues', venueRoutes);
 app.use('/quickquote/webresources/Reviews', reviewRoutes);
+const googleAuthRoutes = require('./routes/googleAuthRoutes');
+app.use('/auth', googleAuthRoutes);
 
 // Rutas protegidas (requieren autenticación)
 app.use('/quickquote/webresources/Clients', authMiddleware, clientRoutes);
