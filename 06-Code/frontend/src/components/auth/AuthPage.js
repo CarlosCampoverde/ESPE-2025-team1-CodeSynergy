@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Container, Paper, Tabs, Tab, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
+
 export default function AuthPage() {
   const [tab, setTab] = React.useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
