@@ -12,6 +12,10 @@ const options = {
     },
     servers: [
       {
+        url: 'https://espe-2025-team1-codesynergy.onrender.com',
+        description: 'Render Public API',
+      },
+      {
         url: 'http://localhost:3001',
         description: 'Servidor de desarrollo local',
       },
