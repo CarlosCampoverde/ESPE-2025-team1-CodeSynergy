@@ -20,7 +20,7 @@ const venueRoutes = require('./routes/venueRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // Importar middleware
-const { authMiddleware, adminMiddleware } = require('./middleware/auth');
+const { authMiddleware, adminMiddleware, superAdminMiddleware, roleMiddleware } = require('./middleware/auth');
 
 const app = express();
 
@@ -35,16 +35,22 @@ connectDB();
 
 // Rutas públicas
 app.use('/quickquote/webresources/Auth', authRoutes);
+const googleAuthRoutes = require('./routes/googleAuthRoutes');
+const userRoutes = require('./routes/userRoutes');
+app.use('/auth', googleAuthRoutes);
+
+// Rutas para gestión de usuarios (solo superadmin)
+app.use('/auth/users', userRoutes);
+
+// Rutas públicas de consulta (sin autenticación)
 app.use('/quickquote/webresources/Menus', menuRoutes);
-app.use('/quickquote/webresources/CateringService/public', cateringServiceRoutes);
 app.use('/quickquote/webresources/Events', eventRoutes);
 app.use('/quickquote/webresources/Venues', venueRoutes);
 app.use('/quickquote/webresources/Reviews', reviewRoutes);
-const googleAuthRoutes = require('./routes/googleAuthRoutes');
-app.use('/auth', googleAuthRoutes);
+app.use('/quickquote/webresources/CateringService/public', cateringServiceRoutes);
 
 // Rutas protegidas (requieren autenticación)
-app.use('/quickquote/webresources/Clients', authMiddleware, clientRoutes);
+app.use('/quickquote/webresources/Clients', authMiddleware, roleMiddleware('admin', 'superadmin'), clientRoutes);
 app.use('/quickquote/webresources/Reservations', authMiddleware, reservationRoutes);
 app.use('/quickquote/webresources/Payments', authMiddleware, paymentRoutes);
 

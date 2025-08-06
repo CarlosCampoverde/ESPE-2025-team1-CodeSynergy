@@ -1,13 +1,27 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-// Middleware de autenticación (temporalmente deshabilitado para pruebas)
-const authMiddleware = (req, res, next) => {
-  // Para pruebas, asignamos un usuario ficticio sin validar el token
-  req.user = {
-    id: 'test-user-id',
-    role: 'admin' // Cambia a 'client' si necesitas probar con un rol diferente
-  };
-  next();
+// Middleware de autenticación real
+const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ error: 'Access denied, no token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    req.user = { id: user._id, role: user.role, username: user.username };
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
 };
 
 // Middleware para verificar rol de administrador
