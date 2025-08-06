@@ -1,7 +1,3 @@
-const express = require("express");
-const router = express.Router();
-const menuController = require("../controllers/menuController");
-
 /**
  * @swagger
  * tags:
@@ -19,34 +15,16 @@ const menuController = require("../controllers/menuController");
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of all menus
+ *         description: List of all menus retrieved successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: number
- *                   menu_name:
- *                     type: string
- *               id:
- *                 type: number
- *                 example: 1
- *               menu_name:
- *                 type: string
- *                 example: "Vegetarian Menu"
- *               menu_description:
- *                 type: string
- *                 example: "A menu for vegetarians"
- *               menu_price:
- *                 type: number
- *                 example: 25
- *               event_type:
- *                 type: string
- *                 example: "wedding"
-router.get("/", menuController.getAllMenus);
+ *                 $ref: '#/components/schemas/Menu'
+ *       500:
+ *         description: Error retrieving menus
+ */
 
 /**
  * @swagger
@@ -63,15 +41,57 @@ router.get("/", menuController.getAllMenus);
  *         schema:
  *           type: string
  *         description: Event type
+ *         example: "wedding"
  *     responses:
  *       200:
- *         description: List of menus for the event type
+ *         description: List of menus for the event type retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu'
  *       404:
  *         description: No menus found for the event type
  *       500:
  *         description: Error retrieving menus
  */
-router.get("/type/:event_type", menuController.getMenusByEventType);
+
+/**
+ * @swagger
+ * /quickquote/webresources/Menus/searchByPrice:
+ *   get:
+ *     summary: Search menus by price range
+ *     tags: [Menus]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price
+ *         example: 10
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price
+ *         example: 50
+ *     responses:
+ *       200:
+ *         description: Menus found within price range
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu'
+ *       404:
+ *         description: No menus found in the price range
+ *       500:
+ *         description: Error searching menus
+ */
 
 /**
  * @swagger
@@ -90,13 +110,16 @@ router.get("/type/:event_type", menuController.getMenusByEventType);
  *         description: Menu ID
  *     responses:
  *       200:
- *         description: Menu found
+ *         description: Menu retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu'
  *       404:
  *         description: Menu not found
  *       500:
  *         description: Error retrieving menu
  */
-router.get("/:id", menuController.getMenu);
 
 /**
  * @swagger
@@ -107,67 +130,63 @@ router.get("/:id", menuController.getMenu);
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Menu data
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Vegetarian Menu"
- *               description:
- *                 type: string
- *                 example: "A menu for vegetarians"
- *               price:
- *                 type: number
- *                 example: 25
+ *             $ref: '#/components/schemas/MenuInput'
+ *           example:
+ *             menu_name: "Vegetarian Menu"
+ *             menu_description: "A menu for vegetarians"
+ *             menu_price: 25
+ *             event_type: "wedding"
  *     responses:
  *       201:
- *         description: Menu created
+ *         description: Menu created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu'
+ *       400:
+ *         description: Invalid menu data
  *       500:
  *         description: Error creating menu
  */
-router.post("/createMenu", menuController.createMenu);
 
 /**
  * @swagger
  * /quickquote/webresources/Menus/updateMenu:
  *   put:
- *     summary: Update a menu
+ *     summary: Update an existing menu
  *     tags: [Menus]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Menu data to update
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "menu001"
- *               name:
- *                 type: string
- *                 example: "Vegetarian Menu Updated"
- *               description:
- *                 type: string
- *                 example: "Updated description"
- *               price:
- *                 type: number
- *                 example: 30
+ *             $ref: '#/components/schemas/MenuUpdate'
+ *           example:
+ *             id: 1
+ *             menu_name: "Updated Vegetarian Menu"
+ *             menu_description: "An updated menu for vegetarians"
+ *             menu_price: 30
+ *             event_type: "wedding"
  *     responses:
  *       200:
- *         description: Menu updated
+ *         description: Menu updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu'
+ *       400:
+ *         description: Invalid menu data
  *       404:
  *         description: Menu not found
  *       500:
  *         description: Error updating menu
  */
-router.put("/updateMenu", menuController.updateMenu);
 
 /**
  * @swagger
@@ -186,45 +205,74 @@ router.put("/updateMenu", menuController.updateMenu);
  *         description: Menu ID
  *     responses:
  *       200:
- *         description: Menu deleted
+ *         description: Menu deleted successfully
  *       404:
  *         description: Menu not found
  *       500:
  *         description: Error deleting menu
  */
-router.delete("/deleteMenu/:id", menuController.deleteMenu);
 
 /**
  * @swagger
- * /quickquote/webresources/Menus/searchByPrice:
- *   get:
- *     summary: Search menus by price range
- *     tags: [Menus]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: min
- *         required: false
- *         schema:
+ * components:
+ *   schemas:
+ *     Menu:
+ *       type: object
+ *       properties:
+ *         id:
  *           type: number
- *         description: Minimum price
- *       - in: query
- *         name: max
- *         required: false
- *         schema:
+ *           example: 1
+ *         menu_name:
+ *           type: string
+ *           example: "Vegetarian Menu"
+ *         menu_description:
+ *           type: string
+ *           example: "A menu for vegetarians"
+ *         menu_price:
  *           type: number
- *         description: Maximum price
- *     responses:
- *       200:
- *         description: List of menus within the price range
- *       404:
- *         description: No menus found in the price range
- *       400:
- *         description: Invalid parameters
- *       500:
- *         description: Error searching menus by price
+ *           example: 25
+ *         event_type:
+ *           type: string
+ *           example: "wedding"
+ *     MenuInput:
+ *       type: object
+ *       required:
+ *         - menu_name
+ *         - menu_price
+ *         - event_type
+ *       properties:
+ *         menu_name:
+ *           type: string
+ *           example: "Vegetarian Menu"
+ *         menu_description:
+ *           type: string
+ *           example: "A menu for vegetarians"
+ *         menu_price:
+ *           type: number
+ *           example: 25
+ *         event_type:
+ *           type: string
+ *           example: "wedding"
+ *     MenuUpdate:
+ *       type: object
+ *       required:
+ *         - id
+ *       properties:
+ *         id:
+ *           type: number
+ *           example: 1
+ *         menu_name:
+ *           type: string
+ *           example: "Updated Vegetarian Menu"
+ *         menu_description:
+ *           type: string
+ *           example: "An updated menu for vegetarians"
+ *         menu_price:
+ *           type: number
+ *           example: 30
+ *         event_type:
+ *           type: string
+ *           example: "wedding"
  */
-router.get("/searchByPrice", menuController.searchMenusByPrice);
 
-module.exports = router;
+module.exports = {};

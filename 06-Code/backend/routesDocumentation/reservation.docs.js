@@ -1,7 +1,3 @@
-const express = require("express");
-const router = express.Router();
-const reservationController = require("../controllers/reservationController");
-
 /**
  * @swagger
  * tags:
@@ -11,37 +7,24 @@ const reservationController = require("../controllers/reservationController");
 
 /**
  * @swagger
- * /quickquote/webresources/Reservations/createReservation:
- *   post:
- *     summary: Create a new reservation
+ * /quickquote/webresources/Reservations:
+ *   get:
+ *     summary: Get all reservations
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Reservation data
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               client_id:
- *                 type: string
- *                 example: "client001"
- *               event_id:
- *                 type: string
- *                 example: "event001"
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2025-08-04"
  *     responses:
- *       201:
- *         description: Reservation created
+ *       200:
+ *         description: List of all reservations retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Reservation'
  *       500:
- *         description: Error creating reservation
+ *         description: Error retrieving reservations
  */
-router.post("/createReservation", reservationController.createReservation);
 
 /**
  * @swagger
@@ -60,60 +43,83 @@ router.post("/createReservation", reservationController.createReservation);
  *         description: Reservation ID
  *     responses:
  *       200:
- *         description: Reservation found
+ *         description: Reservación encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Reservation'
  *       404:
- *         description: Reservation not found
+ *         description: Reservación no encontrada
  *       500:
- *         description: Error retrieving reservation
+ *         description: Error al obtener la reservación
  */
 router.get("/:id", reservationController.getReservation);
 
 /**
  * @swagger
- * /quickquote/webresources/Reservations:
- *   get:
- *     summary: Get all reservations
+ * /quickquote/webresources/Reservations/createReservation:
+ *   post:
+ *     summary: Crear una nueva reservación
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReservationInput'
+ *           example:
+ *             id: 1
+ *             id_client: "5"
+ *             reservation_date: "2023-12-15T18:00:00Z"
+ *             reservation_time: "18:00"
+ *             number_of_guests: 4
+ *             menu_id: "2"
  *     responses:
- *       200:
- *         description: List of all reservations
+ *       201:
+ *         description: Reservación creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Reservation'
  *       500:
- *         description: Error retrieving reservations
+ *         description: Error al crear la reservación
  */
-router.get("/", reservationController.getAllReservations);
+router.post("/createReservation", reservationController.createReservation);
 
 /**
  * @swagger
  * /quickquote/webresources/Reservations/updateReservation:
  *   put:
- *     summary: Update a reservation
+ *     summary: Actualizar una reservación
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Reservation data to update
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "reservation001"
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2025-08-05"
+ *             $ref: '#/components/schemas/ReservationInput'
+ *           example:
+ *             id: 1
+ *             id_client: "5"
+ *             reservation_date: "2023-12-16T19:30:00Z"
+ *             reservation_time: "19:30"
+ *             number_of_guests: 2
+ *             menu_id: "2"
  *     responses:
  *       200:
- *         description: Reservation updated
+ *         description: Reservación actualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Reservation'
  *       404:
- *         description: Reservation not found
+ *         description: Reservación no encontrada
  *       500:
- *         description: Error updating reservation
+ *         description: Error al actualizar la reservación
  */
 router.put("/updateReservation", reservationController.updateReservation);
 
@@ -121,7 +127,7 @@ router.put("/updateReservation", reservationController.updateReservation);
  * @swagger
  * /quickquote/webresources/Reservations/deleteReservation/{id}:
  *   delete:
- *     summary: Delete a reservation by ID
+ *     summary: Eliminar una reservación por ID
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
@@ -131,121 +137,66 @@ router.put("/updateReservation", reservationController.updateReservation);
  *         required: true
  *         schema:
  *           type: string
- *         description: Reservation ID
+ *         description: ID de la reservación
  *     responses:
  *       200:
- *         description: Reservation deleted
+ *         description: Reservación eliminada exitosamente
  *       404:
- *         description: Reservation not found
+ *         description: Reservación no encontrada
  *       500:
- *         description: Error deleting reservation
+ *         description: Error al eliminar la reservación
  */
 router.delete("/deleteReservation/:id", reservationController.deleteReservation);
 
 /**
  * @swagger
- * /quickquote/webresources/Reservations/history/{client_id}:
- *   get:
- *     summary: Get reservation history by client ID
- *     tags: [Reservations]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: client_id
- *         required: true
- *         schema:
+ * components:
+ *   schemas:
+ *     Reservation:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: number
+ *           example: 1
+ *         id_client:
  *           type: string
- *         description: Client ID
- *     responses:
- *       200:
- *         description: List of reservations for the client
- *       404:
- *         description: No reservations found for the client
- *       500:
- *         description: Error retrieving reservations by client
+ *           example: "5"
+ *         reservation_date:
+ *           type: string
+ *           format: date-time
+ *           example: "2023-12-15T18:00:00Z"
+ *         reservation_time:
+ *           type: string
+ *           example: "18:00"
+ *         number_of_guests:
+ *           type: number
+ *           example: 4
+ *         menu_id:
+ *           type: string
+ *           example: "2"
+ *     ReservationInput:
+ *       type: object
+ *       required:
+ *         - id_client
+ *         - reservation_time
+ *         - number_of_guests
+ *       properties:
+ *         id_client:
+ *           type: string
+ *           example: "5"
+ *         reservation_date:
+ *           type: string
+ *           format: date-time
+ *           example: "2023-12-15T18:00:00Z"
+ *         reservation_time:
+ *           type: string
+ *           example: "18:00"
+ *         number_of_guests:
+ *           type: number
+ *           example: 4
+ *         menu_id:
+ *           type: string
+ *           example: "2"
  */
-router.get("/history/:client_id", reservationController.getReservationsByClient);
-
-/**
- * @swagger
- * /quickquote/webresources/Reservations/byDate/{yyyy_mm_dd}:
- *   get:
- *     summary: Get reservations by date
- *     tags: [Reservations]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: yyyy_mm_dd
- *         required: true
- *         schema:
- *           type: string
- *         description: Date (YYYY-MM-DD)
- *     responses:
- *       200:
- *         description: List of reservations for the date
- *       404:
- *         description: No reservations found for the date
- *       500:
- *         description: Error retrieving reservations by date
- */
-router.get("/byDate/:yyyy_mm_dd", reservationController.getReservationsByDate);
-
-/**
- * @swagger
- * /quickquote/webresources/Reservations/byDate/{startDate}/{endDate}:
- *   get:
- *     summary: Get reservations by date range
- *     tags: [Reservations]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: startDate
- *         required: true
- *         schema:
- *           type: string
- *         description: Start date (YYYY-MM-DD)
- *       - in: path
- *         name: endDate
- *         required: true
- *         schema:
- *           type: string
- *         description: End date (YYYY-MM-DD)
- *     responses:
- *       200:
- *         description: List of reservations in the date range
- *       404:
- *         description: No reservations found in the date range
- *       500:
- *         description: Error retrieving reservations by date range
- */
-router.get("/byDate/:startDate/:endDate", reservationController.getReservationsByDateRange);
-
-/**
- * @swagger
- * /quickquote/webresources/Reservations/fromDate/{startDate}:
- *   get:
- *     summary: Get reservations from a start date
- *     tags: [Reservations]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: startDate
- *         required: true
- *         schema:
- *           type: string
- *         description: Start date (YYYY-MM-DD)
- *     responses:
- *       200:
- *         description: List of reservations from the start date
- *       404:
- *         description: No reservations found from the start date
- *       500:
- *         description: Error retrieving reservations from date
- */
-router.get("/fromDate/:startDate", reservationController.getReservationsFromDate);
 
 module.exports = router;

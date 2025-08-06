@@ -1,7 +1,3 @@
-const express = require("express");
-const router = express.Router();
-const paymentController = require("../controllers/paymentController");
-
 /**
  * @swagger
  * tags:
@@ -11,36 +7,24 @@ const paymentController = require("../controllers/paymentController");
 
 /**
  * @swagger
- * /quickquote/webresources/Payments/createPayment:
- *   post:
- *     summary: Create a new payment
+ * /quickquote/webresources/Payments:
+ *   get:
+ *     summary: Get all payments
  *     tags: [Payments]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Payment data
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               amount:
- *                 type: number
- *                 example: 100.5
- *               method:
- *                 type: string
- *                 example: "Credit Card"
- *               reservation_id:
- *                 type: string
- *                 example: "reservation001"
  *     responses:
- *       201:
- *         description: Payment created
+ *       200:
+ *         description: List of all payments retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Payment'
  *       500:
- *         description: Error creating payment
+ *         description: Error retrieving payments
  */
-router.post("/createPayment", paymentController.createPayment);
 
 /**
  * @swagger
@@ -59,64 +43,81 @@ router.post("/createPayment", paymentController.createPayment);
  *         description: Payment ID
  *     responses:
  *       200:
- *         description: Payment found
+ *         description: Payment retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
  *       404:
  *         description: Payment not found
  *       500:
  *         description: Error retrieving payment
  */
-router.get("/:id", paymentController.getPayment);
 
 /**
  * @swagger
- * /quickquote/webresources/Payments:
- *   get:
- *     summary: Get all payments
+ * /quickquote/webresources/Payments/createPayment:
+ *   post:
+ *     summary: Create a new payment
  *     tags: [Payments]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PaymentInput'
+ *           example:
+ *             payment_amount: 150.00
+ *             payment_date: "2023-12-05"
+ *             payment_method: "Credit Card"
  *     responses:
- *       200:
- *         description: List of all payments
+ *       201:
+ *         description: Payment created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
+ *       400:
+ *         description: Invalid payment data
  *       500:
- *         description: Error retrieving payments
+ *         description: Error creating payment
  */
-router.get("/", paymentController.getAllPayments);
 
 /**
  * @swagger
  * /quickquote/webresources/Payments/updatePayment:
  *   put:
- *     summary: Update a payment
+ *     summary: Update an existing payment
  *     tags: [Payments]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Payment data to update
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "payment001"
- *               amount:
- *                 type: number
- *                 example: 120.0
- *               method:
- *                 type: string
- *                 example: "Debit Card"
+ *             $ref: '#/components/schemas/PaymentUpdate'
+ *           example:
+ *             id: 1
+ *             payment_amount: 175.00
+ *             payment_date: "2023-12-06"
+ *             payment_method: "Bank Transfer"
  *     responses:
  *       200:
- *         description: Payment updated
+ *         description: Payment updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
+ *       400:
+ *         description: Invalid payment data
  *       404:
  *         description: Payment not found
  *       500:
  *         description: Error updating payment
  */
-router.put("/updatePayment", paymentController.updatePayment);
 
 /**
  * @swagger
@@ -135,13 +136,12 @@ router.put("/updatePayment", paymentController.updatePayment);
  *         description: Payment ID
  *     responses:
  *       200:
- *         description: Payment deleted
+ *         description: Payment deleted successfully
  *       404:
  *         description: Payment not found
  *       500:
  *         description: Error deleting payment
  */
-router.delete("/deletePayment/:id", paymentController.deletePayment);
 
 /**
  * @swagger
@@ -152,7 +152,6 @@ router.delete("/deletePayment/:id", paymentController.deletePayment);
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Data for payment verification
  *       required: true
  *       content:
  *         application/json:
@@ -161,19 +160,20 @@ router.delete("/deletePayment/:id", paymentController.deletePayment);
  *             properties:
  *               payment_id:
  *                 type: string
- *                 example: "payment001"
+ *                 example: "1"
  *               quotation_id:
  *                 type: string
- *                 example: "quotation001"
+ *                 example: "5"
  *     responses:
  *       200:
- *         description: Payment verified
+ *         description: Payment verification result
  *       400:
- *         description: Invalid data
+ *         description: Invalid verification data
+ *       404:
+ *         description: Payment or quotation not found
  *       500:
  *         description: Error verifying payment
  */
-router.post("/verify", paymentController.verifyPayment);
 
 /**
  * @swagger
@@ -190,15 +190,83 @@ router.post("/verify", paymentController.verifyPayment);
  *         schema:
  *           type: string
  *           format: date
- *         description: Date (YYYY-MM-DD)
+ *         description: Date in YYYY-MM-DD format
+ *         example: "2023-12-05"
  *     responses:
  *       200:
  *         description: Total payments for the date
- *       404:
- *         description: No payments found for the date
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 date:
+ *                   type: string
+ *                   format: date
+ *                 total:
+ *                   type: number
  *       500:
- *         description: Error retrieving total payments
+ *         description: Error calculating total payments
  */
-router.get("/totalByDate/:date", paymentController.getTotalPaymentsByDate);
 
-module.exports = router;
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Payment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: number
+ *           example: 1
+ *         payment_amount:
+ *           type: number
+ *           format: float
+ *           example: 150.00
+ *         payment_date:
+ *           type: string
+ *           format: date
+ *           example: "2023-12-05"
+ *         payment_method:
+ *           type: string
+ *           example: "Credit Card"
+ *     PaymentInput:
+ *       type: object
+ *       required:
+ *         - payment_amount
+ *         - payment_date
+ *         - payment_method
+ *       properties:
+ *         payment_amount:
+ *           type: number
+ *           format: float
+ *           example: 150.00
+ *         payment_date:
+ *           type: string
+ *           format: date
+ *           example: "2023-12-05"
+ *         payment_method:
+ *           type: string
+ *           example: "Credit Card"
+ *     PaymentUpdate:
+ *       type: object
+ *       required:
+ *         - id
+ *       properties:
+ *         id:
+ *           type: number
+ *           example: 1
+ *         payment_amount:
+ *           type: number
+ *           format: float
+ *           example: 175.00
+ *         payment_date:
+ *           type: string
+ *           format: date
+ *           example: "2023-12-06"
+ *         payment_method:
+ *           type: string
+ *           example: "Bank Transfer"
+ */
+
+module.exports = {};

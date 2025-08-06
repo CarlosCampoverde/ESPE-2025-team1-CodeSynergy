@@ -109,28 +109,28 @@ exports.deleteMenu = async (req, res) => {
 
 // Buscar menús por rango de precio
 exports.searchMenusByPrice = async (req, res) => {
-  const { min, max } = req.query;
+  const { minPrice, maxPrice } = req.query;
 
   try {
-    // Validar que min y max sean números válidos
-    const minPrice = parseFloat(min);
-    const maxPrice = parseFloat(max);
+    // Validar que minPrice y maxPrice sean números válidos
+    const minPriceNum = parseFloat(minPrice);
+    const maxPriceNum = parseFloat(maxPrice);
 
-    if (isNaN(minPrice) || isNaN(maxPrice)) {
-      return res.status(400).json({ message: "Los parámetros min y max deben ser números válidos" });
+    if (isNaN(minPriceNum) || isNaN(maxPriceNum)) {
+      return res.status(400).json({ message: "Los parámetros minPrice y maxPrice deben ser números válidos" });
     }
 
-    if (minPrice > maxPrice) {
+    if (minPriceNum > maxPriceNum) {
       return res.status(400).json({ message: "El precio mínimo no puede ser mayor que el precio máximo" });
     }
 
     // Buscar menús dentro del rango de precios
     const menus = await Menu.find({
-      menu_price: { $gte: minPrice, $lte: maxPrice }
+      menu_price: { $gte: minPriceNum, $lte: maxPriceNum }
     }, 'menu_name menu_description menu_price event_type');
 
     if (menus.length === 0) {
-      return res.status(404).json({ message: `No hay menús en el rango de precios de ${minPrice} a ${maxPrice}` });
+      return res.status(404).json({ message: `No hay menús en el rango de precios de ${minPriceNum} a ${maxPriceNum}` });
     }
 
     res.status(200).json(menus);

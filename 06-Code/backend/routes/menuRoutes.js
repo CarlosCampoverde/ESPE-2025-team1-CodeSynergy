@@ -8,6 +8,9 @@ router.get("/", menuController.getAllMenus);
 // Obtener menús por tipo de evento
 router.get("/type/:event_type", menuController.getMenusByEventType);
 
+// Nueva ruta para buscar menús por rango de precio
+router.get("/searchByPrice", menuController.searchMenusByPrice);
+
 // Obtener un menú por ID
 router.get("/:id", menuController.getMenu);
 
@@ -20,6 +23,4 @@ router.put("/updateMenu", menuController.updateMenu);
 // Eliminar un menú
 router.delete("/deleteMenu/:id", menuController.deleteMenu);
 
-// Nueva ruta para buscar menús por rango de precio
-router.get("/searchByPrice", menuController.searchMenusByPrice);
 module.exports = router;

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const reviewController = require("../controllers/reviewController");
-
 /**
  * @swagger
  * tags:
@@ -66,11 +65,13 @@ router.get("/:id", reviewController.getReview);
  *                 type: number
  *                 example: 5
  *               review_comments:
+/**
  *                 type: string
  *                 example: "Excelente lugar, el servicio fue increíble. Definitivamente volveré."
  *         application/json:
  *           schema:
  *             type: object
+module.exports = router;
  *             properties:
  *               rating:
  *                 type: integer
@@ -87,48 +88,45 @@ router.get("/:id", reviewController.getReview);
  *       500:
  *         description: Error creating review
  */
-router.post("/createReview", reviewController.createReview);
 
 /**
  * @swagger
- * /quickquote/webresources/Reviews/updateReview:
- *   put:
- *     summary: Update a review
+/**
+ * tags:
+ *   name: Reviews
+ *   description: Endpoints para gestionar reseñas de lugares
+ */
+
+/**
+ * @swagger
+ * /quickquote/webresources/Reviews:
+ *   get:
+ *     summary: Obtener todas las reseñas
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Review data to update
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "review001"
- *               rating:
- *                 type: integer
- *                 example: 4
- *               comment:
- *                 type: string
- *                 example: "Good service."
  *     responses:
  *       200:
- *         description: Review updated
+ *         description: Lista de todas las reseñas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
  *       404:
- *         description: Review not found
+ *         description: No hay reseñas registradas
  *       500:
- *         description: Error updating review
+ *         description: Error al obtener las reseñas
  */
-router.put("/updateReview", reviewController.updateReview);
+router.get("/", reviewController.getAllReviews);
 
+module.exports = router;
 /**
  * @swagger
- * /quickquote/webresources/Reviews/deleteReview/{id}:
- *   delete:
- *     summary: Delete a review by ID
+ * /quickquote/webresources/Reviews/{id}:
+ *   get:
+ *     summary: Obtener una reseña por ID
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -137,23 +135,118 @@ router.put("/updateReview", reviewController.updateReview);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *         description: Review ID
+ *           type: integer
+ *         description: ID único de la reseña
  *     responses:
  *       200:
- *         description: Review deleted
+ *         description: Reseña encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
  *       404:
- *         description: Review not found
+ *         description: Reseña no encontrada
  *       500:
- *         description: Error deleting review
+ *         description: Error al obtener la reseña
  */
-router.delete("/deleteReview/:id", reviewController.deleteReview);
+router.get("/:id", reviewController.getReview);
+
+/**
+ * @swagger
+ * /quickquote/webresources/Reviews:
+ *   post:
+ *     summary: Crear una nueva reseña
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReviewInput'
+ *           example:
+ *             id: 42
+ *             id_client: "42"
+ *             id_venue: "2"
+ *             review_rating: 4
+ *             review_comments: "Alex actualizo esto :p"
+ *     responses:
+ *       201:
+ *         description: Reseña creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       500:
+ *         description: Error al crear la reseña
+ */
+router.post("/", reviewController.createReview);
+
+/**
+ * @swagger
+ * /quickquote/webresources/Reviews:
+ *   put:
+ *     summary: Actualizar una reseña existente
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReviewInput'
+ *           example:
+ *             id: 42
+ *             id_client: "42"
+ *             id_venue: "2"
+ *             review_rating: 4
+ *             review_comments: "Alex actualizo esto :p"
+ *     responses:
+ *       200:
+ *         description: Reseña actualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Reseña no encontrada
+ *       500:
+ *         description: Error al actualizar la reseña
+ */
+router.put("/", reviewController.updateReview);
+
+/**
+ * @swagger
+ * /quickquote/webresources/Reviews/{id}:
+ *   delete:
+ *     summary: Eliminar una reseña por ID
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único de la reseña
+ *     responses:
+ *       200:
+ *         description: Reseña eliminada exitosamente
+ *       404:
+ *         description: Reseña no encontrada
+ *       500:
+ *         description: Error al eliminar la reseña
+ */
+router.delete("/:id", reviewController.deleteReview);
 
 /**
  * @swagger
  * /quickquote/webresources/Reviews/venue/{venue_id}:
  *   get:
- *     summary: Get reviews by venue ID
+ *     summary: Obtener reseñas por ID de lugar
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -163,14 +256,20 @@ router.delete("/deleteReview/:id", reviewController.deleteReview);
  *         required: true
  *         schema:
  *           type: string
- *         description: Venue ID
+ *         description: ID del lugar
  *     responses:
  *       200:
- *         description: List of reviews for the venue
+ *         description: Lista de reseñas para el lugar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ReviewVenueResponse'
  *       404:
- *         description: No reviews found for the venue
+ *         description: No se encontraron reseñas para este lugar
  *       500:
- *         description: Error retrieving reviews by venue
+ *         description: Error al obtener las reseñas del lugar
  */
 router.get("/venue/:venue_id", reviewController.getReviewsByVenue);
 
@@ -178,7 +277,7 @@ router.get("/venue/:venue_id", reviewController.getReviewsByVenue);
  * @swagger
  * /quickquote/webresources/Reviews/byRating/{rating}:
  *   get:
- *     summary: Get reviews by rating
+ *     summary: Obtener reseñas por calificación mínima
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -188,15 +287,24 @@ router.get("/venue/:venue_id", reviewController.getReviewsByVenue);
  *         required: true
  *         schema:
  *           type: integer
- *         description: Rating value
+ *           minimum: 1
+ *           maximum: 5
+ *         description: Calificación mínima (1-5)
  *     responses:
  *       200:
- *         description: List of reviews with the specified rating
+ *         description: Lista de reseñas con la calificación mínima indicada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
  *       404:
- *         description: No reviews found with the specified rating
+ *         description: No se encontraron reseñas con la calificación indicada
  *       500:
- *         description: Error retrieving reviews by rating
+ *         description: Error al obtener las reseñas por calificación
  */
 router.get("/byRating/:rating", reviewController.getReviewsByRating);
+
 
 module.exports = router;

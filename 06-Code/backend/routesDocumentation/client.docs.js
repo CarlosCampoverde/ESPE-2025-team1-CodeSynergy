@@ -2,74 +2,78 @@ const express = require("express");
 const router = express.Router();
 const clientController = require("../controllers/clientController");
 
+
+
 /**
  * @swagger
  * tags:
  *   name: Clients
- *   description: Operations related to clients
+ *   description: Endpoints para gestionar clientes
  */
 
 /**
  * @swagger
  * /quickquote/webresources/Clients:
  *   get:
- *     summary: Get all clients
+ *     summary: Obtener todos los clientes
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of clients retrieved successfully
- *       401:
- *         description: Unauthorized
+ *         description: Lista de clientes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Client'
+ *       500:
+ *         description: Error al obtener los clientes
  */
-router.get("/", clientController.getAllClients);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/custom-quote:
  *   post:
- *     summary: Customize a quotation
+ *     summary: Personalizar una cotización
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Data to customize the quotation
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *               client_id:
+ *               id_client:
  *                 type: string
- *                 example: "12345"
+ *                 example: "client001"
  *               product:
  *                 type: string
- *                 example: "Product X"
+ *                 example: "Servicio Premium"
  *               quantity:
  *                 type: integer
  *                 example: 10
  *     responses:
  *       200:
- *         description: Customized quotation created successfully
+ *         description: Cotización personalizada creada
  *       400:
- *         description: Invalid data sent
- *       401:
- *         description: Unauthorized
+ *         description: Datos inválidos
+ *       500:
+ *         description: Error al personalizar cotización
  */
-router.post("/custom-quote", clientController.customQuote);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/send-quote:
  *   post:
- *     summary: Send or download a quotation
+ *     summary: Enviar o descargar una cotización
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Data to send or download the quotation
  *       required: true
  *       content:
  *         application/json:
@@ -84,19 +88,18 @@ router.post("/custom-quote", clientController.customQuote);
  *                 example: "client@example.com"
  *     responses:
  *       200:
- *         description: Quotation sent or downloaded successfully
+ *         description: Cotización enviada o descargada
  *       400:
- *         description: Invalid data sent
- *       401:
- *         description: Unauthorized
+ *         description: Datos inválidos
+ *       500:
+ *         description: Error al enviar cotización
  */
-router.post("/send-quote", clientController.sendQuote);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/{id_client}:
  *   get:
- *     summary: Get a client by ID
+ *     summary: Obtener un cliente por ID
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -106,95 +109,91 @@ router.post("/send-quote", clientController.sendQuote);
  *         required: true
  *         schema:
  *           type: string
- *         description: Client ID to retrieve
+ *         description: ID único del cliente
  *     responses:
  *       200:
- *         description: Client retrieved successfully
+ *         description: Cliente encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
  *       404:
- *         description: Client not found
- *       401:
- *         description: Unauthorized
+ *         description: Cliente no encontrado
+ *       500:
+ *         description: Error al obtener el cliente
  */
-router.get("/:id_client", clientController.getClient);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/createClient:
  *   post:
- *     summary: Create a new client
+ *     summary: Crear un nuevo cliente
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Data for the new client
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id_client:
- *                 type: string
- *                 example: "client001"
- *               first_name:
- *                 type: string
- *               last_name:
- *                 type: string
- *               email:
- *                 type: string
- *               phone:
- *                 type: string
- *               address:
- *                 type: string
- *         description: Invalid data sent
- *       401:
- *         description: Unauthorized
+ *             $ref: '#/components/schemas/ClientInput'
+ *           example:
+ *             id_client: "client001"
+ *             first_name: "Carlos"
+ *             last_name: "Martínez"
+ *             email: "carlosmartinez1@example.com"
+ *             phone: "9876543210"
+ *             address: "Calle Verdadera 456"
+ *     responses:
+ *       201:
+ *         description: Cliente creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       500:
+ *         description: Error al crear el cliente
  */
-router.post("/createClient", clientController.createClient);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/updateClient:
  *   put:
- *     summary: Update an existing client
+ *     summary: Actualizar un cliente existente
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Data to update the client
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id_client:
- *                 type: string
- *                 example: "abc123"
- *               name:
- *                 type: string
- *                 example: "John Doe Updated"
- *               email:
- *                 type: string
- *                 example: "john.updated@example.com"
- *               phone:
- *                 type: string
- *                 example: "987654321"
+ *             $ref: '#/components/schemas/ClientInput'
+ *           example:
+ *             id_client: "client001"
+ *             first_name: "Carlos"
+ *             last_name: "Martínez"
+ *             email: "carlosmartinez1@example.com"
+ *             phone: "9876543210"
+ *             address: "Calle Verdadera 456"
  *     responses:
  *       200:
- *         description: Client updated successfully
- *       400:
- *         description: Invalid data sent
- *       401:
- *         description: Unauthorized
+ *         description: Cliente actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       404:
+ *         description: Cliente no encontrado
+ *       500:
+ *         description: Error al actualizar el cliente
  */
-router.put("/updateClient", clientController.updateClient);
 
 /**
  * @swagger
  * /quickquote/webresources/Clients/deleteClient/{id_client}:
  *   delete:
- *     summary: Delete a client by ID
+ *     summary: Eliminar un cliente por ID
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -204,15 +203,69 @@ router.put("/updateClient", clientController.updateClient);
  *         required: true
  *         schema:
  *           type: string
- *         description: Client ID to delete
+ *         description: ID único del cliente
  *     responses:
  *       200:
- *         description: Client deleted successfully
+ *         description: Cliente eliminado exitosamente
  *       404:
- *         description: Client not found
- *       401:
- *         description: Unauthorized
+ *         description: Cliente no encontrado
+ *       500:
+ *         description: Error al eliminar el cliente
  */
-router.delete("/deleteClient/:id_client", clientController.deleteClient);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Client:
+ *       type: object
+ *       properties:
+ *         id_client:
+ *           type: string
+ *           example: "client001"
+ *         first_name:
+ *           type: string
+ *           example: "Carlos"
+ *         last_name:
+ *           type: string
+ *           example: "Martínez"
+ *         email:
+ *           type: string
+ *           example: "carlosmartinez1@example.com"
+ *         phone:
+ *           type: string
+ *           example: "9876543210"
+ *         address:
+ *           type: string
+ *           example: "Calle Verdadera 456"
+ *     ClientInput:
+ *       type: object
+ *       required:
+ *         - id_client
+ *         - first_name
+ *         - last_name
+ *         - email
+ *         - phone
+ *         - address
+ *       properties:
+ *         id_client:
+ *           type: string
+ *           example: "client001"
+ *         first_name:
+ *           type: string
+ *           example: "Carlos"
+ *         last_name:
+ *           type: string
+ *           example: "Martínez"
+ *         email:
+ *           type: string
+ *           example: "carlosmartinez1@example.com"
+ *         phone:
+ *           type: string
+ *           example: "9876543210"
+ *         address:
+ *           type: string
+ *           example: "Calle Verdadera 456"
+ */
 
 module.exports = router;

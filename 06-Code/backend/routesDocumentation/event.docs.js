@@ -2,52 +2,51 @@ const express = require("express");
 const router = express.Router();
 const eventController = require("../controllers/eventController");
 
+
 /**
  * @swagger
  * tags:
  *   name: Events
- *   description: Operations related to events
+ *   description: Endpoints para gestionar eventos
  */
 
 /**
  * @swagger
  * /quickquote/webresources/Events:
  *   get:
- *     summary: Get all events
+ *     summary: Obtener todos los eventos
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of all events
+ *         description: Lista de todos los eventos
  *       500:
- *         description: Error retrieving events
+ *         description: Error al obtener los eventos
  */
-router.get("/", eventController.getAllEvents);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/upcoming:
  *   get:
- *     summary: Get upcoming events
+ *     summary: Obtener eventos próximos
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of upcoming events
+ *         description: Lista de eventos próximos
  *       404:
- *         description: No upcoming events found
+ *         description: No hay eventos próximos
  *       500:
- *         description: Error retrieving upcoming events
+ *         description: Error al obtener eventos próximos
  */
-router.get("/upcoming", eventController.getUpcomingEvents);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/{id}:
  *   get:
- *     summary: Get an event by ID
+ *     summary: Obtener un evento por ID
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
@@ -57,95 +56,77 @@ router.get("/upcoming", eventController.getUpcomingEvents);
  *         required: true
  *         schema:
  *           type: string
- *         description: Event ID
+ *         description: ID del evento
  *     responses:
  *       200:
- *         description: Event found
+ *         description: Evento encontrado
  *       404:
- *         description: Event not found
+ *         description: Evento no encontrado
  *       500:
- *         description: Error retrieving event
+ *         description: Error al obtener el evento
  */
-router.get("/:id", eventController.getEvent);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/createEvent:
  *   post:
- *     summary: Create a new event
+ *     summary: Crear un nuevo evento
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Event data
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Birthday Party"
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2025-08-04"
- *               location:
- *                 type: string
- *                 example: "Quito"
+ *             $ref: '#/components/schemas/EventInput'
+ *           example:
+ *             id: 1
+ *             event_name: "Concierto de Rock"
+ *             event_date: "2023-12-15T20:00:00Z"
+ *             event_location: "Auditorio Nacional"
+ *             event_type: "Concierto"
  *     responses:
  *       201:
- *         description: Event created
+ *         description: Evento creado exitosamente
  *       500:
- *         description: Error creating event
+ *         description: Error al crear el evento
  */
-router.post("/createEvent", eventController.createEvent);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/updateEvent:
  *   put:
- *     summary: Update an event
+ *     summary: Actualizar un evento
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       description: Event data to update
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "event001"
- *               name:
- *                 type: string
- *                 example: "Birthday Party Updated"
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2025-08-05"
- *               location:
- *                 type: string
- *                 example: "Quito"
+ *             $ref: '#/components/schemas/EventInput'
+ *           example:
+ *             id: 1
+ *             event_name: "Concierto de Rock Actualizado"
+ *             event_date: "2023-12-16T20:00:00Z"
+ *             event_location: "Auditorio Nacional"
+ *             event_type: "Concierto"
  *     responses:
  *       200:
- *         description: Event updated
+ *         description: Evento actualizado
  *       404:
- *         description: Event not found
+ *         description: Evento no encontrado
  *       500:
- *         description: Error updating event
+ *         description: Error al actualizar el evento
  */
-router.put("/updateEvent", eventController.updateEvent);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/deleteEvent/{id}:
  *   delete:
- *     summary: Delete an event by ID
+ *     summary: Eliminar un evento por ID
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
@@ -155,22 +136,21 @@ router.put("/updateEvent", eventController.updateEvent);
  *         required: true
  *         schema:
  *           type: string
- *         description: Event ID
+ *         description: ID del evento
  *     responses:
  *       200:
- *         description: Event deleted
+ *         description: Evento eliminado exitosamente
  *       404:
- *         description: Event not found
+ *         description: Evento no encontrado
  *       500:
- *         description: Error deleting event
+ *         description: Error al eliminar el evento
  */
-router.delete("/deleteEvent/:id", eventController.deleteEvent);
 
 /**
  * @swagger
  * /quickquote/webresources/Events/byClient/{id_client}:
  *   get:
- *     summary: Get events by client ID
+ *     summary: Obtener eventos por ID de cliente
  *     tags: [Events]
  *     security:
  *       - bearerAuth: []
@@ -180,15 +160,45 @@ router.delete("/deleteEvent/:id", eventController.deleteEvent);
  *         required: true
  *         schema:
  *           type: string
- *         description: Client ID
+ *         description: ID del cliente
  *     responses:
  *       200:
- *         description: List of events for the client
+ *         description: Lista de eventos para el cliente
  *       404:
- *         description: No events found for the client
+ *         description: No se encontraron eventos para el cliente
  *       500:
- *         description: Error retrieving events by client
+ *         description: Error al obtener eventos por cliente
  */
-router.get("/byClient/:id_client", eventController.getEventsByClient);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     EventInput:
+ *       type: object
+ *       required:
+ *         - id
+ *         - event_name
+ *         - event_date
+ *         - event_location
+ *         - event_type
+ *       properties:
+ *         id:
+ *           type: number
+ *           example: 1
+ *         event_name:
+ *           type: string
+ *           example: "Concierto de Rock"
+ *         event_date:
+ *           type: string
+ *           format: date-time
+ *           example: "2023-12-15T20:00:00Z"
+ *         event_location:
+ *           type: string
+ *           example: "Auditorio Nacional"
+ *         event_type:
+ *           type: string
+ *           example: "Concierto"
+ */
 
 module.exports = router;

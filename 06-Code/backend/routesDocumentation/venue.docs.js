@@ -1,136 +1,37 @@
-const express = require("express");
-const router = express.Router();
-const venueController = require("../controllers/venueController");
 
 /**
  * @swagger
  * tags:
  *   name: Venues
- *   description: Operations related to venues
+ *   description: Endpoints para gestionar lugares (venues)
  */
-
-/**
- * @swagger
- * /quickquote/webresources/Venues/createVenue:
- *   post:
- *     summary: Create a new venue
- *     tags: [Venues]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       description: Data for the venue to create
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: number
- *                 example: 1
- *               venue_name:
- *                 type: string
- *                 example: "Main Hall"
- *               venue_location:
- *                 type: string
- *                 example: "Quito"
- *               venue_capacity:
- *                 type: number
- *                 example: 100
- *     responses:
- *       201:
- *         description: Venue created successfully
- *       500:
- *         description: Error creating the venue
- */
-router.post("/createVenue", venueController.createVenue);
-
-/**
- * @swagger
- * /quickquote/webresources/Venues/{id}:
- *   get:
- *     summary: Get a venue by ID
- *     tags: [Venues]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID of the venue to get
- *     responses:
- *       200:
- *         description: Venue retrieved successfully
- *       404:
- *         description: Venue not found
- *       500:
- *         description: Error retrieving the venue
- */
-router.get("/:id", venueController.getVenue);
 
 /**
  * @swagger
  * /quickquote/webresources/Venues:
  *   get:
- *     summary: Get all venues
+ *     summary: Obtener todos los lugares
  *     tags: [Venues]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of venues retrieved successfully
- *       404:
- *         description: No venues registered
+ *         description: Lista de todos los lugares
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Venue'
  *       500:
- *         description: Error retrieving venues
+ *         description: Error al obtener los lugares
  */
-router.get("/", venueController.getAllVenues);
 
 /**
  * @swagger
- * /quickquote/webresources/Venues/updateVenue:
- *   put:
- *     summary: Update a venue
- *     tags: [Venues]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       description: Data for the venue to update
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 example: "venue001"
- *               venue_name:
- *                 type: string
- *                 example: "Renovated Main Hall"
- *               venue_location:
- *                 type: string
- *                 example: "Quito"
- *               venue_capacity:
- *                 type: integer
- *                 example: 120
- *     responses:
- *       200:
- *         description: Venue updated successfully
- *       404:
- *         description: Venue not found
- *       500:
- *         description: Error updating the venue
- */
-router.put("/updateVenue", venueController.updateVenue);
-
-/**
- * @swagger
- * /quickquote/webresources/Venues/deleteVenue/{id}:
- *   delete:
- *     summary: Delete a venue by ID
+ * /quickquote/webresources/Venues/{id}:
+ *   get:
+ *     summary: Obtener un lugar por ID
  *     tags: [Venues]
  *     security:
  *       - bearerAuth: []
@@ -139,74 +40,163 @@ router.put("/updateVenue", venueController.updateVenue);
  *         name: id
  *         required: true
  *         schema:
+ *           type: number
+ *         description: ID único del lugar
+ *     responses:
+ *       200:
+ *         description: Lugar encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Venue'
+ *       404:
+ *         description: Lugar no encontrado
+ *       500:
+ *         description: Error al obtener el lugar
+ */
+
+/**
+ * @swagger
+ * /quickquote/webresources/Venues:
+ *   post:
+ *     summary: Crear un nuevo lugar
+ *     tags: [Venues]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VenueInput'
+ *           example:
+ *             id: 6
+ *             venue_name: "Centro de Convenciones Internacional"
+ *             venue_location: "Zona Norte"
+ *             venue_capacity: 2400
+ *     responses:
+ *       201:
+ *         description: Lugar creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Venue'
+ *       500:
+ *         description: Error al crear el lugar
+ */
+
+/**
+ * @swagger
+ * /quickquote/webresources/Venues:
+ *   put:
+ *     summary: Actualizar un lugar existente
+ *     tags: [Venues]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VenueInput'
+ *           example:
+ *             id: 6
+ *             venue_name: "Centro de Convenciones Internacional Renovado"
+ *             venue_location: "Zona Sur"
+ *             venue_capacity: 3000
+ *     responses:
+ *       200:
+ *         description: Lugar actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Venue'
+ *       404:
+ *         description: Lugar no encontrado
+ *       500:
+ *         description: Error al actualizar el lugar
+ */
+
+/**
+ * @swagger
+ * /quickquote/webresources/Venues/{id}:
+ *   delete:
+ *     summary: Eliminar un lugar por ID
+ *     tags: [Venues]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: ID único del lugar
+ *     responses:
+ *       200:
+ *         description: Lugar eliminado exitosamente
+ *       404:
+ *         description: Lugar no encontrado
+ *       500:
+ *         description: Error al eliminar el lugar
+ */
+
+/**
+ * @swagger
+ * /quickquote/webresources/Venues/searchByName/{name}:
+ *   get:
+ *     summary: Buscar lugares por nombre
+ *     tags: [Venues]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
  *           type: string
- *         description: ID of the venue to delete
+ *         description: Nombre del lugar (o parte)
  *     responses:
  *       200:
- *         description: Venue deleted successfully
+ *         description: Lista de lugares que coinciden con el nombre
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Venue'
  *       404:
- *         description: Venue not found
+ *         description: No se encontraron lugares con ese nombre
  *       500:
- *         description: Error deleting the venue
+ *         description: Error al buscar lugares por nombre
  */
-router.delete("/deleteVenue/:id", venueController.deleteVenue);
 
 /**
  * @swagger
- * /quickquote/webresources/Venues/by-capacity/{min_capacity}:
+ * /quickquote/webresources/Venues/searchByCapacity/{capacity}:
  *   get:
- *     summary: Search venues by minimum capacity
+ *     summary: Buscar lugares por capacidad mínima
  *     tags: [Venues]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: min_capacity
+ *         name: capacity
  *         required: true
  *         schema:
- *           type: integer
- *         description: Minimum required capacity
+ *           type: number
+ *         description: Capacidad mínima del lugar
  *     responses:
  *       200:
- *         description: List of venues with the specified minimum capacity
+ *         description: Lista de lugares con capacidad igual o mayor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Venue'
  *       404:
- *         description: No venues found with the specified minimum capacity
+ *         description: No se encontraron lugares con esa capacidad
  *       500:
- *         description: Error retrieving venues by capacity
+ *         description: Error al buscar lugares por capacidad
  */
-router.get("/by-capacity/:min_capacity", venueController.getVenuesByCapacity);
-
-/**
- * @swagger
- * /quickquote/webresources/Venues/searchByCapacity/{min}/{max}:
- *   get:
- *     summary: Search venues by capacity range
- *     tags: [Venues]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: min
- *         required: true
- *         schema:
- *           type: integer
- *         description: Minimum capacity
- *       - in: path
- *         name: max
- *         required: true
- *         schema:
- *           type: integer
- *         description: Maximum capacity
- *     responses:
- *       200:
- *         description: List of venues within the capacity range
- *       404:
- *         description: No venues found with capacity in that range
- *       400:
- *         description: Invalid min and max parameters
- *       500:
- *         description: Error searching venues by capacity
- */
-router.get("/searchByCapacity/:min/:max", venueController.searchVenuesByCapacity);
-
-module.exports = router;

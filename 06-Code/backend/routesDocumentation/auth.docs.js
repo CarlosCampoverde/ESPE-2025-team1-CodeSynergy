@@ -4,6 +4,7 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
+
 /**
  * @swagger
  * tags:
@@ -24,6 +25,10 @@ const { authMiddleware, adminMiddleware } = require("../middleware/auth");
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - username
+ *               - email
+ *               - password
  *             properties:
  *               username:
  *                 type: string
@@ -39,11 +44,10 @@ const { authMiddleware, adminMiddleware } = require("../middleware/auth");
  *                 example: "client"
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: Usuario registrado con éxito
  *       400:
- *         description: Missing required fields or error
+ *         description: Faltan campos requeridos o error
  */
-router.post('/register', async (req, res) => {/* ...existing code... */});
 
 /**
  * @swagger
@@ -58,6 +62,9 @@ router.post('/register', async (req, res) => {/* ...existing code... */});
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - username
+ *               - password
  *             properties:
  *               username:
  *                 type: string
@@ -68,12 +75,22 @@ router.post('/register', async (req, res) => {/* ...existing code... */});
  *     responses:
  *       200:
  *         description: Login successful, returns JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 username:
+ *                   type: string
  *       400:
- *         description: Missing credentials or error
+ *         description: Faltan credenciales o error
  *       401:
- *         description: Invalid credentials
+ *         description: Credenciales inválidas
  */
-router.post('/login', async (req, res) => {/* ...existing code... */});
 
 /**
  * @swagger
@@ -86,11 +103,28 @@ router.post('/login', async (req, res) => {/* ...existing code... */});
  *     responses:
  *       200:
  *         description: List of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
  *       403:
  *         description: Forbidden
  *       500:
  *         description: Error retrieving users
  */
-router.get('/users', authMiddleware, adminMiddleware, async (req, res) => {/* ...existing code... */});
+
+module.exports = router;
 
 module.exports = router;
