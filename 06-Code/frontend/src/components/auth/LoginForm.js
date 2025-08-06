@@ -19,7 +19,7 @@ export default function LoginForm() {
     setError('');
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/quickquote/webresources/Auth/login`,
+        'https://espe-2025-team1-codesynergy.onrender.com/quickquote/webresources/Auth/login',
         form
       );
       localStorage.setItem('token', res.data.token);
@@ -34,7 +34,7 @@ export default function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/auth/google`;
+    window.location.href = 'https://espe-2025-team1-codesynergy.onrender.com/auth/google';
   };
 
   return (

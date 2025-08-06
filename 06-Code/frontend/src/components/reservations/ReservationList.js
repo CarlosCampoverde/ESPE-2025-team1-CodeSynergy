@@ -11,17 +11,15 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  IconButton,
-  Paper,
   Typography,
   TextField,
   InputAdornment,
   Chip,
+  Alert,
+  Fab,
 } from '@mui/material';
 import {
   Add,
-  Edit,
-  Delete,
   Search,
   Event,
   People,
@@ -30,6 +28,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { reservationsAPI, clientsAPI, menusAPI } from '../../services/api';
+import { hasRole, getCurrentUser } from '../../utils/auth';
+import RoleBasedActions from '../common/RoleBasedActions';
 
 function ReservationList() {
   const [reservations, setReservations] = useState([]);

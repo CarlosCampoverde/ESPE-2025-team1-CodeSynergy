@@ -17,6 +17,7 @@ import { clientsAPI } from '../../services/api';
 
 function ClientForm() {
   const [client, setClient] = useState({
+    id_client: '',
     first_name: '',
     last_name: '',
     email: '',
@@ -103,10 +104,15 @@ function ClientForm() {
       setError('');
       
       if (isEdit) {
-        await clientsAPI.update({ ...client, id: parseInt(id) });
+        await clientsAPI.update(client);
         setSuccess('Cliente actualizado exitosamente');
       } else {
-        await clientsAPI.create(client);
+        // Generar ID único para nuevo cliente
+        const newClient = {
+          ...client,
+          id_client: `CL${Date.now()}` // Genera un ID único
+        };
+        await clientsAPI.create(newClient);
         setSuccess('Cliente creado exitosamente');
       }
       

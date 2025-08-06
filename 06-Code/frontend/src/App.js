@@ -10,6 +10,7 @@ import AuthPage from './components/auth/AuthPage';
 import TokenHandler from './components/auth/TokenHandler';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserManagement from './components/UserManagement';
+import GoogleOAuthTest from './components/GoogleOAuthTest';
 import ClientList from './components/clients/ClientList';
 import ClientForm from './components/clients/ClientForm';
 import ReservationList from './components/reservations/ReservationList';
@@ -53,6 +54,7 @@ function App() {
         <TokenHandler />
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/oauth-test" element={<GoogleOAuthTest />} />
           <Route
             path="/*"
             element={

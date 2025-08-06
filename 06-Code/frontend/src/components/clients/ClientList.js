@@ -11,22 +11,15 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   TextField,
   InputAdornment,
+  Alert,
+  Fab,
+  Chip,
 } from '@mui/material';
 import {
   Add,
-  Edit,
-  Delete,
   Search,
   Email,
   Phone,
@@ -34,6 +27,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { clientsAPI } from '../../services/api';
+import { hasRole } from '../../utils/auth';
+import RoleBasedActions from '../common/RoleBasedActions';
 
 function ClientList() {
   const [clients, setClients] = useState([]);
@@ -72,12 +67,16 @@ function ClientList() {
 
   const handleDelete = async () => {
     try {
-      await clientsAPI.delete(deleteDialog.client.id);
+      await clientsAPI.delete(deleteDialog.client.id_client);
       setDeleteDialog({ open: false, client: null });
       fetchClients();
     } catch (error) {
       console.error('Error deleting client:', error);
     }
+  };
+
+  const handleEdit = (client) => {
+    navigate(`/clients/edit/${client.id_client}`);
   };
 
   const openDeleteDialog = (client) => {
@@ -100,16 +99,25 @@ function ClientList() {
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4">Gestión de Clientes</Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => navigate('/clients/new')}
-        >
-          Nuevo Cliente
-        </Button>
+        {hasRole(['admin', 'superadmin']) && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => navigate('/clients/new')}
+          >
+            Nuevo Cliente
+          </Button>
+        )}
       </Box>
 
-      <Paper sx={{ mb: 3, p: 2 }}>
+      {filteredClients.length === 0 && !loading && (
+        <Alert severity="info" sx={{ mb: 3 }}>
+          No se encontraron clientes.
+          {hasRole(['admin', 'superadmin']) && ' Haz clic en "Nuevo Cliente" para agregar el primero.'}
+        </Alert>
+      )}
+
+      <Box sx={{ mb: 3 }}>
         <TextField
           fullWidth
           placeholder="Buscar clientes por nombre, email o teléfono..."
@@ -123,7 +131,7 @@ function ClientList() {
             ),
           }}
         />
-      </Paper>
+      </Box>
 
       {filteredClients.length === 0 ? (
         <Paper sx={{ p: 3, textAlign: 'center' }}>
@@ -142,56 +150,74 @@ function ClientList() {
       ) : (
         <Grid container spacing={3}>
           {filteredClients.map((client) => (
-            <Grid item xs={12} md={6} lg={4} key={client.id}>
-              <Card>
-                <CardContent>
+            <Grid item xs={12} md={6} lg={4} key={client.id_client}>
+              <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent sx={{ flexGrow: 1 }}>
                   <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                     <Typography variant="h6" component="div">
                       {client.first_name} {client.last_name}
                     </Typography>
-                    <Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => navigate(`/clients/edit/${client.id}`)}
-                        color="primary"
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => openDeleteDialog(client)}
-                        color="error"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
+                    <RoleBasedActions
+                      item={client}
+                      onEdit={handleEdit}
+                      onDelete={openDeleteDialog}
+                      editRoles={['admin', 'superadmin']}
+                      deleteRoles={['admin', 'superadmin']}
+                      itemType="cliente"
+                    />
                   </Box>
                   
                   <Box display="flex" alignItems="center" mb={1}>
                     <Email sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
                     <Typography variant="body2" color="text.secondary">
-                      {client.email}
+                      {client.email || 'No especificado'}
                     </Typography>
                   </Box>
                   
                   <Box display="flex" alignItems="center" mb={1}>
                     <Phone sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
                     <Typography variant="body2" color="text.secondary">
-                      {client.phone}
+                      {client.phone || 'No especificado'}
                     </Typography>
                   </Box>
                   
                   <Box display="flex" alignItems="flex-start">
                     <LocationOn sx={{ fontSize: 16, mr: 1, color: 'text.secondary', mt: 0.5 }} />
                     <Typography variant="body2" color="text.secondary">
-                      {client.address}
+                      {client.address || 'No especificado'}
                     </Typography>
+                  </Box>
+                  
+                  <Box mt={2}>
+                    <Chip 
+                      label={`ID: ${client.id_client}`} 
+                      size="small" 
+                      variant="outlined" 
+                      color="primary"
+                    />
                   </Box>
                 </CardContent>
               </Card>
             </Grid>
           ))}
         </Grid>
+      )}
+
+      {/* Floating Action Button for mobile */}
+      {hasRole(['admin', 'superadmin']) && (
+        <Fab
+          color="primary"
+          aria-label="add"
+          onClick={() => navigate('/clients/new')}
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            right: 16,
+            display: { xs: 'flex', sm: 'none' }
+          }}
+        >
+          <Add />
+        </Fab>
       )}
 
       <Dialog open={deleteDialog.open} onClose={closeDeleteDialog}>

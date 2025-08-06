@@ -24,7 +24,7 @@ export default function RegisterForm() {
     setError('');
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/quickquote/webresources/Auth/register`,
+        'https://espe-2025-team1-codesynergy.onrender.com/quickquote/webresources/Auth/register',
         form
       );
       setSuccess(true);
@@ -38,7 +38,7 @@ export default function RegisterForm() {
   };
 
   const handleGoogleRegister = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/auth/google`;
+    window.location.href = 'https://espe-2025-team1-codesynergy.onrender.com/auth/google';
   };
 
   return (
