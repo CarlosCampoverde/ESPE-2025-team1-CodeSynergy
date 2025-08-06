@@ -17,6 +17,8 @@ import {
   Chip,
   Alert,
   Fab,
+  Paper,
+  IconButton,
 } from '@mui/material';
 import {
   Add,
@@ -25,6 +27,8 @@ import {
   People,
   Restaurant,
   AccessTime,
+  Edit,
+  Delete,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { reservationsAPI, clientsAPI, menusAPI } from '../../services/api';
