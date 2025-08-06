@@ -30,44 +30,20 @@ function MenuForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
-  // NUEVO: Función para obtener el próximo ID disponible
-  const fetchNextId = async () => {
-    try {
-      // Opción A: Si tu API tiene un endpoint específico para obtener el próximo ID
-      // const response = await menusAPI.getNextId();
-      // return response.data.nextId;
-      
-      // Opción B: Obtener todos los menús y calcular el próximo ID
-      const response = await menusAPI.getAll();
-      const maxId = Math.max(...response.data.map(menu => menu.id), 0);
-      return maxId + 1;
-    } catch (error) {
-      console.error('Error al obtener el próximo ID:', error);
-      // Fallback: retornar 1 si hay error
-      return 1;
-    }
+  // Función para generar ID automáticamente
+  const generateNextId = () => {
+    return Date.now(); // Usar timestamp como ID único
   };
 
   // MODIFICADO: useEffect actualizado para generar ID automáticamente
+  // useEffect para cargar datos en edición o generar ID para creación
   useEffect(() => {
     if (isEdit) {
       fetchMenu();
     } else {
-      // Para nuevo menú, generar el próximo ID automáticamente
-      const generateId = async () => {
-        try {
-          setLoading(true);
-          const nextId = await fetchNextId();
-          setMenu(prev => ({ ...prev, id: nextId }));
-        } catch (error) {
-          setError('Error al generar el ID del menú');
-          console.error('Error:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-      generateId();
+      // Para nuevo menú, generar ID automáticamente
+      const newId = generateNextId();
+      setMenu(prev => ({ ...prev, id: newId }));
     }
   }, [id, isEdit]);
 
@@ -131,8 +107,9 @@ function MenuForm() {
         await menusAPI.update({ ...menuData, id: parseInt(id) });
         setSuccess('Menú actualizado exitosamente');
       } else {
-        // MODIFICADO: Incluir el ID generado al crear
-        await menusAPI.create({ ...menuData, id: parseInt(menu.id) });
+        // Para crear, no incluir el ID generado localmente - el backend lo generará
+        const { id: localId, ...createData } = menuData;
+        await menusAPI.create(createData);
         setSuccess('Menú creado exitosamente');
       }
       

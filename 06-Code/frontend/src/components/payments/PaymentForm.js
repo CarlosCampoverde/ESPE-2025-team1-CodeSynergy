@@ -19,6 +19,7 @@ import {
 import { Save, ArrowBack, AttachMoney } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { paymentsAPI, reservationsAPI, clientsAPI } from '../../services/api';
+import { getCurrentUser, getUserRole } from '../../utils/auth';
 
 function PaymentForm() {
   const [payment, setPayment] = useState({
@@ -49,13 +50,32 @@ function PaymentForm() {
   const fetchInitialData = async () => {
     try {
       setDataLoading(true);
-      const [reservationsRes, clientsRes] = await Promise.all([
-        reservationsAPI.getAll(),
-        clientsAPI.getAll(),
-      ]);
+      const userRole = getUserRole();
+      const currentUser = getCurrentUser();
       
-      setReservations(reservationsRes.data || []);
-      setClients(clientsRes.data || []);
+      if (userRole === 'client') {
+        // Si es cliente, solo mostrar sus propias reservaciones
+        const [reservationsRes] = await Promise.all([
+          reservationsAPI.getAll(),
+        ]);
+        
+        // Filtrar reservaciones del cliente actual
+        const clientReservations = reservationsRes.data?.filter(res => 
+          res.id_client === currentUser?.id || res.id_client === currentUser?.userId
+        ) || [];
+        
+        setReservations(clientReservations);
+        setClients([]); // Los clientes no necesitan ver la lista de clientes
+      } else {
+        // Si es admin o superadmin, mostrar todo
+        const [reservationsRes, clientsRes] = await Promise.all([
+          reservationsAPI.getAll(),
+          clientsAPI.getAll(),
+        ]);
+        
+        setReservations(reservationsRes.data || []);
+        setClients(clientsRes.data || []);
+      }
     } catch (error) {
       setError('Error al cargar los datos iniciales');
       console.error('Error:', error);

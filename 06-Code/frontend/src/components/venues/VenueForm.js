@@ -29,44 +29,19 @@ function VenueForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
-  // NUEVO: Función para obtener el próximo ID disponible
-  const fetchNextId = async () => {
-    try {
-      // Opción A: Si tu API tiene un endpoint específico para obtener el próximo ID
-      // const response = await venuesAPI.getNextId();
-      // return response.data.nextId;
-      
-      // Opción B: Obtener todos los lugares y calcular el próximo ID
-      const response = await venuesAPI.getAll();
-      const maxId = Math.max(...response.data.map(venue => venue.id), 0);
-      return maxId + 1;
-    } catch (error) {
-      console.error('Error al obtener el próximo ID:', error);
-      // Fallback: retornar 1 si hay error
-      return 1;
-    }
+  // Función para generar ID automáticamente
+  const generateNextId = () => {
+    return Date.now(); // Usar timestamp como ID único
   };
 
-  // MODIFICADO: useEffect actualizado para generar ID automáticamente
+  // useEffect para cargar datos en edición o generar ID para creación
   useEffect(() => {
     if (isEdit) {
       fetchVenue();
     } else {
-      // Para nuevo lugar, generar el próximo ID automáticamente
-      const generateId = async () => {
-        try {
-          setLoading(true);
-          const nextId = await fetchNextId();
-          setVenue(prev => ({ ...prev, id: nextId }));
-        } catch (error) {
-          setError('Error al generar el ID del lugar');
-          console.error('Error:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-      generateId();
+      // Para nuevo lugar, generar ID automáticamente
+      const newId = generateNextId();
+      setVenue(prev => ({ ...prev, id: newId }));
     }
   }, [id, isEdit]);
 
@@ -136,8 +111,9 @@ function VenueForm() {
         await venuesAPI.update({ ...venueData, id: parseInt(id) });
         setSuccess('Lugar actualizado exitosamente');
       } else {
-        // MODIFICADO: Incluir el ID generado al crear
-        await venuesAPI.create({ ...venueData, id: parseInt(venue.id) });
+        // Para crear, no incluir el ID generado localmente - el backend lo generará
+        const { id: localId, ...createData } = venueData;
+        await venuesAPI.create(createData);
         setSuccess('Lugar creado exitosamente');
       }
       

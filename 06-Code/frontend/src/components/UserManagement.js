@@ -77,17 +77,43 @@ function UserManagement() {
 
   // Actualizar rol de usuario
   const updateUserRole = async () => {
-    if (!selectedUser || !newRole) return;
+    if (!selectedUser || !newRole) {
+      showAlert('Por favor seleccione un usuario y un rol válido', 'error');
+      return;
+    }
 
-    try {
-      await authAPI.updateUserRole(selectedUser.id, newRole);
-      showAlert(`Rol actualizado exitosamente para ${selectedUser.username}`, 'success');
+    if (newRole === selectedUser.role) {
+      showAlert('El usuario ya tiene ese rol asignado', 'warning');
       setEditDialogOpen(false);
-      setSelectedUser(null);
-      setNewRole('');
-      fetchUsers(); // Recargar la lista
+      return;
+    }
+
+    // Validar que no se esté auto-degradando
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (selectedUser._id === currentUser.id && newRole !== 'superadmin') {
+      showAlert('No puedes cambiar tu propio rol de SuperAdmin', 'error');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log('Updating user role:', { userId: selectedUser._id, newRole });
+      const response = await authAPI.updateUserRole(selectedUser._id, newRole);
+      
+      if (response.data && response.data.success) {
+        showAlert(`Rol actualizado exitosamente para ${selectedUser.username}`, 'success');
+        setEditDialogOpen(false);
+        setSelectedUser(null);
+        setNewRole('');
+        fetchUsers(); // Recargar la lista
+      } else {
+        throw new Error(response.data?.message || 'Error desconocido');
+      }
     } catch (error) {
-      showAlert('Error al actualizar rol: ' + error.message, 'error');
+      console.error('Error updating user role:', error);
+      showAlert('Error al actualizar rol: ' + (error.response?.data?.error || error.message), 'error');
+    } finally {
+      setLoading(false);
     }
   };
 

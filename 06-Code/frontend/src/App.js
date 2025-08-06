@@ -87,13 +87,29 @@ function App() {
                       </ProtectedRoute>
                     } />
                     
-                    {/* Reservations Routes - Todos los usuarios autenticados */}
-                    <Route path="/reservations" element={<ReservationList />} />
-                    <Route path="/reservations/new" element={<ReservationForm />} />
-                    <Route path="/reservations/edit/:id" element={<ReservationForm />} />
+                    {/* Reservations Routes - Solo Admin y SuperAdmin */}
+                    <Route path="/reservations" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <ReservationList />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/reservations/new" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <ReservationForm />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/reservations/edit/:id" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <ReservationForm />
+                      </ProtectedRoute>
+                    } />
                     
-                    {/* Menus Routes - Todos pueden ver, solo admin puede editar */}
-                    <Route path="/menus" element={<MenuList />} />
+                    {/* Menus Routes - Solo Admin y SuperAdmin */}
+                    <Route path="/menus" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <MenuList />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/menus/new" element={
                       <ProtectedRoute requiredRole={['admin', 'superadmin']}>
                         <MenuForm />
@@ -105,10 +121,22 @@ function App() {
                       </ProtectedRoute>
                     } />
                     
-                    {/* Payments Routes - Todos los usuarios autenticados */}
-                    <Route path="/payments" element={<PaymentList />} />
-                    <Route path="/payments/new" element={<PaymentForm />} />
-                    <Route path="/payments/edit/:id" element={<PaymentForm />} />
+                    {/* Payments Routes - Solo Admin y SuperAdmin */}
+                    <Route path="/payments" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <PaymentList />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/payments/new" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <PaymentForm />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/payments/edit/:id" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <PaymentForm />
+                      </ProtectedRoute>
+                    } />
                     
                     {/* Catering Routes - Solo Admin y SuperAdmin */}
                     <Route path="/catering" element={
@@ -127,8 +155,12 @@ function App() {
                       </ProtectedRoute>
                     } />
                     
-                    {/* Events Routes - Todos pueden ver, solo admin puede editar */}
-                    <Route path="/events" element={<EventList />} />
+                    {/* Events Routes - Solo Admin y SuperAdmin */}
+                    <Route path="/events" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <EventList />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/events/new" element={
                       <ProtectedRoute requiredRole={['admin', 'superadmin']}>
                         <EventForm />
@@ -157,8 +189,12 @@ function App() {
                       </ProtectedRoute>
                     } />
                     
-                    {/* Venues Routes - Todos pueden ver, solo admin puede editar */}
-                    <Route path="/venues" element={<VenueList />} />
+                    {/* Venues Routes - Solo Admin y SuperAdmin */}
+                    <Route path="/venues" element={
+                      <ProtectedRoute requiredRole={['admin', 'superadmin']}>
+                        <VenueList />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/venues/new" element={
                       <ProtectedRoute requiredRole={['admin', 'superadmin']}>
                         <VenueForm />
@@ -170,7 +206,7 @@ function App() {
                       </ProtectedRoute>
                     } />
                     
-                    {/* Reviews Routes - Todos pueden ver y crear, solo admin puede editar */}
+                    {/* Reviews Routes - Todos pueden crear, solo admin puede editar todas */}
                     <Route path="/reviews" element={<ReviewList />} />
                     <Route path="/reviews/new" element={<ReviewForm />} />
                     <Route path="/reviews/edit/:id" element={

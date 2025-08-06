@@ -30,41 +30,19 @@ function EventForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
-  // NUEVO: Función para obtener el próximo ID disponible
-  const fetchNextId = async () => {
-    try {
-      const response = await eventsAPI.getAll();
-      const ids = response.data.map(event => parseInt(event.id, 10));
-      const maxId = Math.max(...ids, 0);
-      return maxId + 1;  // Genera el próximo ID
-    } catch (error) {
-      console.error('Error al obtener el próximo ID:', error);
-      return 1; // Fallback a ID 1 si ocurre un error
-    }
+  // Función para generar ID automáticamente
+  const generateNextId = () => {
+    return Date.now(); // Usar timestamp como ID único
   };
 
-  // MODIFICADO: useEffect actualizado para generar ID automáticamente
+  // useEffect para cargar datos en edición o generar ID para creación
   useEffect(() => {
-    const generateId = async () => {
-      try {
-        setLoading(true);
-        const nextId = await fetchNextId(); // Obtener el siguiente ID
-        setEvent(prev => ({
-          ...prev,
-          id: nextId, // Asignar el próximo ID generado
-        }));
-      } catch (error) {
-        setError('Error al generar el ID del evento');
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (isEdit) {
       fetchEvent(); // Si es edición, obtener los datos del evento
     } else {
-      generateId(); // Si es nuevo evento, generar ID automáticamente
+      // Para nuevo evento, generar ID automáticamente
+      const newId = generateNextId();
+      setEvent(prev => ({ ...prev, id: newId }));
     }
   }, [id, isEdit]);
 

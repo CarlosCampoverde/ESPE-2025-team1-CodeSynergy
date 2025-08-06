@@ -86,10 +86,12 @@ function StaffForm() {
       return false;
     }
 
-    // Validar formato de teléfono básico
+    // Validar formato de contacto más flexible (teléfono o email)
     const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-    if (!phoneRegex.test(staff.staff_contact)) {
-      setError('El formato del contacto no es válido');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!phoneRegex.test(staff.staff_contact) && !emailRegex.test(staff.staff_contact)) {
+      setError('El contacto debe ser un teléfono válido o un email válido');
       return false;
     }
 

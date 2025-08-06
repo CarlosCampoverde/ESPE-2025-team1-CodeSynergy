@@ -17,6 +17,8 @@ import {
   TextField,
   InputAdornment,
   Chip,
+  Alert,
+  Snackbar,
 } from '@mui/material';
 import {
   Add,
@@ -35,6 +37,7 @@ function CateringList() {
   const [loading, setLoading] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState({ open: false, service: null });
   const [searchTerm, setSearchTerm] = useState('');
+  const [alert, setAlert] = useState({ show: false, message: '', severity: 'success' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +61,11 @@ function CateringList() {
     } catch (error) {
       console.error('Error fetching catering services:', error);
       setServices([]);
+      setAlert({ 
+        show: true, 
+        message: 'Error al cargar los servicios de catering', 
+        severity: 'error' 
+      });
     } finally {
       setLoading(false);
     }
@@ -67,9 +75,16 @@ function CateringList() {
     try {
       await cateringAPI.delete(deleteDialog.service.id);
       setDeleteDialog({ open: false, service: null });
+      setAlert({ show: true, message: 'Servicio eliminado exitosamente', severity: 'success' });
       fetchServices();
     } catch (error) {
       console.error('Error deleting catering service:', error);
+      setAlert({ 
+        show: true, 
+        message: 'Error al eliminar el servicio: ' + (error.response?.data?.message || error.message), 
+        severity: 'error' 
+      });
+      setDeleteDialog({ open: false, service: null });
     }
   };
 
@@ -210,6 +225,21 @@ function CateringList() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar para mostrar alertas */}
+      <Snackbar
+        open={alert.show}
+        autoHideDuration={6000}
+        onClose={() => setAlert({ ...alert, show: false })}
+      >
+        <Alert 
+          onClose={() => setAlert({ ...alert, show: false })} 
+          severity={alert.severity}
+          sx={{ width: '100%' }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

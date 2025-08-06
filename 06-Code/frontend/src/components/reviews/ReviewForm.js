@@ -16,6 +16,7 @@ import {
 import { Save, ArrowBack } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { reviewsAPI, clientsAPI, venuesAPI } from '../../services/api';
+import { getCurrentUser, getUserRole } from '../../utils/auth';
 
 function ReviewForm() {
   const [review, setReview] = useState({
@@ -79,13 +80,30 @@ function ReviewForm() {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [clientsResponse, venuesResponse] = await Promise.all([
-        clientsAPI.getAll(),
-        venuesAPI.getAll()
-      ]);
+      const userRole = getUserRole();
+      const currentUser = getCurrentUser();
       
-      setClients(clientsResponse.data || []);
-      setVenues(venuesResponse.data || []);
+      if (userRole === 'client') {
+        // Si es cliente, solo cargar venues y auto-seleccionar el cliente actual
+        const venuesResponse = await venuesAPI.getAll();
+        setVenues(venuesResponse.data || []);
+        setClients([]); // Los clientes no necesitan ver la lista de clientes
+        
+        // Auto-seleccionar el cliente actual
+        setReview(prev => ({ 
+          ...prev, 
+          id_client: currentUser?.id || currentUser?.userId || ''
+        }));
+      } else {
+        // Si es admin o superadmin, cargar todo
+        const [clientsResponse, venuesResponse] = await Promise.all([
+          clientsAPI.getAll(),
+          venuesAPI.getAll()
+        ]);
+        
+        setClients(clientsResponse.data || []);
+        setVenues(venuesResponse.data || []);
+      }
     } catch (error) {
       setError('Error al cargar los datos iniciales');
       console.error('Error:', error);
@@ -242,25 +260,27 @@ function ReviewForm() {
                 />
               </Grid>
               
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Cliente"
-                  name="id_client"
-                  value={review.id_client}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                >
-                  <MenuItem value="">Seleccionar cliente</MenuItem>
-                  {clients.map((client) => (
-                    <MenuItem key={client.id} value={client.id}>
-                      {client.first_name} {client.last_name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+              {getUserRole() !== 'client' && (
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Cliente"
+                    name="id_client"
+                    value={review.id_client}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  >
+                    <MenuItem value="">Seleccionar cliente</MenuItem>
+                    {clients.map((client) => (
+                      <MenuItem key={client.id} value={client.id}>
+                        {client.first_name} {client.last_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
               
               <Grid item xs={12} md={4}>
                 <TextField

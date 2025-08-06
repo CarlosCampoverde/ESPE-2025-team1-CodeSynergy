@@ -60,19 +60,19 @@ const menuItemsConfig = [
     text: 'Gestión de Reservaciones', 
     icon: <EventNote />, 
     path: '/reservations', 
-    roles: ['client', 'admin', 'superadmin'] 
+    roles: ['admin', 'superadmin'] 
   },
   { 
     text: 'Gestión de Menús', 
     icon: <RestaurantMenu />, 
     path: '/menus', 
-    roles: ['client', 'admin', 'superadmin'] 
+    roles: ['admin', 'superadmin'] 
   },
   { 
     text: 'Gestión de Pagos', 
     icon: <Payment />, 
     path: '/payments', 
-    roles: ['client', 'admin', 'superadmin'] 
+    roles: ['admin', 'superadmin'] 
   },
   { 
     text: 'Gestión de Servicios de Catering', 
@@ -84,7 +84,7 @@ const menuItemsConfig = [
     text: 'Gestión de Eventos', 
     icon: <Event />, 
     path: '/events', 
-    roles: ['client', 'admin', 'superadmin'] 
+    roles: ['admin', 'superadmin'] 
   },
   { 
     text: 'Gestión de Personal', 
@@ -96,7 +96,7 @@ const menuItemsConfig = [
     text: 'Gestión de Venues', 
     icon: <LocationOn />, 
     path: '/venues', 
-    roles: ['client', 'admin', 'superadmin'] 
+    roles: ['admin', 'superadmin'] 
   },
   { 
     text: 'Gestión de Reseñas', 
