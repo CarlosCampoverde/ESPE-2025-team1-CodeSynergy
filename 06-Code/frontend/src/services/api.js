@@ -56,6 +56,8 @@ export const menusAPI = {
   create: (data) => api.post('/Menus/createMenu', data),
   update: (data) => api.put('/Menus/updateMenu', data),
   delete: (id) => api.delete(`/Menus/deleteMenu/${id}`),
+  getByEventType: (eventType) => api.get(`/Menus/type/${eventType}`),
+  searchByPrice: (minPrice, maxPrice) => api.get(`/Menus/searchByPrice?minPrice=${minPrice}&maxPrice=${maxPrice}`),
 };
 
 // Payments API
@@ -131,14 +133,58 @@ authApi.interceptors.request.use((config) => {
   return config;
 });
 
+// Interceptor para manejar errores de autenticación en authApi
+authApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/auth';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authAPI = {
+  // Autenticación básica
+  login: (data) => authApi.post('/login', data),
+  register: (data) => authApi.post('/register', data),
+  
   // Gestión de usuarios (solo superadmin)
   getAllUsers: () => authApi.get('/users'),
-  searchUsers: (query) => authApi.get(`/users/search?q=${query}`),
+  searchUsers: (query) => authApi.get(`/users/search?q=${encodeURIComponent(query)}`),
   updateUserRole: (userId, role) => authApi.put(`/users/${userId}/role`, { role }),
   
   // Google OAuth
   registerGoogleUser: (data) => authApi.post('/google/register', data),
+  
+  // Verificación de token
+  verifyToken: () => authApi.get('/verify'),
+};
+
+// Utilidades adicionales
+export const apiUtils = {
+  // Función para manejar errores de manera consistente
+  handleError: (error) => {
+    if (error.response) {
+      // Error del servidor
+      return error.response.data?.error || error.response.data?.message || 'Error del servidor';
+    } else if (error.request) {
+      // Error de red
+      return 'Error de conexión. Verifica tu internet.';
+    } else {
+      // Otro tipo de error
+      return error.message || 'Error inesperado';
+    }
+  },
+
+  // Función para generar IDs únicos
+  generateId: () => Date.now().toString(),
+  
+  // Función para validar respuestas
+  validateResponse: (response) => {
+    return response && response.data;
+  }
 };
 
 export default api;

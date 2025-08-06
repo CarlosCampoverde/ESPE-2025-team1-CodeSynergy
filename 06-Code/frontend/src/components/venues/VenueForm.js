@@ -102,18 +102,25 @@ function VenueForm() {
       setLoading(true);
       setError('');
       
-      const venueData = {
-        ...venue,
-        venue_capacity: parseInt(venue.venue_capacity)
-      };
-      
       if (isEdit) {
-        await venuesAPI.update({ ...venueData, id: parseInt(id) });
+        // Para edición, mantener el ID existente
+        const venueData = {
+          ...venue,
+          venue_capacity: parseInt(venue.venue_capacity),
+          id: parseInt(id)
+        };
+        await venuesAPI.update(venueData);
         setSuccess('Lugar actualizado exitosamente');
       } else {
-        // Para crear, no incluir el ID generado localmente - el backend lo generará
-        const { id: localId, ...createData } = venueData;
-        await venuesAPI.create(createData);
+        // Para creación, NO enviar ID (el backend lo genera)
+        const venueData = {
+          venue_name: venue.venue_name,
+          venue_location: venue.venue_location,
+          venue_capacity: parseInt(venue.venue_capacity)
+        };
+        
+        console.log('Creating venue with data:', venueData);
+        await venuesAPI.create(venueData);
         setSuccess('Lugar creado exitosamente');
       }
       
@@ -121,8 +128,11 @@ function VenueForm() {
         navigate('/venues');
       }, 1500);
     } catch (error) {
-      setError(isEdit ? 'Error al actualizar el lugar' : 'Error al crear el lugar');
-      console.error('Error:', error);
+      console.error('Error saving venue:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          (isEdit ? 'Error al actualizar el lugar' : 'Error al crear el lugar');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

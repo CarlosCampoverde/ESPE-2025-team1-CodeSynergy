@@ -145,7 +145,9 @@ function ReviewForm() {
   };
 
   const validateForm = () => {
-    if (!review.id_client) {
+    const userRole = getUserRole();
+    
+    if (userRole !== 'client' && !review.id_client) {
       setError('Debe seleccionar un cliente');
       return false;
     }
@@ -176,19 +178,41 @@ function ReviewForm() {
       setLoading(true);
       setError('');
       
-      const reviewData = {
-        ...review,
-        id_client: parseInt(review.id_client),
-        id_venue: parseInt(review.id_venue),
-        review_rating: parseInt(review.review_rating)
-      };
+      const userRole = getUserRole();
+      const currentUser = getCurrentUser();
+      
+      // Para usuarios cliente, usar su propio ID
+      let clientId = review.id_client;
+      if (userRole === 'client') {
+        clientId = currentUser?.id || currentUser?.userId;
+        if (!clientId) {
+          setError('Error al identificar el usuario. Por favor, inicia sesión nuevamente.');
+          setLoading(false);
+          return;
+        }
+      }
       
       if (isEdit) {
-        await reviewsAPI.update({ ...reviewData, id: parseInt(id) });
+        const reviewData = {
+          ...review,
+          id_client: parseInt(clientId),
+          id_venue: parseInt(review.id_venue),
+          review_rating: parseInt(review.review_rating),
+          id: parseInt(id)
+        };
+        await reviewsAPI.update(reviewData);
         setSuccess('Reseña actualizada exitosamente');
       } else {
-        // MODIFICADO: Incluir el ID generado al crear
-        await reviewsAPI.create({ ...reviewData, id: parseInt(review.id) });
+        // Para creación, NO enviar ID local
+        const reviewData = {
+          id_client: parseInt(clientId),
+          id_venue: parseInt(review.id_venue),
+          review_rating: parseInt(review.review_rating),
+          review_comments: review.review_comments
+        };
+        
+        console.log('Creating review with data:', reviewData);
+        await reviewsAPI.create(reviewData);
         setSuccess('Reseña creada exitosamente');
       }
       

@@ -90,24 +90,25 @@ function UserManagement() {
 
     // Validar que no se esté auto-degradando
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (selectedUser._id === currentUser.id && newRole !== 'superadmin') {
+    const userId = selectedUser._id || selectedUser.id;
+    if (userId === currentUser.id && newRole !== 'superadmin') {
       showAlert('No puedes cambiar tu propio rol de SuperAdmin', 'error');
       return;
     }
 
     setLoading(true);
     try {
-      console.log('Updating user role:', { userId: selectedUser._id, newRole });
-      const response = await authAPI.updateUserRole(selectedUser._id, newRole);
+      console.log('Updating user role:', { userId, newRole, selectedUser });
+      const response = await authAPI.updateUserRole(userId, newRole);
       
-      if (response.data && response.data.success) {
+      if (response.data) {
         showAlert(`Rol actualizado exitosamente para ${selectedUser.username}`, 'success');
         setEditDialogOpen(false);
         setSelectedUser(null);
         setNewRole('');
         fetchUsers(); // Recargar la lista
       } else {
-        throw new Error(response.data?.message || 'Error desconocido');
+        throw new Error('Error en la respuesta del servidor');
       }
     } catch (error) {
       console.error('Error updating user role:', error);

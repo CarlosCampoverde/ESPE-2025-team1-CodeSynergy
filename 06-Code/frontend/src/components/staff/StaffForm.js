@@ -87,11 +87,11 @@ function StaffForm() {
     }
 
     // Validar formato de contacto más flexible (teléfono o email)
-    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
     if (!phoneRegex.test(staff.staff_contact) && !emailRegex.test(staff.staff_contact)) {
-      setError('El contacto debe ser un teléfono válido o un email válido');
+      setError('El contacto debe ser un teléfono válido (7-20 dígitos) o un email válido');
       return false;
     }
 
@@ -110,10 +110,19 @@ function StaffForm() {
       setError('');
       
       if (isEdit) {
-        await staffAPI.update({ ...staff, id: parseInt(id) });
+        const staffData = { ...staff, id: parseInt(id) };
+        await staffAPI.update(staffData);
         setSuccess('Personal actualizado exitosamente');
       } else {
-        await staffAPI.create(staff);
+        // Para creación, NO enviar ID local
+        const staffData = {
+          staff_name: staff.staff_name,
+          staff_role: staff.staff_role,
+          staff_contact: staff.staff_contact
+        };
+        
+        console.log('Creating staff with data:', staffData);
+        await staffAPI.create(staffData);
         setSuccess('Personal creado exitosamente');
       }
       

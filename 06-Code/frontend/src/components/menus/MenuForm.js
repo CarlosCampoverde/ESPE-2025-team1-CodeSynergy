@@ -97,19 +97,25 @@ function MenuForm() {
     try {
       setLoading(true);
       setError('');
-      
-      const menuData = {
-        ...menu,
-        menu_price: parseFloat(menu.menu_price),
-      };
 
       if (isEdit) {
-        await menusAPI.update({ ...menuData, id: parseInt(id) });
+        const menuData = {
+          ...menu,
+          menu_price: parseFloat(menu.menu_price),
+          id: parseInt(id)
+        };
+        await menusAPI.update(menuData);
         setSuccess('Menú actualizado exitosamente');
       } else {
-        // Para crear, no incluir el ID generado localmente - el backend lo generará
-        const { id: localId, ...createData } = menuData;
-        await menusAPI.create(createData);
+        // Para creación, NO enviar ID local
+        const menuData = {
+          menu_name: menu.menu_name,
+          menu_description: menu.menu_description,
+          menu_price: parseFloat(menu.menu_price)
+        };
+        
+        console.log('Creating menu with data:', menuData);
+        await menusAPI.create(menuData);
         setSuccess('Menú creado exitosamente');
       }
       
@@ -117,8 +123,11 @@ function MenuForm() {
         navigate('/menus');
       }, 1500);
     } catch (error) {
-      setError(isEdit ? 'Error al actualizar el menú' : 'Error al crear el menú');
-      console.error('Error:', error);
+      console.error('Error saving menu:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          (isEdit ? 'Error al actualizar el menú' : 'Error al crear el menú');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
