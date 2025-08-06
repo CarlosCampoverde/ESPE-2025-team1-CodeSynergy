@@ -91,4 +91,33 @@ export const reviewsAPI = {
   delete: (id) => api.delete(`/Reviews/deleteReview/${id}`),
 };
 
+// Authentication API
+const AUTH_URL = 'https://espe-2025-team1-codesynergy.onrender.com/auth';
+
+const authApi = axios.create({
+  baseURL: AUTH_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor para agregar token a las requests
+authApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const authAPI = {
+  // Gestión de usuarios (solo superadmin)
+  getAllUsers: () => authApi.get('/users'),
+  searchUsers: (query) => authApi.get(`/users/search?q=${query}`),
+  updateUserRole: (userId, role) => authApi.put(`/users/${userId}/role`, { role }),
+  
+  // Google OAuth
+  registerGoogleUser: (data) => authApi.post('/google/register', data),
+};
+
 export default api;
