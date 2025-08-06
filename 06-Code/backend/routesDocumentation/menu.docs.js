@@ -20,9 +20,32 @@ const menuController = require("../controllers/menuController");
  *     responses:
  *       200:
  *         description: List of all menus
- *       500:
- *         description: Error retrieving menus
- */
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: number
+ *                   menu_name:
+ *                     type: string
+ *               id:
+ *                 type: number
+ *                 example: 1
+ *               menu_name:
+ *                 type: string
+ *                 example: "Vegetarian Menu"
+ *               menu_description:
+ *                 type: string
+ *                 example: "A menu for vegetarians"
+ *               menu_price:
+ *                 type: number
+ *                 example: 25
+ *               event_type:
+ *                 type: string
+ *                 example: "wedding"
 router.get("/", menuController.getAllMenus);
 
 /**

@@ -26,8 +26,8 @@ const venueController = require("../controllers/venueController");
  *             type: object
  *             properties:
  *               id:
- *                 type: string
- *                 example: "venue001"
+ *                 type: number
+ *                 example: 1
  *               venue_name:
  *                 type: string
  *                 example: "Main Hall"
@@ -35,7 +35,7 @@ const venueController = require("../controllers/venueController");
  *                 type: string
  *                 example: "Quito"
  *               venue_capacity:
- *                 type: integer
+ *                 type: number
  *                 example: 100
  *     responses:
  *       201:

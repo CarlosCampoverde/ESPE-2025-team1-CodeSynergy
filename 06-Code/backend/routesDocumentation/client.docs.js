@@ -133,19 +133,19 @@ router.get("/:id_client", clientController.getClient);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               id_client:
  *                 type: string
- *                 example: "John Doe"
+ *                 example: "client001"
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
  *               email:
  *                 type: string
- *                 example: "john@example.com"
  *               phone:
  *                 type: string
- *                 example: "123456789"
- *     responses:
- *       201:
- *         description: Client created successfully
- *       400:
+ *               address:
+ *                 type: string
  *         description: Invalid data sent
  *       401:
  *         description: Unauthorized

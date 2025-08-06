@@ -12,10 +12,26 @@ const authMiddleware = (req, res, next) => {
 
 // Middleware para verificar rol de administrador
 const adminMiddleware = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Acceso denegado, requiere rol de administrador' });
+  if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
+    return res.status(403).json({ error: 'Access denied, admin role required' });
   }
   next();
 };
 
-module.exports = { authMiddleware, adminMiddleware };
+// Middleware para verificar rol de superadmin
+const superAdminMiddleware = (req, res, next) => {
+  if (req.user.role !== 'superadmin') {
+    return res.status(403).json({ error: 'Access denied, superadmin role required' });
+  }
+  next();
+};
+
+// Middleware para verificar si el usuario tiene uno de los roles permitidos
+const roleMiddleware = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return res.status(403).json({ error: 'Access denied, insufficient role' });
+  }
+  next();
+};
+
+module.exports = { authMiddleware, adminMiddleware, superAdminMiddleware, roleMiddleware };

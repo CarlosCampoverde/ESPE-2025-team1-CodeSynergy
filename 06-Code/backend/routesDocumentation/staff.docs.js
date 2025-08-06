@@ -71,9 +71,9 @@ router.get("/:id", staffController.getStaff);
 /**
  * @swagger
  * /quickquote/webresources/Staff/createStaff:
- *   post:
- *     summary: Create a new staff member
- *     tags: [Staff]
+ *               id:
+ *                 type: number
+ *                 example: 1
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -119,9 +119,9 @@ router.post("/createStaff", staffController.createStaff);
  *                 example: "staff001"
  *               name:
  *                 type: string
- *                 example: "Jane Doe"
- *               role:
- *                 type: string
+ *               id:
+ *                 type: number
+ *                 example: 1
  *                 example: "staff"
  *     responses:
  *       200:

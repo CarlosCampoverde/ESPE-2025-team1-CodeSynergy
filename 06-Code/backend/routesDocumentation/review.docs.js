@@ -53,15 +53,21 @@ router.get("/:id", reviewController.getReview);
 /**
  * @swagger
  * /quickquote/webresources/Reviews/createReview:
- *   post:
- *     summary: Create a new review
- *     tags: [Reviews]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       description: Review data
- *       required: true
- *       content:
+ *               id:
+ *                 type: number
+ *                 example: 1
+ *               id_client:
+ *                 type: string
+ *                 example: "2"
+ *               id_venue:
+ *                 type: string
+ *                 example: "3"
+ *               review_rating:
+ *                 type: number
+ *                 example: 5
+ *               review_comments:
+ *                 type: string
+ *                 example: "Excelente lugar, el servicio fue increíble. Definitivamente volveré."
  *         application/json:
  *           schema:
  *             type: object
