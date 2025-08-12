@@ -17,6 +17,7 @@ import { clientsAPI } from '../../services/api';
 
 function ClientForm() {
   const [client, setClient] = useState({
+    id: '',
     id_client: '',
     first_name: '',
     last_name: '',
@@ -31,9 +32,23 @@ function ClientForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
+  // Función para generar ID automáticamente
+  const generateNextId = () => {
+    return Date.now(); // Usar timestamp como ID único
+  };
+
+  // useEffect para cargar datos en edición o generar ID para creación
   useEffect(() => {
     if (isEdit) {
       fetchClient();
+    } else {
+      // Para nuevo cliente, generar ID automáticamente
+      const newId = generateNextId();
+      setClient(prev => ({ 
+        ...prev, 
+        id: newId,
+        id_client: newId // También establecer id_client para mostrar en el form
+      }));
     }
   }, [id, isEdit]);
 
@@ -104,15 +119,26 @@ function ClientForm() {
       setError('');
       
       if (isEdit) {
-        await clientsAPI.update(client);
+        // Para edición, mantener el ID existente
+        const clientData = {
+          ...client,
+          id: parseInt(id)
+        };
+        await clientsAPI.update(clientData);
         setSuccess('Cliente actualizado exitosamente');
       } else {
-        // Generar ID único para nuevo cliente
-        const newClient = {
-          ...client,
-          id_client: `CL${Date.now()}` // Genera un ID único
+        // Para creación, enviar id_client y otros campos (NO enviar id)
+        const clientData = {
+          id_client: client.id_client, // Usar el id_client temporal
+          first_name: client.first_name,
+          last_name: client.last_name,
+          email: client.email,
+          phone: client.phone,
+          address: client.address
         };
-        await clientsAPI.create(newClient);
+        
+        console.log('Creating client with data:', clientData);
+        await clientsAPI.create(clientData);
         setSuccess('Cliente creado exitosamente');
       }
       
@@ -120,17 +146,24 @@ function ClientForm() {
         navigate('/clients');
       }, 1500);
     } catch (error) {
-      setError(isEdit ? 'Error al actualizar el cliente' : 'Error al crear el cliente');
-      console.error('Error:', error);
+      console.error('Error saving client:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          (isEdit ? 'Error al actualizar el cliente' : 'Error al crear el cliente');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading && isEdit) {
+  // MODIFICADO: Mostrar loading también cuando se está generando el ID
+  if (loading && (isEdit || !client.id)) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          {isEdit ? 'Cargando cliente...' : 'Generando ID...'}
+        </Typography>
       </Box>
     );
   }
@@ -166,7 +199,21 @@ function ClientForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="ID"
+                  name="id"
+                  value={client.id}
+                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  helperText={isEdit ? "ID del cliente (solo lectura)" : "ID generado automáticamente"}
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
                   label="Nombre"
@@ -178,7 +225,7 @@ function ClientForm() {
                 />
               </Grid>
               
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
                   label="Apellido"
@@ -212,6 +259,7 @@ function ClientForm() {
                   onChange={handleChange}
                   required
                   disabled={loading}
+                  placeholder="Número de teléfono del cliente"
                 />
               </Grid>
               
@@ -226,6 +274,7 @@ function ClientForm() {
                   onChange={handleChange}
                   required
                   disabled={loading}
+                  placeholder="Dirección completa del cliente"
                 />
               </Grid>
               

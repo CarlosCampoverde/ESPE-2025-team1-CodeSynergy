@@ -1,4 +1,3 @@
-// src/components/menus/MenuForm.js
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -16,6 +15,11 @@ import { Save, ArrowBack, AttachMoney } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { menusAPI } from '../../services/api';
 
+// Función para generar un ID aleatorio numérico
+const generateUniqueId = () => {
+  return Math.floor(Math.random() * 1000000000); // Genera un número aleatorio de 9 dígitos
+};
+
 function MenuForm() {
   const [menu, setMenu] = useState({
     id: '',
@@ -30,23 +34,35 @@ function MenuForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
-  // Función para generar ID automáticamente
-  const generateNextId = () => {
-    return Date.now(); // Usar timestamp como ID único
+  // Función para obtener el último ID (verificamos el último valor existente)
+  const fetchLastId = async () => {
+    try {
+      const response = await menusAPI.getLastId(); // Método de tu API que devuelve el último ID
+      if (response.data && response.data.lastId) {
+        return response.data.lastId;
+      }
+      return 0;  // Si no hay ID, empezar desde 0
+    } catch (error) {
+      console.error('Error al obtener el último ID:', error);
+      return 0;  // Si falla, empezar desde 0
+    }
   };
 
-  // MODIFICADO: useEffect actualizado para generar ID automáticamente
   // useEffect para cargar datos en edición o generar ID para creación
   useEffect(() => {
-    if (isEdit) {
-      fetchMenu();
-    } else {
-      // Para nuevo menú, generar ID automáticamente
-      const newId = generateNextId();
-      setMenu(prev => ({ ...prev, id: newId }));
-    }
+    const initializeMenu = async () => {
+      if (isEdit) {
+        await fetchMenu();
+      } else {
+        let uniqueId = generateUniqueId(); // Generar ID numérico aleatorio
+        setMenu(prev => ({ ...prev, id: uniqueId }));
+      }
+    };
+
+    initializeMenu();
   }, [id, isEdit]);
 
+  // Obtener los datos del menú para edición
   const fetchMenu = async () => {
     try {
       setLoading(true);
@@ -83,7 +99,6 @@ function MenuForm() {
       setError('El precio debe ser mayor a 0');
       return false;
     }
-
     return true;
   };
 
@@ -102,19 +117,18 @@ function MenuForm() {
         const menuData = {
           ...menu,
           menu_price: parseFloat(menu.menu_price),
-          id: parseInt(id)
+          id: parseInt(id) // Usar el ID actual para edición
         };
         await menusAPI.update(menuData);
         setSuccess('Menú actualizado exitosamente');
       } else {
-        // Para creación, NO enviar ID local
+        // Para la creación, enviamos el ID numérico generado
         const menuData = {
+          id: menu.id, // El ID generado aleatoriamente
           menu_name: menu.menu_name,
           menu_description: menu.menu_description,
-          menu_price: parseFloat(menu.menu_price)
+          menu_price: parseFloat(menu.menu_price),
         };
-        
-        console.log('Creating menu with data:', menuData);
         await menusAPI.create(menuData);
         setSuccess('Menú creado exitosamente');
       }
@@ -133,7 +147,6 @@ function MenuForm() {
     }
   };
 
-  // MODIFICADO: Mostrar loading también cuando se está generando el ID
   if (loading && (isEdit || !menu.id)) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -189,7 +202,6 @@ function MenuForm() {
                   helperText={isEdit ? "ID del menú (solo lectura)" : "ID generado automáticamente"}
                 />
               </Grid>
-              
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -202,7 +214,6 @@ function MenuForm() {
                   placeholder="Ej: Menú Ejecutivo, Menú Premium, etc."
                 />
               </Grid>
-              
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -217,7 +228,6 @@ function MenuForm() {
                   placeholder="Describe los platos incluidos, ingredientes principales, etc."
                 />
               </Grid>
-              
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -241,7 +251,6 @@ function MenuForm() {
                   }}
                 />
               </Grid>
-              
               <Grid item xs={12}>
                 <Box display="flex" gap={2} justifyContent="flex-end">
                   <Button

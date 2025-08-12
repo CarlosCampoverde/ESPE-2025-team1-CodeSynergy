@@ -1,4 +1,3 @@
-// src/components/reservations/ReservationForm.js
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -24,7 +23,7 @@ function ReservationForm() {
     id_client: '',
     reservation_date: '',
     reservation_time: '',
-    number_of_guests: '',
+    number_of_guests: 1,
     menu_id: '',
   });
   const [clients, setClients] = useState([]);
@@ -42,10 +41,10 @@ function ReservationForm() {
   }, []);
 
   useEffect(() => {
-    if (isEdit && clients.length > 0 && menus.length > 0) {
+    if (isEdit && id) {
       fetchReservation();
     }
-  }, [id, isEdit, clients, menus]);
+  }, [id, isEdit]);
 
   const fetchInitialData = async () => {
     try {
@@ -54,12 +53,10 @@ function ReservationForm() {
         clientsAPI.getAll(),
         menusAPI.getAll(),
       ]);
-      
       setClients(clientsRes.data || []);
       setMenus(menusRes.data || []);
     } catch (error) {
-      setError('Error al cargar los datos iniciales');
-      console.error('Error:', error);
+      setError('Error loading initial data');
     } finally {
       setDataLoading(false);
     }
@@ -70,17 +67,15 @@ function ReservationForm() {
       setLoading(true);
       const response = await reservationsAPI.getById(id);
       const data = response.data;
-      
       setReservation({
-        id_client: data.id_client || '',
+        id_client: String(data.id_client) || '',
         reservation_date: data.reservation_date || '',
         reservation_time: data.reservation_time || '',
-        number_of_guests: data.number_of_guests || '',
-        menu_id: data.menu_id || '',
+        number_of_guests: data.number_of_guests || 1,
+        menu_id: String(data.menu_id) || '',
       });
     } catch (error) {
-      setError('Error al cargar los datos de la reservación');
-      console.error('Error:', error);
+      setError('Error loading reservation data');
     } finally {
       setLoading(false);
     }
@@ -88,9 +83,9 @@ function ReservationForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setReservation(prev => ({
+    setReservation((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setError('');
     setSuccess('');
@@ -98,33 +93,47 @@ function ReservationForm() {
 
   const validateForm = () => {
     if (!reservation.id_client) {
-      setError('El cliente es requerido');
+      setError('Client is required');
       return false;
     }
     if (!reservation.reservation_date) {
-      setError('La fecha de reservación es requerida');
+      setError('Reservation date is required');
       return false;
     }
     if (!reservation.reservation_time) {
-      setError('La hora de reservación es requerida');
+      setError('Reservation time is required');
       return false;
     }
     if (!reservation.number_of_guests || reservation.number_of_guests <= 0) {
-      setError('El número de invitados debe ser mayor a 0');
+      setError('Number of guests must be greater than 0');
       return false;
     }
     if (!reservation.menu_id) {
-      setError('El menú es requerido');
+      setError('Menu is required');
       return false;
     }
 
-    // Validar que la fecha no sea en el pasado
-    const reservationDate = new Date(reservation.reservation_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (reservationDate < today) {
-      setError('La fecha de reservación no puede ser en el pasado');
+    const selectedClient = clients.find(
+      (c) => String(c.id_client) === String(reservation.id_client)
+    );
+    if (!selectedClient) {
+      setError('Selected client is invalid');
+      return false;
+    }
+
+    const selectedMenu = menus.find(
+      (m) => String(m.id || m._id || m.menu_id) === String(reservation.menu_id)
+    );
+    if (!selectedMenu) {
+      setError('Selected menu is invalid');
+      return false;
+    }
+
+    const reservationDateTime = new Date(
+      `${reservation.reservation_date}T${reservation.reservation_time}`
+    );
+    if (reservationDateTime < new Date()) {
+      setError('Reservation date and time cannot be in the past');
       return false;
     }
 
@@ -133,7 +142,7 @@ function ReservationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -141,37 +150,58 @@ function ReservationForm() {
     try {
       setLoading(true);
       setError('');
-      
+
+      const selectedClient = clients.find(
+        (c) => String(c.id_client) === String(reservation.id_client)
+      );
+      const selectedMenu = menus.find(
+        (m) => String(m.id || m._id || m.menu_id) === String(reservation.menu_id)
+      );
+
+      if (!selectedClient || !selectedMenu) {
+        setError('Selected client or menu not found');
+        return;
+      }
+
       const reservationData = {
-        ...reservation,
-        id_client: parseInt(reservation.id_client),
+        id_client: selectedClient.id_client, // Use string id_client
+        reservation_date: reservation.reservation_date,
+        reservation_time: reservation.reservation_time,
         number_of_guests: parseInt(reservation.number_of_guests),
-        menu_id: parseInt(reservation.menu_id),
+        menu_id: parseInt(selectedMenu.id || selectedMenu._id || selectedMenu.menu_id),
       };
 
       if (isEdit) {
         await reservationsAPI.update({ ...reservationData, id: parseInt(id) });
-        setSuccess('Reservación actualizada exitosamente');
+        setSuccess('Reservation updated successfully');
       } else {
-        await reservationsAPI.create(reservationData);
-        setSuccess('Reservación creada exitosamente');
+        await reservationsAPI.create(reservationData); // No id included for creation
+        setSuccess('Reservation created successfully');
       }
-      
+
       setTimeout(() => {
         navigate('/reservations');
       }, 1500);
     } catch (error) {
-      setError(isEdit ? 'Error al actualizar la reservación' : 'Error al crear la reservación');
-      console.error('Error:', error);
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Unknown error';
+      setError(`Error ${isEdit ? 'updating' : 'creating'} reservation: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    navigate('/reservations');
   };
 
   if (dataLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          Loading data...
+        </Typography>
       </Box>
     );
   }
@@ -179,15 +209,11 @@ function ReservationForm() {
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={3}>
-        <Button
-          startIcon={<ArrowBack />}
-          onClick={() => navigate('/reservations')}
-          sx={{ mr: 2 }}
-        >
-          Volver
+        <Button startIcon={<ArrowBack />} onClick={handleCancel} sx={{ mr: 2 }}>
+          Back
         </Button>
         <Typography variant="h4">
-          {isEdit ? 'Editar Reservación' : 'Nueva Reservación'}
+          {isEdit ? 'Edit Reservation' : 'New Reservation'}
         </Typography>
       </Box>
 
@@ -209,104 +235,120 @@ function ReservationForm() {
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel>Cliente</InputLabel>
+                  <InputLabel>Client</InputLabel>
                   <Select
                     name="id_client"
                     value={reservation.id_client}
                     onChange={handleChange}
                     disabled={loading}
-                    label="Cliente"
+                    label="Client"
                   >
+                    <MenuItem value="">
+                      <em>Select client</em>
+                    </MenuItem>
                     {clients.map((client) => (
-                      <MenuItem key={client.id} value={client.id}>
-                        {client.first_name} {client.last_name}
+                      <MenuItem
+                        key={client.id_client}
+                        value={String(client.id_client)}
+                      >
+                        {(client.first_name || client.firstName || '') +
+                          ' ' +
+                          (client.last_name || client.lastName || '')} (ID:{' '}
+                        {client.id_client})
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel>Menú</InputLabel>
+                  <InputLabel>Menu</InputLabel>
                   <Select
                     name="menu_id"
                     value={reservation.menu_id}
                     onChange={handleChange}
                     disabled={loading}
-                    label="Menú"
+                    label="Menu"
                   >
-                    {menus.map((menu) => (
-                      <MenuItem key={menu.id} value={menu.id}>
-                        {menu.menu_name} - ${menu.menu_price}
-                      </MenuItem>
-                    ))}
+                    <MenuItem value="">
+                      <em>Select menu</em>
+                    </MenuItem>
+                    {menus.map((menu) => {
+                      const menuId = menu.id || menu._id || menu.menu_id;
+                      return (
+                        <MenuItem key={menuId} value={String(menuId)}>
+                          {(menu.menu_name || menu.name || 'Unnamed Menu')} - $
+                          {menu.menu_price || menu.price || 0} (ID: {menuId})
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                 </FormControl>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Fecha de Reservación"
+                  label="Reservation Date"
                   name="reservation_date"
                   type="date"
                   value={reservation.reservation_date}
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  InputLabelProps={{
-                    shrink: true,
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{
+                    min: new Date().toISOString().split('T')[0],
                   }}
                 />
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Hora de Reservación"
+                  label="Reservation Time"
                   name="reservation_time"
                   type="time"
                   value={reservation.reservation_time}
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Número de Invitados"
+                  label="Number of Guests"
                   name="number_of_guests"
                   type="number"
                   value={reservation.number_of_guests}
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  inputProps={{ min: 1 }}
+                  inputProps={{ min: 1, max: 50 }}
                 />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Box display="flex" gap={2} justifyContent="flex-end">
                   <Button
                     variant="outlined"
-                    onClick={() => navigate('/reservations')}
+                    onClick={handleCancel}
                     disabled={loading}
                   >
-                    Cancelar
+                    Cancel
                   </Button>
                   <Button
                     type="submit"
                     variant="contained"
                     startIcon={loading ? <CircularProgress size={20} /> : <Save />}
                     disabled={loading}
+                    color="primary"
                   >
-                    {loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear')}
+                    {loading ? 'Saving...' : isEdit ? 'Update' : 'Create'}
                   </Button>
                 </Box>
               </Grid>
